@@ -47,7 +47,7 @@ public class AmbientSoundManager : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(Random.Range(minDelayBetweenAmbient, maxDelayBetweenAmbient));
-            
+
             if (ambientClips.Length > 0 && ambientSource != null)
             {
                 AudioClip clip = ambientClips[Random.Range(0, ambientClips.Length)];
@@ -76,13 +76,13 @@ public class AmbientSoundManager : MonoBehaviour
     private IEnumerator FadeOutMusic()
     {
         float startVolume = musicSource.volume;
-        
+
         while (musicSource.volume > 0)
         {
             musicSource.volume -= startVolume * Time.deltaTime / 2f;
             yield return null;
         }
-        
+
         musicSource.Stop();
         musicSource.volume = startVolume;
     }

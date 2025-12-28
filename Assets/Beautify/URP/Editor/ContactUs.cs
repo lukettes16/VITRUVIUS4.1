@@ -80,7 +80,6 @@ namespace Beautify.Universal {
     }
 };
 
-
         void OnEnable () {
             kronnectLogo = Resources.Load<Texture2D>("kronnectLogo");
             welcomeBanner = Resources.Load<Texture2D>("welcomeBanner");

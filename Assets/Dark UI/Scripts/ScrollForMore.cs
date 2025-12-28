@@ -29,7 +29,7 @@ namespace Michsky.UI.Dark
                 else if (SFMAnimator != null && listScrollbar.value <= fadeOutValue)
                     SFMAnimator.Play("SFM Out");
             }
-            
+
             else
             {
                 if (SFMAnimator != null && listScrollbar.value <= fadeOutValue)

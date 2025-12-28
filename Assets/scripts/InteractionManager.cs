@@ -4,14 +4,14 @@ using System.Collections.Generic;
 public class InteractionManager : MonoBehaviour
 {
     public static InteractionManager Instance;
-    
+
     [Header("Interaction Settings")]
     public float interactionRange = 3f;
     public LayerMask interactionLayer;
-    
+
     private List<InteractiveObject> interactiveObjects = new List<InteractiveObject>();
     private InteractiveObject currentInteractable;
-    
+
     private void Awake()
     {
         if (Instance == null)
@@ -23,7 +23,7 @@ public class InteractionManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
-    
+
     public void RegisterInteractable(InteractiveObject interactable)
     {
         if (!interactiveObjects.Contains(interactable))
@@ -31,7 +31,7 @@ public class InteractionManager : MonoBehaviour
             interactiveObjects.Add(interactable);
         }
     }
-    
+
     public void UnregisterInteractable(InteractiveObject interactable)
     {
         if (interactiveObjects.Contains(interactable))
@@ -39,12 +39,12 @@ public class InteractionManager : MonoBehaviour
             interactiveObjects.Remove(interactable);
         }
     }
-    
+
     public InteractiveObject GetNearestInteractable(Vector3 position)
     {
         InteractiveObject nearest = null;
         float minDistance = Mathf.Infinity;
-        
+
         foreach (InteractiveObject interactable in interactiveObjects)
         {
             if (interactable.CanInteract())
@@ -57,16 +57,16 @@ public class InteractionManager : MonoBehaviour
                 }
             }
         }
-        
+
         return nearest;
     }
-    
+
     public string GetInteractionMessage(Vector3 position)
     {
         InteractiveObject interactable = GetNearestInteractable(position);
         return interactable != null ? interactable.GetInteractionMessage() : "";
     }
-    
+
     public bool TryInteract(Vector3 position)
     {
         InteractiveObject interactable = GetNearestInteractable(position);

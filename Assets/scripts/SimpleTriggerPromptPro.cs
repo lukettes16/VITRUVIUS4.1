@@ -17,7 +17,7 @@ public class SimpleTriggerPromptPro : MonoBehaviour
     [Tooltip("Referencia al componente TextMeshPro")]
     public TMP_Text promptText;
     public CanvasGroup promptGroup;
-    
+
     [Tooltip("Texto que se mostrara")]
     public string displayText = "Presiona E para interactuar";
 
@@ -36,42 +36,42 @@ public class SimpleTriggerPromptPro : MonoBehaviour
     [Tooltip("Velocidad de animacion del color")]
     [Range(1f, 10f)]
     public float imageColorSpeed = 5f;
-    
+
     [Header("Trigger Settings")]
     [Tooltip("Tags de jugadores para detectar (ej: Player1, Player2)")]
     public string[] playerTags = new string[] { "Player1", "Player2" };
     [Tooltip("Origen de deteccion (dejar vacio para usar este objeto)")]
     public Transform detectionOrigin;
-    
+
     [Tooltip("Distancia donde el prompt esta completamente visible")]
     [Range(0.5f, 20f)]
     public float fullVisibilityDistance = 5f;
-    
+
     [Tooltip("Distancia donde el prompt comienza a aparecer")]
     [Range(1f, 30f)]
     public float fadeStartDistance = 12f;
-    
+
     [Header("Fade Settings")]
     [Tooltip("Velocidad de fade in/out")]
     [Range(0.1f, 5f)]
     public float fadeSpeed = 2f;
-    
+
     [Tooltip("Suavizado de la transicion")]
     [Range(0.1f, 3f)]
     public float smoothness = 1f;
-    
+
     [Tooltip("Opacidad maxima del texto")]
     [Range(0f, 1f)]
     public float maxOpacity = 1f;
-    
+
     [Header("Distance-based Opacity")]
     [Tooltip("Habilitar opacidad basada en distancia")]
     public bool useDistanceOpacity = true;
-    
+
     [Tooltip("Factor de atenuacion por distancia")]
     [Range(0.5f, 3f)]
     public float distanceAttenuation = 1.5f;
-    
+
     [Header("Animation Settings")]
     [Tooltip("Modo de animacion del prompt")]
     public PromptMode animationMode = PromptMode.Smooth;
@@ -79,22 +79,22 @@ public class SimpleTriggerPromptPro : MonoBehaviour
     public bool useScaleAnimation = false;
     [Tooltip("Ocultar objeto cuando esta invisible")]
     public bool hideObjectWhenInvisible = true;
-    
+
     [Tooltip("Factor de escala cuando esta oculto")]
     [Range(0.1f, 1f)]
     public float hiddenScale = 0.8f;
-    
+
     [Tooltip("Velocidad de animacion de escala")]
     [Range(1f, 10f)]
     public float scaleSpeed = 5f;
-    
+
     [Header("Advanced Settings")]
     [Tooltip("Capa de deteccion del jugador")]
     public LayerMask playerLayerMask = -1;
-    
+
     [Tooltip("Usar trigger en lugar de distancia")]
     public bool useTrigger = false;
-    
+
     [Tooltip("Tiempo de actualizacion de busqueda de jugadores (segundos)")]
     [Range(0.1f, 2f)]
     public float playerSearchInterval = 0.5f;
@@ -102,7 +102,7 @@ public class SimpleTriggerPromptPro : MonoBehaviour
     private Transform[] playerTransforms;
     private float currentOpacity = 0f;
     private float targetOpacity = 0f;
-    private float opacityVelocity = 0f; 
+    private float opacityVelocity = 0f;
     private Vector3 originalScale;
     private Vector3 currentScale;
     private bool isPlayerNear = false;
@@ -110,7 +110,6 @@ public class SimpleTriggerPromptPro : MonoBehaviour
     private Color targetImageColor;
     private float lastPlayerSearchTime;
     private int playersInTrigger = 0;
-    private float hysteresisOffset = 0.2f; // Slight buffer to prevent distance flickering
 
     void Start()
     {
@@ -122,7 +121,7 @@ public class SimpleTriggerPromptPro : MonoBehaviour
 
     void Update()
     {
-        
+
         if (Time.time - lastPlayerSearchTime > playerSearchInterval)
         {
             FindAllPlayers();
@@ -133,7 +132,7 @@ public class SimpleTriggerPromptPro : MonoBehaviour
         {
             UpdatePlayerDistance();
         }
-        
+
         UpdateOpacity();
         UpdateScale();
         UpdateImageColor();
@@ -142,13 +141,13 @@ public class SimpleTriggerPromptPro : MonoBehaviour
 
     void InitializeComponents()
     {
-        
+
         if (promptText != null)
         {
             promptText.text = displayText;
-            promptText.alpha = 0f; 
-            currentOpacity = 0f; 
-            targetOpacity = 0f; 
+            promptText.alpha = 0f;
+            currentOpacity = 0f;
+            targetOpacity = 0f;
         }
 
         if (promptGroup != null)
@@ -156,7 +155,6 @@ public class SimpleTriggerPromptPro : MonoBehaviour
             promptGroup.alpha = 0f;
         }
 
-        
         if (backgroundImage == null)
         {
             backgroundImage = GetComponent<Image>();
@@ -179,10 +177,10 @@ public class SimpleTriggerPromptPro : MonoBehaviour
     void FindAllPlayers()
     {
         System.Collections.Generic.List<Transform> allPlayers = new System.Collections.Generic.List<Transform>();
-        
+
         foreach (string tag in playerTags)
         {
-            // Using FindGameObjectsWithTag is fine here since it only runs every 'playerSearchInterval'
+
             GameObject[] playersWithTag = GameObject.FindGameObjectsWithTag(tag);
             foreach (GameObject playerObj in playersWithTag)
             {
@@ -192,8 +190,7 @@ public class SimpleTriggerPromptPro : MonoBehaviour
                 }
             }
         }
-        
-        // If no players found by tag, try to find them by name as a fallback for Player1/Player2
+
         if (allPlayers.Count == 0)
         {
             GameObject p1 = GameObject.Find("Player1");
@@ -216,12 +213,11 @@ public class SimpleTriggerPromptPro : MonoBehaviour
 
         float nearestDistance = float.MaxValue;
         Vector3 origin = GetOriginPosition();
-        
-        
+
         foreach (Transform player in playerTransforms)
         {
             if (player == null) continue;
-            
+
             float distance = Vector3.Distance(origin, player.position);
             if (distance < nearestDistance)
             {
@@ -239,29 +235,28 @@ public class SimpleTriggerPromptPro : MonoBehaviour
 
     void UpdateTargetOpacity(float distance)
     {
-        
+
         if (distance <= fullVisibilityDistance)
         {
             isPlayerNear = true;
             targetOpacity = maxOpacity;
         }
-        
+
         else if (distance >= fadeStartDistance)
         {
             isPlayerNear = false;
             targetOpacity = 0f;
         }
-        
+
         else
         {
             isPlayerNear = true;
-            
+
             if (useDistanceOpacity)
             {
                 float distanceRange = fadeStartDistance - fullVisibilityDistance;
                 float distanceFactor = 1f - ((distance - fullVisibilityDistance) / distanceRange);
-                
-                // Smoother curve for distance attenuation
+
                 float attenuatedOpacity = maxOpacity * Mathf.SmoothStep(0f, 1f, distanceFactor);
                 targetOpacity = Mathf.Clamp(attenuatedOpacity, 0f, maxOpacity);
             }
@@ -269,7 +264,7 @@ public class SimpleTriggerPromptPro : MonoBehaviour
             {
                 float distanceRange = fadeStartDistance - fullVisibilityDistance;
                 float distanceFactor = 1f - ((distance - fullVisibilityDistance) / distanceRange);
-                // Use SmoothStep for a much smoother transition
+
                 targetOpacity = Mathf.SmoothStep(0f, maxOpacity, distanceFactor);
             }
         }
@@ -278,26 +273,26 @@ public class SimpleTriggerPromptPro : MonoBehaviour
     void UpdateOpacity()
     {
         float smoothTime;
-        
+
         switch (animationMode)
         {
             case PromptMode.Instant:
                 currentOpacity = targetOpacity;
                 opacityVelocity = 0f;
                 return;
-                
+
             case PromptMode.Fast:
                 smoothTime = 0.1f;
                 break;
-                
+
             case PromptMode.Bounce:
                 smoothTime = 0.3f;
                 break;
-                
+
             case PromptMode.Elastic:
                 smoothTime = 0.5f;
                 break;
-                
+
             case PromptMode.Smooth:
             default:
                 smoothTime = 1f / Mathf.Max(0.1f, fadeSpeed);
@@ -307,14 +302,13 @@ public class SimpleTriggerPromptPro : MonoBehaviour
 
         currentOpacity = Mathf.SmoothDamp(currentOpacity, targetOpacity, ref opacityVelocity, smoothTime);
 
-        // Clamp currentOpacity to targetOpacity if they are very close to avoid micro-updates
         if (Mathf.Abs(currentOpacity - targetOpacity) < 0.001f)
         {
             currentOpacity = targetOpacity;
             opacityVelocity = 0f;
         }
-        
-        currentOpacity = Mathf.Clamp(currentOpacity, 0f, maxOpacity); 
+
+        currentOpacity = Mathf.Clamp(currentOpacity, 0f, maxOpacity);
     }
 
     void UpdateScale()
@@ -331,7 +325,7 @@ public class SimpleTriggerPromptPro : MonoBehaviour
 
         targetImageColor = isPlayerNear ? hoverImageColor : normalImageColor;
         currentImageColor = Color.Lerp(currentImageColor, targetImageColor, Time.deltaTime * imageColorSpeed);
-        
+
         Color imgColor = currentImageColor;
         imgColor.a = imageOpacity * currentOpacity;
         backgroundImage.color = imgColor;
@@ -340,20 +334,19 @@ public class SimpleTriggerPromptPro : MonoBehaviour
     void ApplyVisualChanges()
     {
         bool shouldBeActive = currentOpacity > 0.01f;
-        
+
         if (promptGroup != null)
         {
             promptGroup.alpha = currentOpacity;
-            
-            // Optimization: Disable raycasts and interaction when mostly invisible
+
             promptGroup.blocksRaycasts = currentOpacity > 0.1f;
             promptGroup.interactable = currentOpacity > 0.1f;
-            
+
             if (hideObjectWhenInvisible && promptGroup.gameObject.activeSelf != shouldBeActive)
             {
                 promptGroup.gameObject.SetActive(shouldBeActive);
             }
-            
+
             if (useScaleAnimation && promptGroup.transform != null)
             {
                 promptGroup.transform.localScale = currentScale;
@@ -362,12 +355,12 @@ public class SimpleTriggerPromptPro : MonoBehaviour
         else if (promptText != null)
         {
             promptText.alpha = currentOpacity;
-            
+
             if (hideObjectWhenInvisible && promptText.gameObject.activeSelf != shouldBeActive)
             {
                 promptText.gameObject.SetActive(shouldBeActive);
             }
-            
+
             if (useScaleAnimation)
             {
                 promptText.transform.localScale = currentScale;
@@ -402,7 +395,7 @@ public class SimpleTriggerPromptPro : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         if (!useTrigger || !IsValidPlayerTag(other.tag)) return;
-        
+
         playersInTrigger++;
         isPlayerNear = true;
         targetOpacity = maxOpacity;
@@ -411,10 +404,9 @@ public class SimpleTriggerPromptPro : MonoBehaviour
     void OnTriggerExit(Collider other)
     {
         if (!useTrigger || !IsValidPlayerTag(other.tag)) return;
-        
+
         playersInTrigger--;
-        
-        
+
         if (playersInTrigger <= 0)
         {
             playersInTrigger = 0;
@@ -426,13 +418,13 @@ public class SimpleTriggerPromptPro : MonoBehaviour
     void OnDrawGizmosSelected()
     {
         Vector3 origin = GetOriginPosition();
-        
+
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(origin, fullVisibilityDistance);
-        
+
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(origin, fadeStartDistance);
-        
+
         if (Application.isPlaying && playerTransforms != null)
         {
             foreach (Transform player in playerTransforms)
@@ -446,7 +438,6 @@ public class SimpleTriggerPromptPro : MonoBehaviour
         }
     }
 
-    
     public void SetText(string newText)
     {
         displayText = newText;

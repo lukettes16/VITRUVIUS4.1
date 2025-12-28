@@ -32,19 +32,16 @@ public class NPCBehaviorManager : MonoBehaviour
     [Tooltip("Flag que activa el seguimiento al Player 2.")]
     public string flagFollowP2 = "NPC_Follows_P2";
 
-    
     private NavMeshAgent agent;
     private Animator animator;
     private MonoBehaviour currentLeaderScript;
     private Transform currentLeaderTransform;
 
-    
     private bool isRunningToExit = false;
     private bool isFollowing = false;
 
-    
     public bool IsFollowing => isFollowing;
-    
+
     public Transform CurrentLeaderTransform => currentLeaderTransform;
 
     private void Awake()
@@ -55,13 +52,12 @@ public class NPCBehaviorManager : MonoBehaviour
         if (audioSource == null)
         {
             audioSource = gameObject.AddComponent<AudioSource>();
-            audioSource.spatialBlend = 1f; 
+            audioSource.spatialBlend = 1f;
             audioSource.playOnAwake = false;
         }
-        
+
         agent.stoppingDistance = stoppingDistance;
 
-        
         if (dialogueDataManager == null)
             dialogueDataManager = FindObjectOfType<NPCDialogueDataManager>();
 
@@ -74,7 +70,7 @@ public class NPCBehaviorManager : MonoBehaviour
 
     private void Update()
     {
-        
+
         if (isRunningToExit)
         {
             UpdateAnimation(runSpeed, false, true);
@@ -86,13 +82,11 @@ public class NPCBehaviorManager : MonoBehaviour
             return;
         }
 
-        
         if (!isFollowing && dialogueDataManager != null)
         {
             CheckDialogueFlags();
         }
 
-        
         if (isFollowing && currentLeaderTransform != null)
         {
             SeguirLider();
@@ -103,11 +97,8 @@ public class NPCBehaviorManager : MonoBehaviour
         }
     }
 
-    
-
     public void RunToDoorAndVanish(Transform doorExitPoint)
     {
-
 
         agent.ResetPath();
         agent.speed = runSpeed;
@@ -131,8 +122,6 @@ public class NPCBehaviorManager : MonoBehaviour
 
         gameObject.SetActive(false);
     }
-
-    
 
     private void CheckDialogueFlags()
     {
@@ -185,25 +174,21 @@ public class NPCBehaviorManager : MonoBehaviour
 
     private void UpdateAnimation(float speed, bool isCrouching, bool isRunning)
     {
-        
-        
-        
+
         float targetAnimSpeed = speed > 0.1f ? (isRunning ? 2f : 1f) : 0f;
 
-        
         animator.SetFloat("Speed", targetAnimSpeed, 0.2f, Time.deltaTime);
 
         animator.SetBool("IsCrouching", isCrouching);
         animator.SetBool("IsRunning", isRunning);
         animator.SetBool("IsFollowing", isFollowing);
     }
-    
-    
+
     public void PlayFootstepSound()
     {
         if (footstepSounds != null && footstepSounds.Length > 0 && audioSource != null)
         {
-            
+
             if (agent.velocity.magnitude > 0.1f)
             {
                 AudioClip clip = footstepSounds[Random.Range(0, footstepSounds.Length)];

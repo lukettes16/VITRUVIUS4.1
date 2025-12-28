@@ -129,7 +129,7 @@ public class HorrorEndOfDemoController : MonoBehaviour
             menuInputActions = Resources.Load<InputActionAsset>("Input/MenuNavigation");
             if (menuInputActions == null)
             {
-                Debug.LogWarning("[HorrorEndOfDemo] MenuNavigation InputActionAsset not found");
+                
                 return;
             }
         }
@@ -180,11 +180,10 @@ public class HorrorEndOfDemoController : MonoBehaviour
     {
         if (isShowing)
         {
-            Debug.LogWarning("[HorrorEndOfDemo] End screen already showing");
+            
             return;
         }
 
-        Debug.Log("[HorrorEndOfDemo] Showing horror end screen");
         isShowing = true;
 
         if (endScreenRoot == null)
@@ -215,8 +214,7 @@ public class HorrorEndOfDemoController : MonoBehaviour
 
     private void CreateEndScreenUI()
     {
-        Debug.Log("[HorrorEndOfDemo] Creating horror end screen UI");
-
+        
         endScreenRoot = new GameObject("HorrorEndScreenCanvas");
         endScreenRoot.transform.SetParent(transform, false);
 
@@ -263,16 +261,16 @@ public class HorrorEndOfDemoController : MonoBehaviour
         mainTMPText.color = bloodRedText;
         mainTMPText.alignment = TextAlignmentOptions.Center;
         mainTMPText.fontStyle = FontStyles.Bold;
-        
+
         if (larkeSansFont != null)
         {
             mainTMPText.font = larkeSansFont;
         }
         else
         {
-            Debug.LogWarning("[HorrorEndOfDemo] Larke Sans font not assigned");
+            
         }
-        
+
         RectTransform mainRect = mainTextObj.GetComponent<RectTransform>();
         mainRect.anchorMin = new Vector2(0, 0.55f);
         mainRect.anchorMax = new Vector2(1, 1);
@@ -286,12 +284,12 @@ public class HorrorEndOfDemoController : MonoBehaviour
         secondaryTMPText.color = crackedWhiteText;
         secondaryTMPText.alignment = TextAlignmentOptions.Center;
         secondaryTMPText.fontStyle = FontStyles.Italic;
-        
+
         if (larkeSansFont != null)
         {
             secondaryTMPText.font = larkeSansFont;
         }
-        
+
         RectTransform secondaryRect = secondaryTextObj.GetComponent<RectTransform>();
         secondaryRect.anchorMin = new Vector2(0, 0);
         secondaryRect.anchorMax = new Vector2(1, 0.45f);
@@ -339,12 +337,12 @@ public class HorrorEndOfDemoController : MonoBehaviour
         buttonTMP.color = buttonTextColor;
         buttonTMP.alignment = TextAlignmentOptions.Center;
         buttonTMP.fontStyle = FontStyles.Bold;
-        
+
         if (larkeSansFont != null)
         {
             buttonTMP.font = larkeSansFont;
         }
-        
+
         RectTransform buttonTextRect = buttonTextObj.GetComponent<RectTransform>();
         buttonTextRect.anchorMin = Vector2.zero;
         buttonTextRect.anchorMax = Vector2.one;
@@ -355,7 +353,7 @@ public class HorrorEndOfDemoController : MonoBehaviour
         AddButtonHoverEvents();
 
         endScreenRoot.SetActive(false);
-        Debug.Log("[HorrorEndOfDemo] Horror end screen UI created");
+        
     }
 
     private void AddButtonHoverEvents()
@@ -466,7 +464,7 @@ public class HorrorEndOfDemoController : MonoBehaviour
         {
             float glitch = Mathf.Sin(Time.unscaledTime * textGlitchSpeed) * textGlitchIntensity;
             float alpha = 1f + glitch;
-            
+
             Color mainCol = mainTMPText.color;
             mainCol.a = Mathf.Clamp01(alpha);
             mainTMPText.color = mainCol;
@@ -548,7 +546,7 @@ public class HorrorEndOfDemoController : MonoBehaviour
 
     private void OnQuitButtonPressed()
     {
-        Debug.Log("[HorrorEndOfDemo] ESCAPE button pressed - Exiting");
+        
         StopAllCoroutines();
 
         if (ambientAudioSource.isPlaying)
@@ -557,7 +555,7 @@ public class HorrorEndOfDemoController : MonoBehaviour
             staticAudioSource.Stop();
 
         #if UNITY_EDITOR
-        Debug.Log("[HorrorEndOfDemo] Stopping editor playmode");
+        
         UnityEditor.EditorApplication.isPlaying = false;
         #else
         Application.Quit();
@@ -566,7 +564,7 @@ public class HorrorEndOfDemoController : MonoBehaviour
 
     public void ResetEndScreen()
     {
-        Debug.Log("[HorrorEndOfDemo] Resetting end screen");
+        
         isShowing = false;
         if (endScreenRoot != null)
         {

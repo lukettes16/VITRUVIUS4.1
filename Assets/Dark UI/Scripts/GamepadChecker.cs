@@ -38,10 +38,9 @@ namespace Michsky.UI.Dark
             else
             {
                 checkerScript.enabled = true;
-                Debug.Log("Always Search is on. Input device will be updated in case of disconnecting/connecting.");
+                
             }
 
-            // We're doing this since unity layout group could be buggy while using content size fitter
             for (int i = 0; i < gamepadObjects.Count; i++)
                 gamepadObjects[i].SetActive(true);
 
@@ -63,7 +62,6 @@ namespace Michsky.UI.Dark
 
             for (int x = 0; x < names.Length; x++)
             {
-                // print(names[x].Length); Just for testing stuff
 
                 if (names[x].Length >= 1)
                     GamepadConnected = 1;
@@ -90,7 +88,7 @@ namespace Michsky.UI.Dark
             gamepadEnabled = true;
             eventSystem.SetActive(false);
             virtualCursor.SetActive(true);
-            Debug.Log("Gamepad detected. Switching to gamepad input.");
+            
         }
 
         public void SwitchToKeyboard()
@@ -104,7 +102,7 @@ namespace Michsky.UI.Dark
             gamepadEnabled = false;
             virtualCursor.SetActive(false);
             eventSystem.SetActive(true);
-            Debug.Log("No gamepad detected. Switching to keyboard input.");
+            
         }
     }
 }

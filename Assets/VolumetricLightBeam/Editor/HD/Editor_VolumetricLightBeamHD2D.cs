@@ -24,7 +24,7 @@ namespace VLB
         protected override void DrawProperties(bool hasLightSpot)
         {
             base.DrawProperties(hasLightSpot);
-          
+
             if (FoldableHeader.Begin(this, EditorStrings.Beam.Header2D))
             {
                 DrawSortingLayerAndOrder();
@@ -37,10 +37,10 @@ namespace VLB
             var updatedProperties = SortingLayerAndOrderDrawer.Draw(m_SortingLayerID, m_SortingOrder);
 
             if (updatedProperties.HasFlag(SortingLayerAndOrderDrawer.UpdatedProperties.SortingLayerID))
-                m_Targets.RecordUndoAction("Edit Sorting Layer", (VolumetricLightBeamHD2D beam) => beam.sortingLayerID = m_SortingLayerID.intValue); // call setters
+                m_Targets.RecordUndoAction("Edit Sorting Layer", (VolumetricLightBeamHD2D beam) => beam.sortingLayerID = m_SortingLayerID.intValue);
 
             if (updatedProperties.HasFlag(SortingLayerAndOrderDrawer.UpdatedProperties.SortingOrder))
-                m_Targets.RecordUndoAction("Edit Sorting Order", (VolumetricLightBeamHD2D beam) => beam.sortingOrder = m_SortingOrder.intValue); // call setters
+                m_Targets.RecordUndoAction("Edit Sorting Order", (VolumetricLightBeamHD2D beam) => beam.sortingOrder = m_SortingOrder.intValue);
         }
     }
 }

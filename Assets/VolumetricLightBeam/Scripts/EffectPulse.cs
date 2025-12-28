@@ -10,17 +10,9 @@ namespace VLB
     {
         public new const string ClassName = "EffectPulse";
 
-        /// <summary>
-        /// Frequency of pulsing.
-        /// Higher value means the pulsing will occur faster.
-        /// </summary>
         [Range(0.1f, 60.0f)]
         public float frequency = Consts.Effects.FrequencyDefault;
 
-        /// <summary>
-        /// The amplitude of intensity change which will be applied to the Light and/or Beam.
-        /// A random value will be picked each time inside that range.
-        /// </summary>
         [MinMaxRange(-5.0f, 5.0f)]
         public MinMaxRangeFloat intensityAmplitude = Consts.Effects.IntensityAmplitudeDefault;
 
@@ -57,4 +49,3 @@ namespace VLB
         }
     }
 }
-

@@ -1,6 +1,6 @@
 using System.Collections;
 using UnityEngine;
-using System.Collections.Generic; 
+using System.Collections.Generic;
 using UnityEngine.UI;
 
 public class ElectricBox : MonoBehaviour
@@ -10,11 +10,11 @@ public class ElectricBox : MonoBehaviour
     [SerializeField] private GameObject fullLeverObject;
     [Tooltip("El Transform de la parte de la palanca que debe rotar (la parte movil).")]
     [SerializeField] private Transform leverToRotate;
-    [SerializeField] private Vector3 rotationAngle = new Vector3(-60f, 0f, 0f); 
-    [SerializeField] private float rotationDuration = 1.5f; 
+    [SerializeField] private Vector3 rotationAngle = new Vector3(-60f, 0f, 0f);
+    [SerializeField] private float rotationDuration = 1.5f;
 
     [Header("Efectos a desactivar")]
-    [SerializeField] private GameObject electricityParticles; 
+    [SerializeField] private GameObject electricityParticles;
 
     [Header("Sonido")]
     [Tooltip("Sonido que se reproduce cuando se corta la electricidad.")]
@@ -29,24 +29,17 @@ public class ElectricBox : MonoBehaviour
 
     [Header("Objetos Afectados")]
     [Tooltip("Arrastra aqui el script WarningDoor del Collider que quieres desactivar.")]
-    [SerializeField] private WarningDoor doorBarrier; 
+    [SerializeField] private WarningDoor doorBarrier;
 
     [Header("Item Configuration")]
-    [SerializeField] private string requiredItemID = "PalancaParte"; 
+    [SerializeField] private string requiredItemID = "PalancaParte";
 
-    
-    
-    
     [Header("Interaction Prompt")]
-    [SerializeField] private GameObject interactPromptCanvas; 
+    [SerializeField] private GameObject interactPromptCanvas;
     [SerializeField] private Image promptButtonImage;
     [SerializeField] private RectTransform buttonAnchor;
     [SerializeField] private Vector2 buttonImageOffset = Vector2.zero;
-    
-    
-    
 
-    
     [Header("Outline Multiplayer")]
     [Tooltip("The color used when two or more players are in the trigger.")]
     [SerializeField] private Color cooperativeOutlineColor = Color.yellow;
@@ -63,7 +56,6 @@ public class ElectricBox : MonoBehaviour
     private int outlineColorID;
     private int outlineScaleID;
     private Color originalOutlineColor = Color.black;
-    
 
     private bool isPowerOn = true;
     private bool isAnimating = false;
@@ -76,22 +68,15 @@ public class ElectricBox : MonoBehaviour
             fullLeverObject.SetActive(false);
         }
 
-        
-        
-        
         if (interactPromptCanvas != null)
         {
             interactPromptCanvas.SetActive(false);
         }
-        
-        
-        
 
-        
         meshRenderer = GetComponent<Renderer>();
         if (meshRenderer != null)
         {
-            
+
             if (meshRenderer.sharedMaterials.Length < 2)
             {
                 Material[] currentMaterials = meshRenderer.materials;
@@ -102,7 +87,6 @@ public class ElectricBox : MonoBehaviour
             outlineColorID = Shader.PropertyToID(outlineColorProperty);
             outlineScaleID = Shader.PropertyToID(outlineScaleProperty);
 
-            
             SetOutlineState(Color.black, 0.0f);
         }
         else
@@ -111,12 +95,11 @@ public class ElectricBox : MonoBehaviour
         }
     }
 
-    
     private void SetOutlineState(Color color, float scale)
     {
         if (meshRenderer != null && propertyBlock != null)
         {
-            
+
             meshRenderer.GetPropertyBlock(propertyBlock, 1);
 
             propertyBlock.SetColor(outlineColorID, color);
@@ -135,7 +118,7 @@ public class ElectricBox : MonoBehaviour
         else if (activePlayers.Count == 1)
         {
             PlayerIdentifier singlePlayer = activePlayers[0];
-            
+
             SetOutlineState(singlePlayer.PlayerOutlineColor, activeOutlineScale);
         }
         else
@@ -146,7 +129,7 @@ public class ElectricBox : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        
+
         PlayerIdentifier playerIdentifier = other.GetComponent<PlayerIdentifier>();
 
         if (playerIdentifier != null)
@@ -157,18 +140,13 @@ public class ElectricBox : MonoBehaviour
             }
             UpdateOutlineVisuals();
 
-            
-            
-            
             PlayerInventory inventory = other.GetComponent<PlayerInventory>();
             if (inventory != null && inventory.HasItem(requiredItemID) && isPowerOn)
             {
                 UpdatePromptVisuals();
                 ShowPrompt(true);
             }
-            
-            
-            
+
         }
     }
 
@@ -184,9 +162,6 @@ public class ElectricBox : MonoBehaviour
             }
             UpdateOutlineVisuals();
 
-            
-            
-            
             if (activePlayers.Count == 0)
             {
                 ShowPrompt(false);
@@ -201,7 +176,6 @@ public class ElectricBox : MonoBehaviour
             DialogueManager.ShowElectricBoxEnterDialogue(other.gameObject, hasLever);
         }
     }
-    
 
     public void TryDeactivatePower(MonoBehaviour playerScript)
     {
@@ -210,7 +184,6 @@ public class ElectricBox : MonoBehaviour
             return;
         }
 
-        
         PlayerInventory inventory = playerScript.GetComponent<PlayerInventory>();
         PlayerUIController uiController = playerScript.GetComponent<PlayerUIController>();
         string playerName = playerScript.gameObject.name;
@@ -218,12 +191,9 @@ public class ElectricBox : MonoBehaviour
         if (inventory != null && inventory.HasItem(requiredItemID))
         {
             isAnimating = true;
-            
-            
-            
+
             ShowPrompt(false);
-            
-            
+
             StartCoroutine(DeactivatePowerCoroutine(inventory, playerName, uiController));
         }
         else
@@ -237,15 +207,13 @@ public class ElectricBox : MonoBehaviour
 
     private IEnumerator DeactivatePowerCoroutine(PlayerInventory inventory, string playerName, PlayerUIController uiController)
     {
-        
+
         if (inventory.HasItem(requiredItemID))
         {
-            inventory.UseItem(requiredItemID); 
+            inventory.UseItem(requiredItemID);
 
         }
 
-        
-        
         if (electricityParticles != null)
         {
             electricityParticles.SetActive(false);
@@ -255,8 +223,8 @@ public class ElectricBox : MonoBehaviour
         {
             if (audioSource == null) audioSource = GetComponent<AudioSource>();
             if (audioSource == null) audioSource = gameObject.AddComponent<AudioSource>();
-            
-            audioSource.spatialBlend = 0f; 
+
+            audioSource.spatialBlend = 0f;
             audioSource.PlayOneShot(powerCutSound, powerCutVolume);
         }
 
@@ -268,14 +236,14 @@ public class ElectricBox : MonoBehaviour
 
             tempSource.clip = powerCutSoundLinear;
             tempSource.volume = powerCutVolumeLinear;
-            tempSource.spatialBlend = 0f; 
-            tempSource.dopplerLevel = 0f; 
+            tempSource.spatialBlend = 0f;
+            tempSource.dopplerLevel = 0f;
 
             tempSource.Play();
             Destroy(tempAudio, powerCutSoundLinear.length + 0.1f);
         }
 
-        if (uiController != null) 
+        if (uiController != null)
         {
             uiController.ShowNotification($" The power is off now! ");
         }
@@ -286,7 +254,6 @@ public class ElectricBox : MonoBehaviour
         }
 
         isPowerOn = false;
-        
 
         if (fullLeverObject != null)
         {
@@ -357,7 +324,5 @@ public class ElectricBox : MonoBehaviour
             }
         }
     }
-    
-    
-    
+
 }

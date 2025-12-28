@@ -11,43 +11,24 @@ namespace VLB
     {
         public const string ClassName = "VolumetricShadowHD";
 
-        /// <summary>
-        /// Controls how dark the shadow cast by this Light Beam will be.
-        /// The bigger the value, the more the shadow will affect the visual.
-        /// </summary>
         public float strength
         {
             get { return m_Strength; }
             set { if (m_Strength != value) { m_Strength = value; SetDirty(); } }
         }
 
-        /// <summary>
-        /// How often will the occlusion be processed?
-        /// Try to update the occlusion as rarely as possible to keep good performance.
-        /// </summary>
         public ShadowUpdateRate updateRate
         {
             get { return m_UpdateRate; }
             set { m_UpdateRate = value; }
         }
 
-        /// <summary>
-        /// How many frames we wait between 2 occlusion tests?
-        /// If you want your beam to be super responsive to the changes of your environment, update it every frame by setting 1.
-        /// If you want to save on performance, we recommend to wait few frames between each update by setting a higher value.
-        /// </summary>
         public int waitXFrames
         {
             get { return m_WaitXFrames; }
             set { m_WaitXFrames = value; }
         }
 
-        /// <summary>
-        /// The beam can only be occluded by objects located on the layers matching this mask.
-        /// It's very important to set it as restrictive as possible (checking only the layers which are necessary)
-        /// to perform a more efficient process in order to increase the performance.
-        /// It should NOT include the layer on which the beams are generated.
-        /// </summary>
         public LayerMask layerMask
         {
             get { return m_LayerMask; }
@@ -57,9 +38,7 @@ namespace VLB
                 UpdateDepthCameraProperties();
             }
         }
-        /// <summary>
-        /// Whether or not the virtual camera will use occlusion culling during rendering from the beam's POV.
-        /// </summary>
+
         public bool useOcclusionCulling
         {
             get { return m_UseOcclusionCulling; }
@@ -70,10 +49,6 @@ namespace VLB
             }
         }
 
-        /// <summary>
-        /// Controls how large the depth texture captured by the virtual camera is.
-        /// The lower the resolution, the better the performance, but the less accurate the rendering.
-        /// </summary>
         public int depthMapResolution
         {
             get { return m_DepthMapResolution; }
@@ -84,10 +59,6 @@ namespace VLB
             }
         }
 
-        /// <summary>
-        /// Controls how large the depth texture captured by the virtual camera is.
-        /// The lower the resolution, the better the performance, but the less accurate the rendering.
-        /// </summary>
         public int depthMapDepth
         {
             get { return m_DepthMapDepth; }
@@ -98,10 +69,6 @@ namespace VLB
             }
         }
 
-        /// <summary>
-        /// Manually process the occlusion.
-        /// You have to call this function in order to update the occlusion when using ShadowUpdateRate.Never.
-        /// </summary>
         public void ProcessOcclusionManually() { ProcessOcclusion(ProcessOcclusionSource.User); }
 
         [SerializeField] float m_Strength = Consts.Shadow.StrengthDefault;
@@ -135,17 +102,17 @@ namespace VLB
                 return;
 
             if(m_LastFrameRendered == Time.frameCount && Application.isPlaying && source == ProcessOcclusionSource.OnEnable)
-                return; // allow to call ProcessOcclusion from OnEnable (when disabling/enabling multiple a beam on the same frame) without generating an error
+                return;
 
             Debug.Assert(!Application.isPlaying || m_LastFrameRendered != Time.frameCount, "ProcessOcclusion has been called twice on the same frame, which is forbidden");
             Debug.Assert(m_Master && m_DepthCamera);
 
-            if (SRPHelper.IsUsingCustomRenderPipeline()) // Recursive rendering is not supported on SRP
+            if (SRPHelper.IsUsingCustomRenderPipeline())
                 m_NeedToUpdateOcclusionNextFrame = true;
             else
                 ProcessOcclusionInternal();
 
-            SetDirty(); // refresh material
+            SetDirty();
 
             if (updateRate.HasFlag(ShadowUpdateRate.OnBeamMove))
                 m_TransformPacked = transform.GetWorldPacked();
@@ -155,7 +122,7 @@ namespace VLB
 
             if (firstTime && _INTERNAL_ApplyRandomFrameOffset)
             {
-                m_LastFrameRendered += Random.Range(0, waitXFrames); // add a random offset to prevent from updating texture for all beams having the same wait value
+                m_LastFrameRendered += Random.Range(0, waitXFrames);
             }
         }
 
@@ -197,7 +164,7 @@ namespace VLB
         void OnDisable()
         {
             if (m_DepthCamera) m_DepthCamera.gameObject.SetActive(false);
-            SetDirty(); // refresh material with empty depth texture
+            SetDirty();
         }
 
         void OnDestroy()
@@ -235,7 +202,7 @@ namespace VLB
 
             if(cam != null
             && cam.enabled
-            && Time.frameCount != m_LastFrameRendered // prevent from updating multiple times if there are more than 1 camera
+            && Time.frameCount != m_LastFrameRendered
             && updateRate != ShadowUpdateRate.Never)
             {
                 bool shouldUpdate = false;
@@ -275,7 +242,7 @@ namespace VLB
 #endif
 
             if (m_NeedToUpdateOcclusionNextFrame && m_Master && m_DepthCamera
-                && Time.frameCount > 1)  // fix NullReferenceException in UnityEngine.Rendering.Universal.Internal.CopyDepthPass.Execute when using SRP
+                && Time.frameCount > 1)
             {
                 ProcessOcclusionInternal();
                 m_NeedToUpdateOcclusionNextFrame = false;
@@ -296,11 +263,11 @@ namespace VLB
         {
             if (m_DepthCamera != null)
             {
-                m_DepthCamera.gameObject.SetActive(true); // active it in case it has been disabled by OnDisable()
+                m_DepthCamera.gameObject.SetActive(true);
             }
             else
             {
-                // delete old depth cameras when duplicating the GAO
+
                 gameObject.ForeachComponentsInDirectChildrenOnly<Camera>(cam => DestroyImmediate(cam.gameObject), true);
 
                 m_DepthCamera = Utils.NewWithComponent<Camera>("Depth Camera");
@@ -309,10 +276,10 @@ namespace VLB
                 {
                     m_DepthCamera.enabled = false;
 
-                    UpdateDepthCameraProperties(); // set layerMask & useOcclusionCulling
+                    UpdateDepthCameraProperties();
                     m_DepthCamera.clearFlags = CameraClearFlags.Depth;
                     m_DepthCamera.depthTextureMode = DepthTextureMode.Depth;
-                    m_DepthCamera.renderingPath = RenderingPath.Forward; // RenderingPath.VertexLit is faster, but RenderingPath.Forward allows to catch alpha cutout
+                    m_DepthCamera.renderingPath = RenderingPath.Forward;
                     m_DepthCamera.gameObject.hideFlags = Consts.Internal.ProceduralObjectsHideFlags;
                     m_DepthCamera.transform.SetParent(transform, false);
                     Config.Instance.SetURPScriptableRendererIndexToDepthCamera(m_DepthCamera);
@@ -341,7 +308,7 @@ namespace VLB
                     m_DepthCamera.targetTexture = null;
                 }
 
-                DestroyImmediate(m_DepthCamera.gameObject); // Make sure to delete the GAO
+                DestroyImmediate(m_DepthCamera.gameObject);
                 m_DepthCamera = null;
             }
         }
@@ -362,12 +329,11 @@ namespace VLB
         VolumetricLightBeamHD m_Master = null;
         TransformUtils.Packed m_TransformPacked;
         int m_LastFrameRendered = int.MinValue;
-        public int _INTERNAL_LastFrameRendered { get { return m_LastFrameRendered; } } // for unit tests
+        public int _INTERNAL_LastFrameRendered { get { return m_LastFrameRendered; } }
 
         Camera m_DepthCamera = null;
         bool m_NeedToUpdateOcclusionNextFrame = false;
 
-        // Internal stuff for QA tests
         static bool _INTERNAL_ApplyRandomFrameOffset = true;
 
         public static bool INTERNAL_GetApplyRandomFrameOffset() { return _INTERNAL_ApplyRandomFrameOffset; }
@@ -380,7 +346,7 @@ namespace VLB
         public void INTERNAL_DisableApplyRandomFrameOffset()
         {
             _INTERNAL_ApplyRandomFrameOffset = false;
-            m_LastFrameRendered = int.MinValue; // we need to do that for HD Shadows since they start before QATest in OnEnable
+            m_LastFrameRendered = int.MinValue;
         }
 
 #if UNITY_EDITOR
@@ -393,8 +359,7 @@ namespace VLB
 
         void MarkMaterialAsDirty()
         {
-            // when adding/removing this component in editor, we might need to switch from a GPU Instanced material to a custom one,
-            // since this feature doesn't support GPU Instancing
+
             if (!Application.isPlaying)
                 m_Master._EditorSetBeamGeomDirty();
         }
@@ -414,7 +379,6 @@ namespace VLB
             }
             return false;
         }
-#endif // UNITY_EDITOR
+#endif
     }
 }
-

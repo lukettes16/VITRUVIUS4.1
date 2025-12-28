@@ -12,7 +12,6 @@ public class ButtonIndicatorController : MonoBehaviour
 
     [Header("VFX Scale")]
     [Tooltip("Tamao de la onda de impacto")]
-    [SerializeField] private float shockwaveBaseScale = 1f;
     [SerializeField] private float shockwaveFinalScale = 5f;
 
     [Header("Color Settings")]
@@ -46,7 +45,7 @@ public class ButtonIndicatorController : MonoBehaviour
 
     void Start()
     {
-        
+
         if (shockwaveVFX != null)
         {
             shockwaveVFX.Stop();
@@ -62,9 +61,6 @@ public class ButtonIndicatorController : MonoBehaviour
         }
     }
 
-    
-    
-    
     public void TriggerPress()
     {
         if (animator != null)
@@ -73,9 +69,6 @@ public class ButtonIndicatorController : MonoBehaviour
         }
     }
 
-    
-    
-    
     public void TriggerShockwave(bool isFinalHit = false)
     {
         if (shockwaveVFX == null)
@@ -83,32 +76,24 @@ public class ButtonIndicatorController : MonoBehaviour
             return;
         }
 
-        
         shockwaveVFX.Stop();
 
-        
         float targetScale = isFinalHit ? shockwaveFinalScale * 1.5f : shockwaveFinalScale;
         shockwaveVFX.transform.localScale = Vector3.one * targetScale;
 
-        
         if (shockwaveVFX.HasVector4("PlayerColor"))
         {
             shockwaveVFX.SetVector4("PlayerColor", currentPlayerColor);
         }
 
-        
         shockwaveVFX.Reinit();
         shockwaveVFX.Play();
     }
 
-    
-    
-    
     public void SetPlayerColor(Color playerColor)
     {
         currentPlayerColor = playerColor;
 
-        
         if (spriteRenderer != null)
         {
             spriteRenderer.color = playerColor;
@@ -118,16 +103,12 @@ public class ButtonIndicatorController : MonoBehaviour
             imageComponent.color = playerColor;
         }
 
-        
         if (shockwaveVFX != null && shockwaveVFX.HasVector4("PlayerColor"))
         {
             shockwaveVFX.SetVector4("PlayerColor", playerColor);
         }
     }
 
-    
-    
-    
     public void SetAlpha(float alpha)
     {
         if (spriteRenderer != null)
@@ -146,7 +127,7 @@ public class ButtonIndicatorController : MonoBehaviour
 
     void OnDisable()
     {
-        
+
         if (shockwaveVFX != null)
         {
             shockwaveVFX.Stop();

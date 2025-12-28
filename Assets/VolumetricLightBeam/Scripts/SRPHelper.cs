@@ -1,5 +1,5 @@
 ﻿#if UNITY_2018_1_OR_NEWER
-#define VLB_SRP_SUPPORT // Comment this to disable SRP support
+#define VLB_SRP_SUPPORT
 #endif
 
 #if VLB_SRP_SUPPORT
@@ -11,8 +11,8 @@ using CallbackType = System.Action<UnityEngine.Rendering.ScriptableRenderContext
 using AliasCurrentPipeline = UnityEngine.Experimental.Rendering.RenderPipelineManager;
 using AliasCameraEvents = UnityEngine.Experimental.Rendering.RenderPipeline;
 using CallbackType = System.Action<UnityEngine.Camera>;
-#endif // UNITY_2019_1_OR_NEWER
-#endif // VLB_SRP_SUPPORT
+#endif
+#endif
 
 using UnityEngine;
 using System.Collections.Generic;
@@ -46,7 +46,7 @@ namespace VLB
         {
             get
             {
-                // cache the value to prevent from comparing strings (in ComputeRenderPipeline) each frame when SRPBatcher is enabled
+
                 if (!m_IsRenderPipelineCached)
                 {
                     m_RenderPipelineCached = ComputeRenderPipeline();
@@ -77,7 +77,7 @@ namespace VLB
 #if VLB_SRP_SUPPORT
     public static bool IsUsingCustomRenderPipeline()
     {
-        // TODO: optimize and use renderPipelineType
+
         return AliasCurrentPipeline.currentPipeline != null || UnityEngine.Rendering.GraphicsSettings.defaultRenderPipeline != null;
     }
 
@@ -152,7 +152,7 @@ namespace VLB
                 scriptingDefineSymbols = scriptingDefineSymbols.Replace(";;", ";");
                 PlayerSettings.SetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup, scriptingDefineSymbols);
             }
-        #endif // UNITY_2021_2_OR_NEWER
+        #endif
 
             if(hasChanged)
             {
@@ -165,16 +165,15 @@ namespace VLB
             var allSymbols = new List<string> { "VLB_BUILTIN", "VLB_URP", "VLB_HDRP" };
             int enumValueCount = System.Enum.GetNames(typeof(RenderPipeline)).Length;
             Debug.Assert(allSymbols.Count == enumValueCount);
-            string defineSymbol = allSymbols[(int)renderPipeline];      
+            string defineSymbol = allSymbols[(int)renderPipeline];
 
             allSymbols.Remove(defineSymbol);
 
             AppendScriptingDefineSymbols(allSymbols.ToArray(), defineSymbol);
         }
-    #endif // UNITY_EDITOR
+    #endif
 #else
         public static bool IsUsingCustomRenderPipeline() { return false; }
 #endif
     }
 }
-

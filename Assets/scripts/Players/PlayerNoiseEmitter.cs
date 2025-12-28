@@ -1,15 +1,15 @@
 using UnityEngine;
 using UnityEngine.VFX;
 using System.Reflection;
-using System.Linq; 
-using UnityEngine.InputSystem; 
+using System.Linq;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerNoiseEmitter : MonoBehaviour
 {
     [Header("Radios de ruido (metros)")]
     [Tooltip("Radio de ruido constante en idle (SIEMPRE activo para deteccion cercana)")]
-    public float idleNoiseRadius = 2.5f; 
+    public float idleNoiseRadius = 2.5f;
     public float walkNoiseRadius = 3f;
     public float crouchNoiseRadius = 2f;
     public float runNoiseRadius = 6f;
@@ -28,7 +28,7 @@ public class PlayerNoiseEmitter : MonoBehaviour
     [Header("Debug")]
     public bool showNoiseGizmo = true;
     public Color noiseColor = new Color(1f, 0.6f, 0f, 0.25f);
-    public float debugLogInterval = 1f; 
+    public float debugLogInterval = 1f;
     private float lastLogTime;
 
     [HideInInspector] public float currentNoiseRadius = 0f;
@@ -36,13 +36,13 @@ public class PlayerNoiseEmitter : MonoBehaviour
     private CharacterController controller;
     private float visualRadius = 0f;
     public bool isRingVisible = false;
-    
+
     public bool IsRingVisible
     {
         get { return isRingVisible; }
         set { isRingVisible = value; }
     }
-    
+
     private object activeMovementScript;
     private FieldInfo isMovingField;
     private FieldInfo isRunningField;
@@ -50,7 +50,7 @@ public class PlayerNoiseEmitter : MonoBehaviour
     private bool reflectionInitialized = false;
 
     [Header("Input para Toggle de Noise Ring")]
-    [SerializeField] private InputActionReference toggleNoiseRingAction; 
+    [SerializeField] private InputActionReference toggleNoiseRingAction;
 
     [Header("Audio")]
     public AudioSource audioSource;
@@ -96,10 +96,9 @@ public class PlayerNoiseEmitter : MonoBehaviour
 
     void InitializeReflection()
     {
-        
+
         Component[] components = GetComponents<Component>();
 
-        
         activeMovementScript = components.FirstOrDefault(c =>
             c != null && (c.GetType().Name == "MovJugador1" || c.GetType().Name == "MovJugador2"));
 
@@ -107,17 +106,11 @@ public class PlayerNoiseEmitter : MonoBehaviour
         {
             var type = activeMovementScript.GetType();
 
-
-            
             const BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public;
 
             isMovingField = type.GetField("isMoving", flags);
-            isRunningField = type.GetField("isRunningInput", flags); 
+            isRunningField = type.GetField("isRunningInput", flags);
             isCrouchingField = type.GetField("isCrouching", flags);
-
-
-
-
 
             reflectionInitialized = isMovingField != null && isRunningField != null && isCrouchingField != null;
         }
@@ -148,7 +141,6 @@ public class PlayerNoiseEmitter : MonoBehaviour
             bool isRunning = (bool)isRunningField.GetValue(activeMovementScript);
             bool isCrouching = (bool)isCrouchingField.GetValue(activeMovementScript);
 
-
         }
         else
         {
@@ -156,9 +148,6 @@ public class PlayerNoiseEmitter : MonoBehaviour
         }
     }
 
-    
-    
-    
 void CalculateLogicRadius()
     {
         bool isMoving = false;
@@ -173,20 +162,18 @@ void CalculateLogicRadius()
                 isRunning = (bool)isRunningField.GetValue(activeMovementScript);
                 isCrouching = (bool)isCrouchingField.GetValue(activeMovementScript);
             }
-            catch (System.Exception ex)
+            catch (System.Exception)
             {
                 reflectionInitialized = false;
             }
         }
 
-        
         if (!reflectionInitialized)
         {
             isMoving = controller.velocity.magnitude > 0.1f;
         }
 
-        
-        float targetRadius = idleNoiseRadius; 
+        float targetRadius = idleNoiseRadius;
 
         if (isMoving)
         {
@@ -195,18 +182,13 @@ void CalculateLogicRadius()
             else targetRadius = walkNoiseRadius;
         }
 
-        
-        
         currentNoiseRadius = Mathf.Max(targetRadius, idleNoiseRadius);
     }
 
-    
-    
-    
     public void ToggleRingVisibility()
     {
         isRingVisible = !isRingVisible;
-        
+
         if (audioSource != null)
         {
             AudioClip clipToPlay = isRingVisible ? ringOnClip : ringOffClip;
@@ -222,15 +204,11 @@ void CalculateLogicRadius()
     {
         if (noiseVFX == null) return;
 
-        
         visualRadius = Mathf.Lerp(visualRadius, currentNoiseRadius, Time.deltaTime * visualLerpSpeed);
 
-        
-        
         if (noiseVFX.HasFloat(vfxRadiusProperty))
             noiseVFX.SetFloat(vfxRadiusProperty, visualRadius);
 
-        
         float targetPulse = idlePulseSpeed;
 
         if (currentNoiseRadius >= runNoiseRadius - 0.1f)
@@ -238,11 +216,9 @@ void CalculateLogicRadius()
         else if (currentNoiseRadius >= walkNoiseRadius - 0.1f)
             targetPulse = walkPulseSpeed;
 
-        
         if (noiseVFX.HasFloat(vfxPulseProperty))
             noiseVFX.SetFloat(vfxPulseProperty, targetPulse);
 
-        
         noiseVFX.enabled = isRingVisible && (visualRadius > 0.1f);
     }
 
@@ -253,4 +229,3 @@ void CalculateLogicRadius()
         Gizmos.DrawWireSphere(transform.position, currentNoiseRadius);
     }
 }
-

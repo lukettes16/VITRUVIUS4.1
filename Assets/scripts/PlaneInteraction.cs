@@ -7,18 +7,17 @@ public class PlaneInteraction : InteractiveObject
     [SerializeField] private AudioClip closeSound;
     [SerializeField] private float audioVolume = 0.8f;
     [SerializeField] private float audioPitch = 1f;
-    
+
     private bool isNoteOpen = false;
 [Header("Plane Specific Settings")]
     public string planeType = "Default";
     public bool isCollectible = false;
-    
+
     protected override void OnInteract()
     {
-        
+
         isNoteOpen = !isNoteOpen;
-        
-        
+
         if (isNoteOpen && openSound != null)
         {
             AudioManager.Instance.PlaySFX(openSound, transform.position, audioVolume, audioPitch);
@@ -27,19 +26,14 @@ public class PlaneInteraction : InteractiveObject
         {
             AudioManager.Instance.PlaySFX(closeSound, transform.position, audioVolume, audioPitch);
         }
-        
-        
 
-        
         if (isCollectible)
         {
-            
 
             gameObject.SetActive(false);
         }
         else
         {
-            
 
         }
     }

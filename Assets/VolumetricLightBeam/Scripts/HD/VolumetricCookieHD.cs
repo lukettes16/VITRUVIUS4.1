@@ -11,65 +11,42 @@ namespace VLB
     {
         public const string ClassName = "VolumetricCookieHD";
 
-        /// <summary>
-        /// How much the cookie texture will contribute to the beam rendering.
-        /// </summary>
         public float contribution
         {
             get { return m_Contribution; }
             set { if (m_Contribution != value) { m_Contribution = value; SetDirty(); } }
         }
 
-        /// <summary>
-        /// Specify the texture mask asset.
-        /// It can be a regular 'Cookie' texture or any other texture type.
-        /// </summary>
         public Texture cookieTexture
         {
             get { return m_CookieTexture; }
             set { if (m_CookieTexture != value) { m_CookieTexture = value; SetDirty(); } }
         }
 
-        /// <summary>
-        /// Which channel(s) will be used to render the cookie.
-        /// </summary>
         public CookieChannel channel
         {
             get { return m_Channel; }
             set { if (m_Channel != value) { m_Channel = value; SetDirty(); } }
         }
 
-        /// <summary>
-        /// - False: white/opaque value in chosen texture channel is visible.
-        /// - True: white/opaque value in chosen texture channel is hidden.
-        /// </summary>
         public bool negative
         {
             get { return m_Negative; }
             set { if (m_Negative != value) { m_Negative = value; SetDirty(); } }
         }
 
-        /// <summary>
-        /// 2D local translation applied to the cookie texture.
-        /// </summary>
         public Vector2 translation
         {
             get { return m_Translation; }
             set { if (m_Translation != value) { m_Translation = value; SetDirty(); } }
         }
 
-        /// <summary>
-        /// Rotation angle of the cookie texture (in degrees).
-        /// </summary>
         public float rotation
         {
             get { return m_Rotation; }
             set { if (m_Rotation != value) { m_Rotation = value; SetDirty(); } }
         }
 
-        /// <summary>
-        /// 2D local scale applied to the cookie texture.
-        /// </summary>
         public Vector2 scale
         {
             get { return m_Scale; }
@@ -128,7 +105,7 @@ namespace VLB
 #if UNITY_EDITOR
             if (!Application.isPlaying)
                 MakeBeamGeomDirty();
-#endif // UNITY_EDITOR
+#endif
 
             if (Application.isPlaying)
             {
@@ -141,7 +118,7 @@ namespace VLB
 #if UNITY_EDITOR
             if (!Application.isPlaying)
                 MakeBeamGeomDirty();
-#endif // UNITY_EDITOR
+#endif
 
             if (Application.isPlaying)
             {
@@ -154,14 +131,13 @@ namespace VLB
         {
             var beam = GetComponent<VolumetricLightBeamHD>();
             if (beam)
-                beam._EditorSetBeamGeomDirty(); // need to recall BeamGeometry.Initialize to force havin a custom material
+                beam._EditorSetBeamGeomDirty();
         }
 
         void OnValidate()
         {
             SetDirty();
         }
-#endif // UNITY_EDITOR
+#endif
     }
 }
-

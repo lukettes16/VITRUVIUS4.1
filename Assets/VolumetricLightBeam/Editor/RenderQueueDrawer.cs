@@ -35,7 +35,7 @@ namespace VLB
                     EditorGUI.BeginChangeCheck();
 
                     if (!m_IsRenderQueueCustom && !isPropValueInEnumList)
-                        m_IsRenderQueueCustom = true; // handle proper dropbox change to "custom" when resetting Config to default values
+                        m_IsRenderQueueCustom = true;
 
                     RenderQueue rq = m_IsRenderQueueCustom ? RenderQueue.Custom : (RenderQueue)m_Prop.intValue;
                     rq = (RenderQueue)EditorGUILayout.EnumPopup(label, rq);
@@ -55,7 +55,7 @@ namespace VLB
                 }
                 if (EditorGUI.EndChangeCheck())
                 {
-                    Utils._EditorSetAllBeamGeomDirty(); // TODO switch sd / hd ?
+                    Utils._EditorSetAllBeamGeomDirty();
                 }
             }
         }

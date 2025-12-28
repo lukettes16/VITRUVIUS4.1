@@ -10,5 +10,4 @@ namespace VLB
         }
     }
 }
-#endif // UNITY_EDITOR
-
+#endif

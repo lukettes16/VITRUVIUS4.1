@@ -28,7 +28,6 @@ namespace Beautify.Universal {
         }
         LUTGroup[] groups;
 
-
         [MenuItem("Window/Beautify/LUT Browser")]
         public static void ShowBrowser() {
             GetWindow<LUTBrowser>("LUT Browser");
@@ -175,14 +174,13 @@ namespace Beautify.Universal {
             b = FindObjectOfType<BeautifySettings>();
 #endif
             if (b == null) {
-                Debug.LogError("Beautify not found. It's requred for the LUT Browser functionality.");
+                
                 return;
             }
             BeautifyRendererFeature.captureCameraType = cameraType;
             BeautifyRendererFeature.requestScreenCapture = true;
             EditorUtility.SetDirty(BeautifySettings.sharedSettings);
         }
-
 
         void RefreshLUTs() {
 

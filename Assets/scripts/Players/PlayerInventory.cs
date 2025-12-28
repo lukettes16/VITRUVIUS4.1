@@ -28,10 +28,6 @@ public class PlayerInventory : MonoBehaviour
         UpdateUI();
     }
 
-    
-    
-    
-
     public bool AddKeyCard(string keyCardID)
     {
         if (HasKeyCard(keyCardID))
@@ -43,7 +39,6 @@ public class PlayerInventory : MonoBehaviour
         collectedKeyCards.Add(keyCardID);
         if (keyCardCollectSound != null && audioSource != null)
             audioSource.PlayOneShot(keyCardCollectSound);
-
 
         UpdateUI();
         return true;
@@ -62,15 +57,10 @@ public class PlayerInventory : MonoBehaviour
         if (itemCollectSound != null && audioSource != null)
             audioSource.PlayOneShot(itemCollectSound);
 
-
         UpdateUI();
 
         return true;
     }
-
-    
-    
-    
 
     public bool HasKeyCard(string keyCardID) => collectedKeyCards.Contains(keyCardID);
     public bool HasItem(string itemID) => collectedItems.Contains(itemID);
@@ -98,10 +88,6 @@ public class PlayerInventory : MonoBehaviour
         return false;
     }
 
-    
-    
-    
-
     public List<string> GetCollectedKeyCards() => new List<string>(collectedKeyCards);
     public List<string> GetCollectedItems() => new List<string>(collectedItems);
 
@@ -115,9 +101,6 @@ public class PlayerInventory : MonoBehaviour
 
     }
 
-    
-    
-    
     public void RemoveNonEssentialItems()
     {
         List<string> itemsToKeep = new List<string>();
@@ -142,10 +125,6 @@ public class PlayerInventory : MonoBehaviour
 
     }
 
-    
-    
-    
-
     public int GetTotalItemsCollected()
     {
         return collectedItems.Count + collectedKeyCards.Count;
@@ -159,9 +138,6 @@ public class PlayerInventory : MonoBehaviour
         if (itemsCollectedText != null)
             itemsCollectedText.text = $"Items: {GetTotalItemsCollected()}";
 
-        
-        
-        
         var hotbarUI = GetComponentInChildren<InventoryHotbarUI>();
         if (hotbarUI != null)
             hotbarUI.RefreshHotbar();

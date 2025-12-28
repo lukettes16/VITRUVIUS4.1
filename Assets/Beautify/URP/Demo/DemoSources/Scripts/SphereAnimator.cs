@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 
-
 namespace Beautify.Universal {
 
     public class SphereAnimator : MonoBehaviour {

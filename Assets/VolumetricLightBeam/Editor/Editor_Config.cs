@@ -41,7 +41,7 @@ namespace VLB
             m_DrawerRenderQueue = new RenderQueueDrawer(geometryRenderQueue);
             m_DrawerRenderQueueHD = new RenderQueueDrawer(geometryRenderQueueHD);
 
-            Noise3D.LoadIfNeeded(); // Try to load Noise3D, maybe for the 1st time
+            Noise3D.LoadIfNeeded();
 
             m_TargetConfig = this.target as Config;
 
@@ -125,7 +125,6 @@ namespace VLB
         bool m_NeedToRefreshShader = false;
         bool m_IsUsedInstance = false;
 
-
         #region Raymarching Qualities
         ReorderableList m_ListQualities;
 
@@ -133,10 +132,10 @@ namespace VLB
         {
             m_ListQualities = new ReorderableList(serializedObject
                 , raymarchingQualities
-                , true // draggable
-                , true // displayHeader
-                , true // displayAddButton
-                , true // displayRemoveButton
+                , true
+                , true
+                , true
+                , true
                 );
             m_ListQualities.drawHeaderCallback = RaymarchingQualitiesDrawHeader;
             m_ListQualities.drawElementCallback = RaymarchingQualitiesDrawElement;
@@ -192,7 +191,7 @@ namespace VLB
         {
             if (list.count < 1)
             {
-                Debug.LogError("Having at least 1 RaymarchingQuality value is mandatory: cannot delete.");
+                
                 return;
             }
 
@@ -539,9 +538,8 @@ namespace VLB
                     {
                         var debugInfo = m_TargetConfig.GetDebugInfo();
                         GUIUtility.systemCopyBuffer = debugInfo;
-                        Debug.Log("Copied to clipboard:\n" + debugInfo);
+                        
                     }
-
 
                     if (GUILayout.Button(EditorStrings.Config.ClearAssetStoreCache, EditorStyles.miniButton))
                     {

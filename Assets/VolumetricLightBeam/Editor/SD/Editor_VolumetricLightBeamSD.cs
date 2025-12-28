@@ -5,7 +5,7 @@ using UnityEditor.IMGUI.Controls;
 using System.Collections.Generic;
 using System.Linq;
 
-#pragma warning disable 0429, 0162 // Unreachable expression code detected (because of Noise3D.isSupported on mobile)
+#pragma warning disable 0429, 0162
 
 namespace VLB
 {
@@ -46,8 +46,8 @@ namespace VLB
             sp.FloatSlider(
                 EditorStrings.Beam.SD.SideThickness,
                 0, 1,
-                (value) => Mathf.Clamp01(1 - (value / Consts.Beam.SD.FresnelPowMaxValue)),    // conversion value to slider
-                (value) => (1 - value) * Consts.Beam.SD.FresnelPowMaxValue                    // conversion slider to value
+                (value) => Mathf.Clamp01(1 - (value / Consts.Beam.SD.FresnelPowMaxValue)),
+                (value) => (1 - value) * Consts.Beam.SD.FresnelPowMaxValue
                 );
         }
 
@@ -70,7 +70,7 @@ namespace VLB
                     , MaterialManager.StaticPropertiesSD.staticPropertiesCount);
                 EditorGUILayout.LabelField(msg);
             }
-#endif // VLB_DEBUG
+#endif
 
             VolumetricLightBeamSD.AttachedLightType lightType;
             bool hasLightSpot = m_Targets[0].GetLightSpotAttachedSlow(out lightType) != null;
@@ -81,10 +81,10 @@ namespace VLB
 
             if (FoldableHeader.Begin(this, EditorStrings.Beam.HeaderBasic))
             {
-                // Color
+
                 using (ButtonToggleScope.FromLight(colorFromLight, hasLightSpot))
                 {
-                    if (!hasLightSpot) EditorGUILayout.BeginHorizontal();    // mandatory to have the color picker on the same line (when the button "from light" is not here)
+                    if (!hasLightSpot) EditorGUILayout.BeginHorizontal();
                     {
                         if (Config.Instance.featureEnabledColorGradient == FeatureEnabledColorGradient.Off)
                         {
@@ -105,13 +105,11 @@ namespace VLB
                     }
                     if (!hasLightSpot) EditorGUILayout.EndHorizontal();
                 }
-                
-                // Blending Mode
+
                 EditorGUILayout.PropertyField(blendingMode, EditorStrings.Beam.BlendingMode);
 
                 EditorGUILayout.Separator();
 
-                // Intensity
                 bool advancedModeEnabled = false;
                 using (var lightDisabledGrp = ButtonToggleScope.FromLight(intensityFromLight, hasLightSpot))
                 {
@@ -125,12 +123,12 @@ namespace VLB
                             {
                                 using (new EditorExtensions.ShowMixedValue(intensityOutside))
                                 {
-                                    // display grayed out Unity's light intensity
+
                                     EditorGUILayout.FloatField(EditorStrings.Beam.SD.IntensityGlobal, SpotLightHelper.GetIntensity(m_Targets[0].lightSpotAttached));
                                 }
 
-                                lightDisabledGrp?.EndDisabledGroup(); // muliplier factor should be available
-                                DrawMultiplierProperty(intensityMultiplier, EditorStrings.Beam.IntensityMultiplier); // multiplier property
+                                lightDisabledGrp?.EndDisabledGroup();
+                                DrawMultiplierProperty(intensityMultiplier, EditorStrings.Beam.IntensityMultiplier);
                             }
                             else
                             {
@@ -172,19 +170,19 @@ namespace VLB
 
             if (FoldableHeader.Begin(this, EditorStrings.Beam.HeaderShape))
             {
-                // Fade End
+
                 using (var lightDisabledGrp = ButtonToggleScope.FromLight(fallOffEndFromLight, hasLightSpot))
                 {
                     if (m_Targets.HasAtLeastOneTargetWith((VolumetricLightBeamSD beam) => { return beam.useFallOffEndFromAttachedLightSpot; }))
                     {
                         using (new EditorExtensions.ShowMixedValue(fallOffEnd))
                         {
-                            // display grayed out Unity's light range
+
                             EditorGUILayout.FloatField(EditorStrings.Beam.FallOffEnd, SpotLightHelper.GetFallOffEnd(m_Targets[0].lightSpotAttached));
                         }
 
-                        lightDisabledGrp?.EndDisabledGroup(); // muliplier factor should be available
-                        DrawMultiplierProperty(fallOffEndMultiplier, EditorStrings.Beam.FallOffEndMultiplier); // multiplier property
+                        lightDisabledGrp?.EndDisabledGroup();
+                        DrawMultiplierProperty(fallOffEndMultiplier, EditorStrings.Beam.FallOffEndMultiplier);
                     }
                     else
                     {
@@ -192,19 +190,18 @@ namespace VLB
                     }
                 }
 
-                // Spot Angle
                 using (var lightDisabledGrp = ButtonToggleScope.FromLight(spotAngleFromLight, hasLightSpot))
                 {
                     if (m_Targets.HasAtLeastOneTargetWith((VolumetricLightBeamSD beam) => { return beam.useSpotAngleFromAttachedLightSpot; }))
                     {
                         using (new EditorExtensions.ShowMixedValue(spotAngle))
                         {
-                            // display grayed out Unity's light angle
+
                             EditorGUILayout.FloatField(EditorStrings.Beam.SpotAngle, SpotLightHelper.GetSpotAngle(m_Targets[0].lightSpotAttached));
                         }
 
-                        lightDisabledGrp?.EndDisabledGroup(); // muliplier factor should be available
-                        DrawMultiplierProperty(spotAngleMultiplier, EditorStrings.Beam.SpotAngleMultiplier); // multiplier property
+                        lightDisabledGrp?.EndDisabledGroup();
+                        DrawMultiplierProperty(spotAngleMultiplier, EditorStrings.Beam.SpotAngleMultiplier);
                     }
                     else
                     {
@@ -241,7 +238,6 @@ namespace VLB
 
                 EditorGUILayout.Separator();
 
-                // Tilt
                 if (m_Targets.HasAtLeastOneTargetWith((VolumetricLightBeamSD beam) => { return beam.shaderAccuracy == ShaderAccuracy.High; }))
                 {
                     using (new EditorGUILayout.HorizontalScope())
@@ -445,7 +441,7 @@ namespace VLB
             DrawEditInSceneButton();
             DrawCustomActionButtons();
             DrawAdditionalFeatures();
-            
+
             serializedObject.ApplyModifiedProperties();
         }
 
@@ -471,10 +467,10 @@ namespace VLB
             var updatedProperties = SortingLayerAndOrderDrawer.Draw(sortingLayerID, sortingOrder);
 
             if(updatedProperties.HasFlag(SortingLayerAndOrderDrawer.UpdatedProperties.SortingLayerID))
-                m_Targets.RecordUndoAction("Edit Sorting Layer", (VolumetricLightBeamSD beam) => beam.sortingLayerID = sortingLayerID.intValue); // call setters
+                m_Targets.RecordUndoAction("Edit Sorting Layer", (VolumetricLightBeamSD beam) => beam.sortingLayerID = sortingLayerID.intValue);
 
             if (updatedProperties.HasFlag(SortingLayerAndOrderDrawer.UpdatedProperties.SortingOrder))
-                m_Targets.RecordUndoAction("Edit Sorting Order", (VolumetricLightBeamSD beam) => beam.sortingOrder = sortingOrder.intValue); // call setters
+                m_Targets.RecordUndoAction("Edit Sorting Order", (VolumetricLightBeamSD beam) => beam.sortingOrder = sortingOrder.intValue);
         }
 
         void DrawAnimatorWarning()
@@ -507,7 +503,7 @@ namespace VLB
 
         void DrawAdditionalFeatures()
         {
-            if (Application.isPlaying) return; // do not support adding additional components at runtime
+            if (Application.isPlaying) return;
 
             using (new EditorGUILayout.HorizontalScope())
             {

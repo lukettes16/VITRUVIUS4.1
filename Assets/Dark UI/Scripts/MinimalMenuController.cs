@@ -104,7 +104,7 @@ namespace Michsky.UI.Dark
         void SetupResolutionDropdown()
         {
             if (resolutionDropdown == null) return;
-            if (optionsPanelRoot != null && !optionsPanelRoot.activeInHierarchy) { /* still populate */ }
+            if (optionsPanelRoot != null && !optionsPanelRoot.activeInHierarchy) {  }
 
             resOptions.Clear();
             resolutionDropdown.dropdownItems.RemoveRange(0, resolutionDropdown.dropdownItems.Count);
@@ -248,9 +248,7 @@ namespace Michsky.UI.Dark
 
             if (sceneInBuild)
                 SceneManager.LoadScene(startSceneName);
-            else
-                Debug.LogError($"Scene '{startSceneName}' not found in Build Settings.");
-        }
+            else { }}
 
         int GetOptionsIndex()
         {
@@ -294,4 +292,3 @@ namespace Michsky.UI.Dark
         }
     }
 }
-

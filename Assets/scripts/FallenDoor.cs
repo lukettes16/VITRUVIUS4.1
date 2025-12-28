@@ -39,8 +39,8 @@ public class FallenDoor : InteractiveObject
     [Tooltip("Sonido de esfuerzo (Loop/Grito) para PLAYER 2 (Mujer)")]
     [SerializeField] private AudioClip effortVoiceP2;
 
-    private AudioSource audioSource;      
-    private AudioSource voiceAudioSource; 
+    private AudioSource audioSource;
+    private AudioSource voiceAudioSource;
 
     [Header("Haptic Feedback - Drop IMPACT")]
     [SerializeField] private float dropRumbleDuration = 0.3f;
@@ -91,7 +91,6 @@ public class FallenDoor : InteractiveObject
             SetOutlineState(Color.black, 0.0f);
         }
 
-        
         audioSource = GetComponent<AudioSource>();
         if (audioSource == null)
         {
@@ -100,11 +99,10 @@ public class FallenDoor : InteractiveObject
         }
         audioSource.rolloffMode = AudioRolloffMode.Linear;
 
-        
         voiceAudioSource = gameObject.AddComponent<AudioSource>();
         voiceAudioSource.playOnAwake = false;
         voiceAudioSource.spatialBlend = 1f;
-        voiceAudioSource.rolloffMode = AudioRolloffMode.Linear; 
+        voiceAudioSource.rolloffMode = AudioRolloffMode.Linear;
 
         if (promptCanvas != null) promptCanvas.enabled = false;
     }
@@ -192,9 +190,6 @@ public class FallenDoor : InteractiveObject
         }
     }
 
-    
-
-    
     public void StartLifting(MovJugador1 lifter)
     {
         isBeingLifted = true;
@@ -204,14 +199,13 @@ public class FallenDoor : InteractiveObject
         hasDropped = false;
         isDropping = false;
 
-        
         if (liftSound != null && audioSource != null)
         {
             audioSource.clip = liftSound;
             audioSource.loop = true;
             audioSource.Play();
         }
-        
+
         if (effortVoiceP1 != null && voiceAudioSource != null)
         {
             voiceAudioSource.clip = effortVoiceP1;
@@ -220,7 +214,6 @@ public class FallenDoor : InteractiveObject
         }
     }
 
-    
     public void StartFailLifting(MovJugador2 failler)
     {
         if (isBeingLifted) return;
@@ -232,14 +225,13 @@ public class FallenDoor : InteractiveObject
         isDropping = false;
         failDialogueShown = false;
 
-        
         if (liftSound != null && audioSource != null)
         {
             audioSource.clip = liftSound;
             audioSource.loop = true;
             audioSource.Play();
         }
-        
+
         if (effortVoiceP2 != null && voiceAudioSource != null)
         {
             voiceAudioSource.clip = effortVoiceP2;
@@ -249,7 +241,6 @@ public class FallenDoor : InteractiveObject
 
     }
 
-    
     public void StopLifting()
     {
         if (isDropping) return;
@@ -269,7 +260,6 @@ public class FallenDoor : InteractiveObject
             DialogueManager.ShowFallenDoorEarlyRelease(string.IsNullOrEmpty(doorID) ? gameObject.name : doorID, actorGo);
         }
 
-        
         if (audioSource != null)
         {
             if (audioSource.isPlaying) audioSource.Stop();
@@ -277,7 +267,6 @@ public class FallenDoor : InteractiveObject
             if (dropSound != null) audioSource.PlayOneShot(dropSound);
         }
 
-        
         if (voiceAudioSource != null && voiceAudioSource.isPlaying)
         {
             voiceAudioSource.Stop();
@@ -288,7 +277,6 @@ public class FallenDoor : InteractiveObject
     {
         float currentHeight = transform.position.y - initialPosition.y;
 
-        
         if (isBeingLifted && !isFailLifting && currentHeight < maxLiftHeight)
         {
             float shake = Random.Range(-shakeAmount, shakeAmount);
@@ -299,21 +287,20 @@ public class FallenDoor : InteractiveObject
 
             if (playerLifter != null) playerLifter.StartCooperativeEffects(0.1f, 0.02f, 0.4f, 0.2f, 0.1f);
 
-            
             if (transform.position.y >= initialPosition.y + maxLiftHeight)
             {
                 transform.position = new Vector3(initialPosition.x, initialPosition.y + maxLiftHeight, initialPosition.z);
 
                 if (!isAtMaxHeight)
                 {
-                    
+
                     if (audioSource != null)
                     {
                         audioSource.Stop();
                         audioSource.loop = false;
                         if (maxHeightSound != null) audioSource.PlayOneShot(maxHeightSound);
                     }
-                    
+
                     if (voiceAudioSource != null) voiceAudioSource.Stop();
 
                     if (playerLifter != null) playerLifter.StartCooperativeEffects(0.2f, 0.1f, 0.8f, 0.8f, 0.2f);
@@ -323,7 +310,6 @@ public class FallenDoor : InteractiveObject
             }
         }
 
-        
         else if (isFailLifting && !isBeingLifted)
         {
             if (currentHeight < failLiftHeight)
@@ -359,7 +345,6 @@ public class FallenDoor : InteractiveObject
             }
         }
 
-        
         else if (!isBeingLifted && !isFailLifting && currentHeight > 0f)
         {
             transform.position = Vector3.MoveTowards(transform.position, initialPosition, dropSpeed * Time.deltaTime);

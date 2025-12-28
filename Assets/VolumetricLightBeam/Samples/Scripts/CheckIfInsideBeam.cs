@@ -39,8 +39,7 @@ namespace VLB_Samples
 
             if (dynamicOcclusion)
             {
-                // This GameObject is inside the beam's TriggerZone.
-                // Make sure it's not hidden by an occluder
+
                 isInsideBeam = !dynamicOcclusion.IsColliderHiddenByDynamicOccluder(m_Collider);
             }
             else
@@ -50,4 +49,3 @@ namespace VLB_Samples
         }
     }
 }
-

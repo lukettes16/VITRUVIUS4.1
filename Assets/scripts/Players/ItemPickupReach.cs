@@ -2,10 +2,6 @@ using UnityEngine;
 using UnityEngine.Animations.Rigging;
 using System.Collections;
 
-
-
-
-
 public class ItemPickupReach : MonoBehaviour
 {
     [Header("Rig References")]
@@ -50,30 +46,24 @@ public class ItemPickupReach : MonoBehaviour
 
     private void Start()
     {
-        
+
         if (handIKTarget != null)
         {
             restPosition = handIKTarget.localPosition;
             restRotation = handIKTarget.localRotation;
         }
 
-        
         if (handReachRig != null)
         {
             handReachRig.weight = 0f;
         }
     }
 
-    
-    
-    
-    
-    
     public void ReachForItem(GameObject targetObject, System.Action<GameObject> onGrabAction = null)
     {
         if (!enableReachAnimation || targetObject == null || handIKTarget == null)
         {
-            
+
             onGrabAction?.Invoke(targetObject);
             return;
         }
@@ -85,7 +75,6 @@ public class ItemPickupReach : MonoBehaviour
             return;
         }
 
-        
         if (currentReachCoroutine != null)
         {
             StopCoroutine(currentReachCoroutine);
@@ -97,9 +86,6 @@ public class ItemPickupReach : MonoBehaviour
         currentReachCoroutine = StartCoroutine(ReachCoroutine(targetPosition));
     }
 
-    
-    
-    
     public void ReturnToRest()
     {
         if (!enableReachAnimation || handIKTarget == null)
@@ -121,7 +107,6 @@ public class ItemPickupReach : MonoBehaviour
         Vector3 startPos = handIKTarget.position;
         Quaternion startRot = handIKTarget.rotation;
 
-        
         Vector3 directionToTarget = (worldTargetPosition - handIKTarget.position).normalized;
         Quaternion targetRotation = Quaternion.LookRotation(directionToTarget, Vector3.up);
 
@@ -133,22 +118,18 @@ public class ItemPickupReach : MonoBehaviour
             float normalizedTime = elapsed / reachDuration;
             float curveValue = reachCurve.Evaluate(normalizedTime);
 
-            
             handIKTarget.position = Vector3.Lerp(startPos, worldTargetPosition, curveValue);
             handIKTarget.rotation = Quaternion.Slerp(startRot, targetRotation, curveValue);
 
-            
             if (handReachRig != null)
             {
                 handReachRig.weight = Mathf.Lerp(0f, 1f, curveValue);
             }
 
-            
             if (!hasGrabbed && Vector3.Distance(handIKTarget.position, worldTargetPosition) <= grabThreshold)
             {
                 hasGrabbed = true;
 
-                
                 if (onGrabCallback != null && currentTargetObject != null)
                 {
                     onGrabCallback.Invoke(currentTargetObject);
@@ -159,7 +140,6 @@ public class ItemPickupReach : MonoBehaviour
             yield return null;
         }
 
-        
         handIKTarget.position = worldTargetPosition;
         handIKTarget.rotation = targetRotation;
 
@@ -168,7 +148,6 @@ public class ItemPickupReach : MonoBehaviour
             handReachRig.weight = 1f;
         }
 
-        
         if (!hasGrabbed && onGrabCallback != null && currentTargetObject != null)
         {
             onGrabCallback.Invoke(currentTargetObject);
@@ -186,7 +165,6 @@ public class ItemPickupReach : MonoBehaviour
         Vector3 startPos = handIKTarget.position;
         Quaternion startRot = handIKTarget.rotation;
 
-        
         Vector3 worldRestPosition = handIKTarget.parent != null
             ? handIKTarget.parent.TransformPoint(restPosition)
             : restPosition;
@@ -201,11 +179,9 @@ public class ItemPickupReach : MonoBehaviour
             float normalizedTime = elapsed / returnDuration;
             float curveValue = reachCurve.Evaluate(normalizedTime);
 
-            
             handIKTarget.position = Vector3.Lerp(startPos, worldRestPosition, curveValue);
             handIKTarget.rotation = Quaternion.Slerp(startRot, worldRestRotation, curveValue);
 
-            
             if (handReachRig != null)
             {
                 handReachRig.weight = Mathf.Lerp(1f, 0f, curveValue);
@@ -214,7 +190,6 @@ public class ItemPickupReach : MonoBehaviour
             yield return null;
         }
 
-        
         handIKTarget.localPosition = restPosition;
         handIKTarget.localRotation = restRotation;
 
@@ -226,13 +201,10 @@ public class ItemPickupReach : MonoBehaviour
         currentReachCoroutine = null;
     }
 
-    
-    
-    
     public void OnItemCollected()
     {
         currentTargetObject = null;
-        
+
         StartCoroutine(DelayedReturn());
     }
 
@@ -242,7 +214,6 @@ public class ItemPickupReach : MonoBehaviour
         ReturnToRest();
     }
 
-    
     public bool IsReaching => isReaching;
 
     public void SetEnableReachAnimation(bool enable)
@@ -259,15 +230,13 @@ public class ItemPickupReach : MonoBehaviour
     {
         if (handIKTarget != null)
         {
-            
+
             Gizmos.color = Color.green;
             Gizmos.DrawWireSphere(handIKTarget.position, 0.05f);
 
-            
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireSphere(transform.position, maxReachDistance);
 
-            
             Gizmos.color = Color.cyan;
             Gizmos.DrawWireSphere(handIKTarget.position, grabThreshold);
         }

@@ -4,13 +4,13 @@ public class ThirdPersonCamera : MonoBehaviour
 {
     [Header("Camera Target")]
     public Transform target;
-    public Transform pivot; // Used for vertical rotation if assigned
+    public Transform pivot;
 
     [Header("Camera Settings")]
     public float distance = 5f;
     public float height = 1.7f;
     public float horizontalOffset = 0f;
-    public float rotationSpeed = 2.6f; // Aumentado un 30% (de 2.0f a 2.6f) para mayor agilidad
+    public float rotationSpeed = 2.6f;
     public float joystickSensitivity = 1.0f;
     public float rotationSmoothing = 0.05f;
     public bool invertX = false;
@@ -30,7 +30,6 @@ public class ThirdPersonCamera : MonoBehaviour
     public float fpHeight = 1.6f;
     public float fpSmoothing = 0.02f;
 
-    // Input from Player scripts
     [HideInInspector] public Vector2 lookInput;
 
     private float currentYaw = 0f;
@@ -41,7 +40,7 @@ public class ThirdPersonCamera : MonoBehaviour
     private Vector3 cameraVelocity = Vector3.zero;
     private float yawVelocity = 0f;
     private float pitchVelocity = 0f;
-    
+
     private bool isInitialized = false;
 
     void Start()
@@ -78,18 +77,15 @@ public class ThirdPersonCamera : MonoBehaviour
 
     void HandleInput()
     {
-        // Apply sensitivity and inversion
+
         float xInput = lookInput.x * (invertX ? -1 : 1);
         float yInput = lookInput.y * (invertY ? -1 : 1);
 
-        // Frame-rate independent rotation with smoothing (reduced from 100f to 5f for natural control)
         targetYaw += xInput * joystickSensitivity * rotationSpeed * 5f * Time.unscaledDeltaTime;
         targetPitch -= yInput * joystickSensitivity * rotationSpeed * 5f * Time.unscaledDeltaTime;
-        
-        // Clamp pitch to avoid uncomfortable angles
+
         targetPitch = Mathf.Clamp(targetPitch, minPitch, maxPitch);
 
-        // Smooth damping for fluid 360 rotation
         currentYaw = Mathf.SmoothDampAngle(currentYaw, targetYaw, ref yawVelocity, rotationSmoothing);
         currentPitch = Mathf.SmoothDampAngle(currentPitch, targetPitch, ref pitchVelocity, rotationSmoothing);
     }
@@ -97,11 +93,10 @@ public class ThirdPersonCamera : MonoBehaviour
     void UpdateCameraPosition()
     {
         Quaternion rotation = Quaternion.Euler(currentPitch, currentYaw, 0);
-        
-        // Point of focus (Player's head/center)
+
         float currentHeight = isFirstPerson ? fpHeight : height;
         Vector3 targetFocusPosition = target.position + Vector3.up * currentHeight;
-        
+
         if (!isFirstPerson && horizontalOffset != 0)
         {
             targetFocusPosition += rotation * Vector3.right * horizontalOffset;
@@ -109,16 +104,14 @@ public class ThirdPersonCamera : MonoBehaviour
 
         if (isFirstPerson)
         {
-            // First Person: Camera at head, follows rotation exactly
+
             transform.position = Vector3.SmoothDamp(transform.position, targetFocusPosition, ref cameraVelocity, fpSmoothing);
             transform.rotation = rotation;
             return;
         }
 
-        // Third Person: Orbit logic
         Vector3 direction = rotation * -Vector3.forward;
-        
-        // Check for collisions to avoid clipping through walls
+
         RaycastHit hit;
         float currentDistance = distance;
         if (Physics.SphereCast(targetFocusPosition, sphereCastRadius, direction, out hit, distance, collisionLayers, QueryTriggerInteraction.Ignore))
@@ -129,7 +122,6 @@ public class ThirdPersonCamera : MonoBehaviour
             }
         }
 
-        // Smoothly interpolate distance for professional feel
         targetDistance = Mathf.Lerp(targetDistance, currentDistance, Time.unscaledDeltaTime * 10f);
         Vector3 finalPosition = targetFocusPosition + direction * targetDistance;
 
@@ -142,7 +134,7 @@ public class ThirdPersonCamera : MonoBehaviour
         isFirstPerson = fp;
         if (fp)
         {
-            // Reset distance when entering FP
+
             targetDistance = 0f;
         }
         else

@@ -7,14 +7,13 @@ public class PlayerFlashlightHandler : MonoBehaviour
     private bool isPlayer2 = false;
 
     [Header("Flashlight Objects")]
-    
+
     public GameObject player1FlashlightRoot;
     public GameObject player2FlashlightRoot;
 
     private PlayerInventory inventory;
     private bool hasFlashlight = false;
 
-    
     private GameObject _flashlightRoot;
     private FlashlightController _controller;
 
@@ -22,12 +21,10 @@ public class PlayerFlashlightHandler : MonoBehaviour
     {
         inventory = GetComponent<PlayerInventory>();
 
-        
         string playerName = gameObject.name.ToLower();
         isPlayer1 = playerName.Contains("player1") || playerName.Contains("1");
         isPlayer2 = playerName.Contains("player2") || playerName.Contains("2");
 
-        
         if (isPlayer1 && player1FlashlightRoot != null)
         {
             _flashlightRoot = player1FlashlightRoot;
@@ -37,14 +34,12 @@ public class PlayerFlashlightHandler : MonoBehaviour
             _flashlightRoot = player2FlashlightRoot;
         }
 
-        
         if (_flashlightRoot != null)
         {
             _controller = _flashlightRoot.GetComponent<FlashlightController>();
-            _flashlightRoot.SetActive(false); 
+            _flashlightRoot.SetActive(false);
         }
 
-        
         if (_flashlightRoot != null && _controller == null)
             _controller = _flashlightRoot.GetComponent<FlashlightController>();
     }
@@ -67,15 +62,14 @@ public class PlayerFlashlightHandler : MonoBehaviour
 
     private void UpdateFlashlightVisibility()
     {
-        
+
         if (_flashlightRoot != null)
         {
             _flashlightRoot.SetActive(hasFlashlight);
 
-            
             if (hasFlashlight && _controller != null)
             {
-                
+
                 _controller.SetFlashlightState(true, true);
             }
         }

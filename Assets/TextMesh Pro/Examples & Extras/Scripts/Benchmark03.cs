@@ -2,7 +2,6 @@
 using System.Collections;
 using UnityEngine.TextCore.LowLevel;
 
-
 namespace TMPro.Examples
 {
 
@@ -15,18 +14,15 @@ namespace TMPro.Examples
 
         public Font SourceFont;
 
-
         void Awake()
         {
 
         }
 
-
         void Start()
         {
             TMP_FontAsset fontAsset = null;
 
-            // Create Dynamic Font Asset for the given font file.
             switch (Benchmark)
             {
                 case BenchmarkType.TMP_SDF_MOBILE:

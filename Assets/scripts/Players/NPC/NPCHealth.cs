@@ -4,10 +4,6 @@ using TMPro;
 using System;
 using System.Collections;
 
-
-
-
-
 [RequireComponent(typeof(NPCIdentifier))]
 public class NPCHealth : MonoBehaviour
 {
@@ -71,7 +67,6 @@ public class NPCHealth : MonoBehaviour
         if (Camera.main != null)
             mainCameraTransform = Camera.main.transform;
 
-        
         if (chestImpactPoint == null)
         {
             GameObject chestPointObj = new GameObject("ChestImpactPoint");
@@ -98,7 +93,7 @@ public class NPCHealth : MonoBehaviour
 
     void Update()
     {
-        
+
         if (healthCanvasGroup != null && mainCameraTransform != null && !IsDead)
         {
             healthCanvasGroup.transform.LookAt(
@@ -109,9 +104,6 @@ public class NPCHealth : MonoBehaviour
         }
     }
 
-    
-    
-    
     public void TakeDamage(int damage)
     {
         if (IsDead || isInvulnerable)
@@ -127,7 +119,6 @@ public class NPCHealth : MonoBehaviour
         UpdateUI();
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
 
-        
         if (healthCanvasGroup != null)
         {
             if (fadeCoroutine != null) StopCoroutine(fadeCoroutine);
@@ -147,7 +138,6 @@ public class NPCHealth : MonoBehaviour
             audioSource.PlayOneShot(damageSound);
         }
 
-        
         PlayBloodEffect();
 
         if (npcAnimator != null)
@@ -156,9 +146,6 @@ public class NPCHealth : MonoBehaviour
         }
     }
 
-    
-    
-    
     private void PlayBloodEffect()
     {
         if (bloodParticlesPrefab == null || chestImpactPoint == null)
@@ -217,12 +204,9 @@ public class NPCHealth : MonoBehaviour
         isInvulnerable = false;
     }
 
-    
-    
-    
     private IEnumerator ShowHealthBarRoutine()
     {
-        
+
         float timer = 0f;
         float startAlpha = healthCanvasGroup.alpha;
 
@@ -234,10 +218,8 @@ public class NPCHealth : MonoBehaviour
         }
         healthCanvasGroup.alpha = 1f;
 
-        
         yield return new WaitForSeconds(displayTimeAfterDamage);
 
-        
         timer = 0f;
         startAlpha = healthCanvasGroup.alpha;
 
@@ -252,9 +234,6 @@ public class NPCHealth : MonoBehaviour
         fadeCoroutine = null;
     }
 
-    
-    
-    
     private void Die()
     {
         if (IsDead) return;
@@ -262,7 +241,6 @@ public class NPCHealth : MonoBehaviour
         IsDead = true;
         ApplyDeathEffects();
 
-        
         if (fadeCoroutine != null) StopCoroutine(fadeCoroutine);
         if (healthCanvasGroup != null) healthCanvasGroup.alpha = 0f;
 
@@ -272,16 +250,13 @@ public class NPCHealth : MonoBehaviour
             npcAnimator.SetBool("IsDead", true);
         }
 
-        
         if (npcIdentifier != null)
             OnNPCDied?.Invoke(npcIdentifier.npcID);
 
-        
         NPCBehaviorManager behavior = GetComponent<NPCBehaviorManager>();
         if (behavior != null)
             behavior.enabled = false;
 
-        
         UnityEngine.AI.NavMeshAgent agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
         if (agent != null)
             agent.enabled = false;
@@ -295,9 +270,6 @@ public class NPCHealth : MonoBehaviour
         }
     }
 
-    
-    
-    
     private void UpdateUI()
     {
         if (healthSlider != null)
@@ -310,14 +282,7 @@ public class NPCHealth : MonoBehaviour
             healthText.text = $"{currentHealth} / {maxHealth}";
     }
 
-    
-    
-    
     public int GetCurrentHealth() => currentHealth;
 
-    
-    
-    
     public int GetMaxHealth() => maxHealth;
 }
-

@@ -11,40 +11,20 @@ namespace VLB
     {
         public const string ClassName = "VolumetricDustParticles";
 
-        /// <summary>
-        /// Max alpha of the particles
-        /// </summary>
         [Range(0f, 1f)]
         public float alpha = Consts.DustParticles.AlphaDefault;
 
-        /// <summary>
-        /// Max size of the particles
-        /// </summary>
         public float size = Consts.DustParticles.SizeDefault;
 
-        /// <summary>
-        /// Direction of the particles.
-        /// </summary>
         public ParticlesDirection direction = Consts.DustParticles.DirectionDefault;
 
-        /// <summary>
-        /// Movement speed of the particles.
-        /// </summary>
         public Vector3 velocity = Consts.DustParticles.VelocityDefault;
 
         [System.Obsolete("Use 'velocity' instead")]
         public float speed = 0.03f;
 
-        /// <summary>
-        /// Control how many particles are spawned. The higher the density, the more particles are spawned, the higher the performance cost is.
-        /// </summary>
         public float density = Consts.DustParticles.DensityDefault;
 
-        /// <summary>
-        /// The distance range (from the light source) where the particles are spawned.
-        /// - Min bound: the higher it is, the more the particles are spawned away from the light source.
-        /// - Max bound: the lower it is, the more the particles are gathered near the light source.
-        /// </summary>
         [MinMaxRange(0.0f, 1.0f)]
         public MinMaxRangeFloat spawnDistanceRange = Consts.DustParticles.SpawnDistanceRangeDefault;
 
@@ -54,22 +34,11 @@ namespace VLB
         [System.Obsolete("Use 'spawnDistanceRange' instead")]
         public float spawnMaxDistance = 0.7f;
 
-        /// <summary>
-        /// Enable particles culling based on the distance with the FadeOut Camera identified through the VLB Config's 'fadeOutCameraTag' property.
-        /// We highly recommend to enable this feature to keep good runtime performances.
-        /// </summary>
         public bool cullingEnabled = Consts.DustParticles.CullingEnabledDefault;
 
-        /// <summary>
-        /// If culling is enabled, the particles will not be rendered if they are further than cullingMaxDistance to the FadeOut Camera.
-        /// </summary>
         public float cullingMaxDistance = Consts.DustParticles.CullingMaxDistanceDefault;
 
-        /// <summary>
-        /// Is the particle system currently culled (no visible) because too far from the FadeOut Camera?
-        /// </summary>
         public bool isCulled { get; private set; }
-
 
         [SerializeField] float m_AlphaAdditionalRuntime = 1.0f;
         public float alphaAdditionalRuntime
@@ -105,9 +74,9 @@ namespace VLB
         {
             density = Mathf.Clamp(density, Consts.DustParticles.DensityMin, Consts.DustParticles.DensityMax);
             cullingMaxDistance = Mathf.Max(cullingMaxDistance, Consts.DustParticles.CullingMaxDistanceMin);
-            Play(); // support instant refresh when modifying properties from inspector
+            Play();
         }
-#endif // UNITY_EDITOR
+#endif
 
         VolumetricLightBeamAbstractBase m_Master = null;
 
@@ -126,8 +95,7 @@ namespace VLB
 
         void InstantiateParticleSystem()
         {
-            // If we duplicate (from Editor and Playmode) the VLB, the children are also duplicated (like the dust particles)
-            // we have to make sure to properly destroy them before creating our proper procedural particle instance.
+
             gameObject.ForeachComponentsInDirectChildrenOnly<ParticleSystem>(ps => DestroyImmediate(ps.gameObject), true);
 
             m_Particles = Config.Instance.NewVolumetricDustParticles();
@@ -140,7 +108,7 @@ namespace VLB
                     UnityEditor.GameObjectUtility.SetStaticEditorFlags(m_Particles.gameObject, m_Master.GetStaticEditorFlagsForSubObjects());
                     m_Particles.gameObject.SetSameSceneVisibilityStatesThan(m_Master.gameObject);
                 }
-#endif // UNITY_EDITOR
+#endif
                 m_Particles.transform.SetParent(transform, false);
 
                 m_Renderer = m_Particles.GetComponent<ParticleSystemRenderer>();
@@ -156,7 +124,7 @@ namespace VLB
         {
             SetActiveAndPlay();
         }
-        
+
         void SetActive(bool active)
         {
             if (m_Particles) m_Particles.gameObject.SetActive(active);
@@ -187,7 +155,7 @@ namespace VLB
         {
             if (m_Particles)
             {
-                DestroyImmediate(m_Particles.gameObject); // Make sure to delete the GAO
+                DestroyImmediate(m_Particles.gameObject);
                 m_Particles = null;
             }
 
@@ -209,7 +177,7 @@ namespace VLB
                 Play();
             }
             else
-#endif // UNITY_EDITOR
+#endif
             {
                 UpdateCulling();
 
@@ -228,7 +196,7 @@ namespace VLB
         {
             if (m_Particles && m_Particles.gameObject.activeSelf)
             {
-                // set these props here instead of from InstantiateParticleSystem to support dimension change in editor
+
                 m_Particles.transform.localRotation = UtilsBeamProps.GetInternalLocalRotation(m_Master);
                 m_Particles.transform.localScale = m_Master.IsScalable() ? Vector3.one : Vector3.one.Divide(m_Master.GetLossyScale());
 
@@ -249,7 +217,7 @@ namespace VLB
                 startSize.constantMin = size * 0.9f;
                 startSize.constantMax = size * 1.1f;
                 main.startSize = startSize;
-                
+
                 var startColor = main.startColor;
 
                 if (UtilsBeamProps.GetColorMode(m_Master) == ColorMode.Flat)
@@ -263,7 +231,6 @@ namespace VLB
                 {
                     startColor.mode = ParticleSystemGradientMode.Gradient;
 
-                    // Duplicate gradient and apply alpha
                     var gradientRef = UtilsBeamProps.GetColorGradient(m_Master);
                     Debug.Assert(gradientRef != null);
                     var colorKeys = gradientRef.colorKeys;
@@ -336,17 +303,16 @@ namespace VLB
 
         void HandleBackwardCompatibility(int serializedVersion, int newVersion)
         {
-            if (serializedVersion == -1) return;            // freshly new spawned entity: nothing to do
-            if (serializedVersion == newVersion) return;    // same version: nothing to do
+            if (serializedVersion == -1) return;
+            if (serializedVersion == newVersion) return;
 
 #pragma warning disable 0618
             if (serializedVersion < 1880)
             {
-                // Version 1880 changed the order of ParticlesDirection enum and add WorldSpace option
+
                 if ((int)direction == 0)    direction = (ParticlesDirection)1;
                 else                        direction = (ParticlesDirection)0;
 
-                // Version 1880 changed from single float speed to 3D velocity vector
                 velocity = new Vector3(0.0f, 0.0f, speed);
             }
 
@@ -393,8 +359,7 @@ namespace VLB
                 if (visible && !m_Particles.isPlaying)
                     m_Particles.Play();
             }
-        } 
+        }
         #endregion
     }
 }
-

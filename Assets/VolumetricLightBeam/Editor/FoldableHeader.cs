@@ -37,7 +37,6 @@ namespace VLB
 
             bool folded = IsFolded(uniqueString);
 
-
 #if UI_USE_FOLDOUT_HEADER_2019
             folded = !EditorGUILayout.BeginFoldoutHeaderGroup(!folded, label);
 #else
@@ -73,5 +72,4 @@ namespace VLB
         static GUIStyle ms_StyleHeaderFoldable = null;
     }
 }
-#endif // UNITY_EDITOR
-
+#endif

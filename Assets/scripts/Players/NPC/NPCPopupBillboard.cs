@@ -214,37 +214,26 @@ public class NPCPopupBillboard : MonoBehaviour
         popupCanvas.transform.LookAt(lookPos, cam.transform.rotation * Vector3.up);
     }
 
-    
-    
-    
-    
     public void UpdateTextInstant(string message)
     {
         if (popupText == null || popupCanvas == null) return;
 
-        
         if (revealCoroutine != null)
         {
             StopCoroutine(revealCoroutine);
             revealCoroutine = null;
         }
 
-        
         if (!popupCanvas.enabled)
             popupCanvas.enabled = true;
 
-        
         popupText.fontSize = fontSize;
         popupText.text = message;
 
-        
         timer = 999f;
         isVisible = true;
     }
 
-    
-    
-    
     public void ShowMessage(string message, float duration)
     {
         if (popupText == null || popupCanvas == null) return;

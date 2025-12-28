@@ -24,7 +24,6 @@ namespace Beautify.Universal {
 
         public static Texture3D Import(string path) {
 
-            // Check if path is within assets folder
             string assetPath = path;
             int k = path.IndexOf("Assets/");
             if (k >= 0) {
@@ -40,12 +39,10 @@ namespace Beautify.Universal {
             assetPath += ".asset";
             var tex = AssetDatabase.LoadAssetAtPath<Texture3D>(assetPath);
 
-            if (tex != null) return tex; // safe behaviour: if file exists, do not change anything
+            if (tex != null) return tex;
 
-            // Read the lut data
             string[] lines = File.ReadAllLines(path);
 
-            // Start parsing
             int i = 0;
             int size = -1;
             int sizeCube = -1;
@@ -56,8 +53,7 @@ namespace Beautify.Universal {
             while (true) {
                 if (i >= lines.Length) {
                     if (table.Count != sizeCube)
-                        Debug.LogError("Premature end of file");
-
+                        
                     break;
                 }
 
@@ -66,20 +62,19 @@ namespace Beautify.Universal {
                 if (string.IsNullOrEmpty(line))
                     goto next;
 
-                // Header data
                 if (line.StartsWith("TITLE"))
-                    goto next; // Skip the title tag, we don't need it
+                    goto next;
 
                 if (line.StartsWith("LUT_3D_SIZE")) {
                     string sizeStr = line.Substring(11).TrimStart();
 
                     if (!int.TryParse(sizeStr, out size)) {
-                        Debug.LogError("Invalid data on line " + i);
+                        
                         break;
                     }
 
                     if (size < 2 || size > 256) {
-                        Debug.LogError("LUT size out of range");
+                        
                         break;
                     }
 
@@ -97,11 +92,10 @@ namespace Beautify.Universal {
                     goto next;
                 }
 
-                // Table
                 string[] row = line.Split();
 
                 if (row.Length != 3) {
-                    Debug.LogError("Invalid data on line " + i);
+                    
                     break;
                 }
 
@@ -109,7 +103,7 @@ namespace Beautify.Universal {
                 for (int j = 0; j < 3; j++) {
                     float d;
                     if (!float.TryParse(row[j], NumberStyles.Float, CultureInfo.InvariantCulture.NumberFormat, out d)) {
-                        Debug.LogError("Invalid data on line " + i);
+                        
                         break;
                     }
 
@@ -123,11 +117,10 @@ namespace Beautify.Universal {
             }
 
             if (sizeCube != table.Count) {
-                Debug.LogError("Wrong table size - Expected " + sizeCube + " elements, got " + table.Count);
+                
                 return null;
             }
 
-            // Generate a new Texture3D
             tex = new Texture3D(size, size, size, TextureFormat.RGBAHalf, false) {
                 anisoLevel = 0,
                 filterMode = FilterMode.Bilinear,
@@ -137,7 +130,6 @@ namespace Beautify.Universal {
             tex.SetPixels(table.ToArray(), 0);
             tex.Apply();
 
-            // Save to disk
             AssetDatabase.CreateAsset(tex, assetPath);
 
             AssetDatabase.SaveAssets();
@@ -156,7 +148,7 @@ namespace Beautify.Universal {
             while (i < len) {
                 char c = line[i];
 
-                if (c == '#') // Filters comment out
+                if (c == '#')
                     break;
 
                 filtered.Append(c);
@@ -170,14 +162,14 @@ namespace Beautify.Universal {
             string[] domainStrs = line.Substring(10).TrimStart().Split();
 
             if (domainStrs.Length != 3) {
-                Debug.LogError("Invalid data on line " + i);
+                
                 return false;
             }
 
             for (int j = 0; j < 3; j++) {
                 float d;
                 if (!float.TryParse(domainStrs[j], NumberStyles.Float, CultureInfo.InvariantCulture.NumberFormat, out d)) {
-                    Debug.LogError("Invalid data on line " + i);
+                    
                     return false;
                 }
 

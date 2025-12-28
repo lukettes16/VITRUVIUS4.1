@@ -12,7 +12,7 @@ namespace Michsky.UI.Dark
         {
             if (virtualCursor == null)
             {
-                Debug.Log("Looking for Virtual Cursor automatically.");
+                
                 virtualCursor = GameObject.Find("Virtual Cursor").GetComponent<VirtualCursor>();
             }
         }

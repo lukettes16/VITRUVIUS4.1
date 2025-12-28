@@ -1,5 +1,5 @@
 ﻿#if DEBUG
-//#define DEBUG_SHOW_RAYCAST_LINES
+
 #endif
 
 using UnityEngine;
@@ -14,58 +14,27 @@ namespace VLB
     {
         public new const string ClassName = "DynamicOcclusionRaycasting";
 
-        /// <summary>
-        /// Should it interact with 2D or 3D occluders?
-        /// </summary>
         public Dimensions dimensions = Consts.DynOcclusion.RaycastingDimensionsDefault;
 
-        /// <summary>
-        /// The beam can only be occluded by objects located on the layers matching this mask.
-        /// It's very important to set it as restrictive as possible (checking only the layers which are necessary)
-        /// to perform a more efficient process in order to increase the performance.
-        /// </summary>
         public LayerMask layerMask = Consts.DynOcclusion.LayerMaskDefault;
 
-        /// <summary>
-        /// Should this beam be occluded by triggers or not?
-        /// </summary>
         public bool considerTriggers = Consts.DynOcclusion.RaycastingConsiderTriggersDefault;
 
-        /// <summary>
-        /// Minimum 'area' of the collider to become an occluder.
-        /// Colliders smaller than this value will not block the beam.
-        /// </summary>
         public float minOccluderArea = Consts.DynOcclusion.RaycastingMinOccluderAreaDefault;
 
-        /// <summary>
-        /// Approximated percentage of the beam to collide with the surface in order to be considered as occluder
-        /// </summary>
         public float minSurfaceRatio = Consts.DynOcclusion.RaycastingMinSurfaceRatioDefault;
 
-        /// <summary>
-        /// Max angle (in degrees) between the beam and the surface in order to be considered as occluder
-        /// </summary>
         public float maxSurfaceDot = Consts.DynOcclusion.RaycastingMaxSurfaceDotDefault;
 
-        /// <summary>
-        /// Alignment of the computed clipping plane:
-        /// </summary>
         public PlaneAlignment planeAlignment = Consts.DynOcclusion.RaycastingPlaneAlignmentDefault;
 
-        /// <summary>
-        /// Translate the plane. We recommend to set a small positive offset in order to handle non-flat surface better.
-        /// </summary>
         public float planeOffset = Consts.DynOcclusion.RaycastingPlaneOffsetDefault;
 
-        /// <summary>
-        /// Fade out the beam before the computed clipping plane in order to soften the transition.
-        /// </summary>
         [FormerlySerializedAs("fadeDistanceToPlane")]
         public float fadeDistanceToSurface = Consts.DynOcclusion.RaycastingFadeDistanceToSurfaceDefault;
 
         [System.Obsolete("Use 'fadeDistanceToSurface' instead")]
         public float fadeDistanceToPlane { get { return fadeDistanceToSurface; } set { fadeDistanceToSurface = value; } }
-
 
         public bool IsColliderHiddenByDynamicOccluder(Collider collider)
         {
@@ -130,10 +99,6 @@ namespace VLB
             public void SetNull() { collider2D = null; collider3D = null; }
         }
 
-        /// <summary>
-        /// Get information about the current occluder hit by the beam.
-        /// Can be null if the beam is not occluded.
-        /// </summary>
         HitResult m_CurrentHit;
 
         protected override string GetShaderKeyword() { return ShaderKeywords.SD.OcclusionClippingPlane; }
@@ -200,7 +165,7 @@ namespace VLB
                 }
             }
         }
-        
+
         Vector3 GetRandomVectorAround(Vector3 direction, float angleDiff)
         {
             var halfAngle = angleDiff * 0.5f;
@@ -224,7 +189,7 @@ namespace VLB
             float bestLength = float.MaxValue;
             for (int i = 0; i < hits.Length; ++i)
             {
-                if (hits[i].collider.gameObject != m_Master.gameObject) // skip collider from TriggerZone
+                if (hits[i].collider.gameObject != m_Master.gameObject)
                 {
                     if (hits[i].collider.bounds.GetMaxArea2D() >= minOccluderArea)
                     {
@@ -254,10 +219,10 @@ namespace VLB
             float bestLength = float.MaxValue;
             for (int i = 0; i < hits.Length; ++i)
             {
-                if (!considerTriggers && hits[i].collider.isTrigger) // do not query triggers if considerTriggers is disabled
+                if (!considerTriggers && hits[i].collider.isTrigger)
                     continue;
 
-                if (hits[i].collider.gameObject != m_Master.gameObject) // skip collider from TriggerZone
+                if (hits[i].collider.gameObject != m_Master.gameObject)
                 {
                     if (hits[i].collider.bounds.GetMaxArea2D() >= minOccluderArea)
                     {
@@ -303,7 +268,6 @@ namespace VLB
             }
             return Vector3.zero;
         }
-
 
         bool IsHitValid(ref HitResult hit, Vector3 forwardVec)
         {
@@ -422,7 +386,7 @@ namespace VLB
             {
                 float dist;
                 if (m_DebugPlaneLocal.Raycast(new Ray(transform.position, m_Master.raycastGlobalForward), out dist))
-                    m_DebugPlaneLocal.distance = dist; // compute local distance
+                    m_DebugPlaneLocal.distance = dist;
             }
 #endif
         }
@@ -432,7 +396,7 @@ namespace VLB
         {
             if (!Application.isPlaying)
             {
-                // In Editor, process raycasts at each frame update
+
                 if (!editorRaycastAtEachFrame)
                     SetHitNull();
                 else

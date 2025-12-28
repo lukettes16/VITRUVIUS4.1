@@ -10,7 +10,6 @@ public class RainDemo : MonoBehaviour {
     public Text[] buttonText;
     Color defaultColor = new Color(50f / 255f, 50f / 255f, 50f / 255f);
 
-    //Light Rain
     public void ShowLightRain()
     {
         HideVFX();
@@ -21,7 +20,6 @@ public class RainDemo : MonoBehaviour {
         buttonText[0].color = Color.red;
     }
 
-    //Moderate Rain
     public void ShowModerateRain()
     {
         HideVFX();
@@ -32,7 +30,6 @@ public class RainDemo : MonoBehaviour {
         buttonText[1].color = Color.red;
     }
 
-    //Heavy Rain
     public void ShowHeavyRain()
     {
         HideVFX();

@@ -5,7 +5,7 @@ public class WeaponWallAvoidance : MonoBehaviour
 {
     [Header("Referencias")]
     public Rig armDownRig;
-    public Animator animator; 
+    public Animator animator;
 
     [Header("Configuracin de Deteccin")]
     public Transform rayOrigin;
@@ -15,7 +15,6 @@ public class WeaponWallAvoidance : MonoBehaviour
     [Header("Suavizado")]
     public float smoothSpeed = 10f;
 
-    
     private const string BOOL_FLASHLIGHT = "FlashlightOn";
     private const string BOOL_DEAD = "IsDeadAnimator";
 
@@ -26,7 +25,6 @@ public class WeaponWallAvoidance : MonoBehaviour
     {
         if (armDownRig != null) armDownRig.weight = 0f;
 
-        
         if (animator == null) animator = GetComponent<Animator>();
     }
 
@@ -34,24 +32,19 @@ public class WeaponWallAvoidance : MonoBehaviour
     {
         if (rayOrigin == null || armDownRig == null || animator == null) return;
 
-        
-        
         bool isFlashlightOn = animator.GetBool(BOOL_FLASHLIGHT);
         bool isDead = animator.GetBool(BOOL_DEAD);
 
-        
         if (isFlashlightOn && !isDead)
         {
             DetectWall();
         }
         else
         {
-            
+
             _targetWeight = 0f;
         }
 
-        
-        
         _currentWeight = Mathf.Lerp(_currentWeight, _targetWeight, Time.deltaTime * smoothSpeed);
         armDownRig.weight = _currentWeight;
     }
@@ -66,11 +59,11 @@ public class WeaponWallAvoidance : MonoBehaviour
 
         if (Physics.Raycast(ray, detectionDistance, obstacleMask))
         {
-            _targetWeight = 1f; 
+            _targetWeight = 1f;
         }
         else
         {
-            _targetWeight = 0f; 
+            _targetWeight = 0f;
         }
     }
 }

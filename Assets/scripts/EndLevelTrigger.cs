@@ -27,7 +27,7 @@ public class EndLevelTrigger : MonoBehaviour
     public GameObject endDemoTextObject;
     public GameObject continueButtonObject;
     public Button continueButton;
-    public GameObject proximityIndicator; 
+    public GameObject proximityIndicator;
 
     [Header("Splash Settings")]
     public RuntimeAnimatorController splashAnimatorController;
@@ -42,7 +42,7 @@ public class EndLevelTrigger : MonoBehaviour
     public float fadeDuration = 1.5f;
     public string nextSceneName = "DaVinciP1";
     public bool requireBothPlayers = true;
-    public float proximityRange = 5f; 
+    public float proximityRange = 5f;
 
     private bool transitionStarted = false;
     private HashSet<int> playersInTrigger = new HashSet<int>();
@@ -59,7 +59,7 @@ public class EndLevelTrigger : MonoBehaviour
 
         bool anyPlayerNear = false;
         PlayerIdentifier[] allPlayers = GameObject.FindObjectsOfType<PlayerIdentifier>();
-        
+
         foreach (var player in allPlayers)
         {
             if (Vector3.Distance(transform.position, player.transform.position) <= proximityRange)
@@ -91,8 +91,6 @@ public class EndLevelTrigger : MonoBehaviour
             return;
         }
 
-
-
         try
         {
             PlayerIdentifier[] identifiers = GameObject.FindObjectsOfType<PlayerIdentifier>();
@@ -113,7 +111,7 @@ public class EndLevelTrigger : MonoBehaviour
 
                 if (inventory != null && snapshot != null)
                 {
-                    
+
                     if (!snapshot.items.Contains("Flashlight"))
                     {
                         snapshot.items.Add("Flashlight");
@@ -121,8 +119,6 @@ public class EndLevelTrigger : MonoBehaviour
 
                     inventory.RestoreInventory(snapshot.keyCards, snapshot.items);
 
-
-                    
                     FlashlightController flashlight = identifier.GetComponentInChildren<FlashlightController>(true);
                     if (flashlight != null)
                     {
@@ -147,7 +143,7 @@ public class EndLevelTrigger : MonoBehaviour
     private void Start()
     {
         EnsureSceneLoadedHook();
-        
+
         if (fadePanelCanvasGroup != null)
         {
             fadePanelCanvasGroup.alpha = 0f;
@@ -158,7 +154,7 @@ public class EndLevelTrigger : MonoBehaviour
         }
         if (endDemoTextObject != null)
         {
-            endDemoTextObject.SetActive(false); 
+            endDemoTextObject.SetActive(false);
         }
         if (proximityIndicator != null)
         {
@@ -351,9 +347,9 @@ public class EndLevelTrigger : MonoBehaviour
 
     private IEnumerator FadeAndShowUI()
     {
-        
+
         float startTime = Time.time;
-        float endAlpha = 1f; 
+        float endAlpha = 1f;
 
         while (fadePanelCanvasGroup.alpha < endAlpha)
         {
@@ -362,9 +358,8 @@ public class EndLevelTrigger : MonoBehaviour
             yield return null;
         }
 
-        fadePanelCanvasGroup.alpha = endAlpha; 
+        fadePanelCanvasGroup.alpha = endAlpha;
 
-        
         if (splashAnimatorController == null)
         {
             splashAnimatorController = Resources.Load<RuntimeAnimatorController>("EndGame/SplashTitleTransition");
@@ -376,11 +371,10 @@ public class EndLevelTrigger : MonoBehaviour
 
         if (splashAnimatorController != null && splashFont != null)
         {
-             
+
              GameObject splashObj = new GameObject("Splash_EndDemo");
-             
-             
-             if (fadePanelCanvasGroup != null) 
+
+             if (fadePanelCanvasGroup != null)
              {
                 splashObj.transform.SetParent(fadePanelCanvasGroup.transform, false);
              }
@@ -389,37 +383,31 @@ public class EndLevelTrigger : MonoBehaviour
                   splashObj.transform.SetParent(this.transform, false);
              }
 
-             
              splashObj.transform.localPosition = Vector3.zero;
              splashObj.transform.localRotation = Quaternion.identity;
              splashObj.transform.localScale = Vector3.one;
-            
-             
-             CanvasGroup cg = splashObj.AddComponent<CanvasGroup>();
-             cg.alpha = 0f; 
 
-             
+             CanvasGroup cg = splashObj.AddComponent<CanvasGroup>();
+             cg.alpha = 0f;
+
              RectTransform rt = splashObj.AddComponent<RectTransform>();
-             
+
              rt.anchorMin = new Vector2(0.5f, 0.5f);
              rt.anchorMax = new Vector2(0.5f, 0.5f);
              rt.pivot = new Vector2(0.5f, 0.5f);
-             rt.anchoredPosition = Vector2.zero; 
-             rt.sizeDelta = new Vector2(1500, 200); 
+             rt.anchoredPosition = Vector2.zero;
+             rt.sizeDelta = new Vector2(1500, 200);
 
-             
              TextMeshProUGUI tmp = splashObj.AddComponent<TextMeshProUGUI>();
              if (splashFont != null) tmp.font = splashFont;
              tmp.text = "END OF THE DEMO";
-             tmp.fontSize = 90; 
-             tmp.alignment = TextAlignmentOptions.Center; 
+             tmp.fontSize = 90;
+             tmp.alignment = TextAlignmentOptions.Center;
              tmp.color = new Color(1f, 1f, 1f, 1f);
-             
-             
+
              Animator anim = splashObj.AddComponent<Animator>();
              anim.runtimeAnimatorController = splashAnimatorController;
-             
-          
+
              float textTimer = 0f;
              float textDuration = 4.0f;
              while (textTimer < textDuration)
@@ -429,9 +417,6 @@ public class EndLevelTrigger : MonoBehaviour
                  yield return null;
              }
              cg.alpha = 1f;
-             
-
-
 
         }
         else if (endDemoTextObject != null)
@@ -439,10 +424,9 @@ public class EndLevelTrigger : MonoBehaviour
             endDemoTextObject.SetActive(true);
         }
 
-        
         if (continueButtonObject != null)
         {
-            
+
             if (fadePanelCanvasGroup != null)
             {
                 continueButtonObject.transform.SetParent(fadePanelCanvasGroup.transform, false);
@@ -450,27 +434,19 @@ public class EndLevelTrigger : MonoBehaviour
 
             continueButtonObject.SetActive(true);
 
-            
-
-            
             RectTransform btnRect = continueButtonObject.GetComponent<RectTransform>();
             if (btnRect != null)
             {
-                
+
                 btnRect.anchorMin = new Vector2(0.5f, 0.5f);
                 btnRect.anchorMax = new Vector2(0.5f, 0.5f);
                 btnRect.pivot = new Vector2(0.5f, 0.5f);
-                
-                
-                
+
                 btnRect.localScale = new Vector3(0.8f, 0.8f, 0.8f);
-                
-                
-                
+
                 btnRect.anchoredPosition = new Vector2(0f, -150f);
             }
 
-            
             Button btn = continueButton;
             if (btn == null)
             {
@@ -478,19 +454,17 @@ public class EndLevelTrigger : MonoBehaviour
                 if (btn == null) btn = continueButtonObject.GetComponentInChildren<Button>();
             }
 
-            // Ensure button visuals
             Image btnImg = continueButtonObject.GetComponent<Image>();
             if (btnImg != null)
             {
-                 // Ensure it's visible even if sprite is missing
-                 if (btnImg.sprite == null) 
+
+                 if (btnImg.sprite == null)
                  {
-                     btnImg.sprite = null; // Clear potential broken reference
+                     btnImg.sprite = null;
                      btnImg.color = new Color(0.9f, 0.9f, 0.9f, 1f);
                  }
             }
 
-            // Ensure button text
             TextMeshProUGUI btnText = continueButtonObject.GetComponentInChildren<TextMeshProUGUI>();
             if (btnText == null)
             {
@@ -502,7 +476,7 @@ public class EndLevelTrigger : MonoBehaviour
                  textRect.anchorMax = Vector2.one;
                  textRect.sizeDelta = Vector2.zero;
             }
-            
+
             if (string.IsNullOrEmpty(btnText.text)) btnText.text = "QUIT";
             if (splashFont != null) btnText.font = splashFont;
             btnText.alignment = TextAlignmentOptions.Center;
@@ -519,11 +493,9 @@ public class EndLevelTrigger : MonoBehaviour
             }
         }
 
-        
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
-        
-        
+
         if (UnityEngine.EventSystems.EventSystem.current == null)
         {
              GameObject eventSystem = new GameObject("EventSystem");
@@ -536,7 +508,6 @@ public class EndLevelTrigger : MonoBehaviour
             continueButton.Select();
         }
 
-        
         if (playerOneInput != null)
         {
             playerOneInput.SwitchCurrentActionMap("UI");
@@ -546,15 +517,11 @@ public class EndLevelTrigger : MonoBehaviour
             playerTwoInput.SwitchCurrentActionMap("UI");
         }
 
-        
     }
 
-    
     public void LoadMainMenuScene()
     {
 
-
-        
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
@@ -567,7 +534,6 @@ public class EndLevelTrigger : MonoBehaviour
             playerTwoInput.SwitchCurrentActionMap("Player");
         }
 
-        
         SceneManager.LoadScene(mainMenuScene);
     }
 }

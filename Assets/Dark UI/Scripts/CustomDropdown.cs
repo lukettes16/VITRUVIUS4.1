@@ -147,7 +147,7 @@ namespace Michsky.UI.Dark
             selectedImage.sprite = dropdownItems[itemIndex].itemIcon;
             selectedText.text = dropdownItems[itemIndex].itemName;
             selectedItemIndex = itemIndex;
-            // dropdownItems[itemIndex].OnItemSelection.Invoke();
+
         }
 
         public void Animate()

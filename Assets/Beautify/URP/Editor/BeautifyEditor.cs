@@ -22,7 +22,6 @@ namespace Beautify.Universal {
         Texture2D headerTex;
         bool pixelateExpanded;
 
-        // settings group <setting, property reference>
         class SectionContents {
             public Dictionary<Beautify.SettingsGroup, List<MemberInfo>> groups = new Dictionary<Beautify.SettingsGroup, List<MemberInfo>>();
             public List<MemberInfo> singleFields = new List<MemberInfo>();
@@ -47,7 +46,6 @@ namespace Beautify.Universal {
 
             propertyFetcher = new PropertyFetcher<Beautify>(serializedObject);
 
-            // get volume fx settings
             var settings = beautify.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
                             .Where(t => t.FieldType.IsSubclassOf(typeof(VolumeParameter)))
                             .Where(t => (t.IsPublic && t.GetCustomAttributes(typeof(NonSerializedAttribute), false).Length == 0) ||
@@ -55,7 +53,6 @@ namespace Beautify.Universal {
                             .Where(t => t.GetCustomAttributes(typeof(HideInInspector), false).Length == 0)
                             .Where(t => t.GetCustomAttributes(typeof(Beautify.SectionGroup), false).Any());
 
-            // group by settings first
             unpackedFields.Clear();
             sections.Clear();
             groupedFields.Clear();
@@ -84,7 +81,6 @@ namespace Beautify.Universal {
                 }
             }
         }
-
 
         public override void OnInspectorGUI () {
 
@@ -156,7 +152,6 @@ namespace Beautify.Universal {
                     ContactUsWindow.ShowScreen();
                 }
                 EditorGUILayout.EndHorizontal();
-
 
                 UniversalRenderPipelineAsset pipe = GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset;
 
@@ -348,7 +343,6 @@ namespace Beautify.Universal {
             if (pixelateExpanded) {
                 EditorGUILayout.HelpBox("Use the Downsampling option in General Settings to apply a pixelate effect.", MessageType.Info);
             }
-
 
             if (serializedObject.ApplyModifiedProperties()) {
                 if (beautify.directWrite.value != prevDirectWrite || beautify.bloomExclusionLayerMask != prevBloomExclusionLayerMask || beautify.anamorphicFlaresExclusionLayerMask != prevAnamorphicFlaresExclusionLayerMask || beautify.outline.value) {

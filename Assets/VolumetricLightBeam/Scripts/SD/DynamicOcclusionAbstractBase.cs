@@ -3,37 +3,23 @@ using UnityEngine.Serialization;
 
 namespace VLB
 {
-    [AddComponentMenu("")] // hide it from Component search
+    [AddComponentMenu("")]
     [DisallowMultipleComponent]
     [RequireComponent(typeof(VolumetricLightBeamSD))]
     public abstract class DynamicOcclusionAbstractBase : MonoBehaviour
     {
         public const string ClassName = "DynamicOcclusionAbstractBase";
 
-        /// <summary>
-        /// How often will the occlusion be processed?
-        /// Try to update the occlusion as rarely as possible to keep good performance.
-        /// </summary>
         public DynamicOcclusionUpdateRate updateRate = Consts.DynOcclusion.UpdateRateDefault;
 
-        /// <summary>
-        /// How many frames we wait between 2 occlusion tests?
-        /// If you want your beam to be super responsive to the changes of your environment, update it every frame by setting 1.
-        /// If you want to save on performance, we recommend to wait few frames between each update by setting a higher value.
-        /// </summary>
         [FormerlySerializedAs("waitFrameCount")]
         public int waitXFrames = Consts.DynOcclusion.WaitFramesCountDefault;
 
-        /// <summary>
-        /// Manually process the occlusion.
-        /// You have to call this function in order to update the occlusion when using DynamicOcclusionUpdateRate.Never.
-        /// </summary>
         public void ProcessOcclusionManually() { ProcessOcclusion(ProcessOcclusionSource.User); }
 
         public event System.Action onOcclusionProcessed;
 
         public static bool _INTERNAL_ApplyRandomFrameOffset = true;
-
 
         protected enum ProcessOcclusionSource
         {
@@ -49,7 +35,7 @@ namespace VLB
                 return;
 
             if (m_LastFrameRendered == Time.frameCount && Application.isPlaying && source == ProcessOcclusionSource.OnEnable)
-                return; // allow to call ProcessOcclusion from OnEnable (when disabling/enabling multiple a beam on the same frame) without generating an error
+                return;
 
             Debug.Assert(!Application.isPlaying || m_LastFrameRendered != Time.frameCount, "ProcessOcclusion has been called twice on the same frame, which is forbidden");
             Debug.Assert(m_Master);
@@ -73,13 +59,13 @@ namespace VLB
 
             if (firstTime && _INTERNAL_ApplyRandomFrameOffset)
             {
-                m_LastFrameRendered += Random.Range(0, waitXFrames); // add a random offset to prevent from updating texture for all beams having the same wait value
+                m_LastFrameRendered += Random.Range(0, waitXFrames);
             }
         }
 
         TransformUtils.Packed m_TransformPacked;
         int m_LastFrameRendered = int.MinValue;
-        public int _INTERNAL_LastFrameRendered { get { return m_LastFrameRendered; } } // for unit tests
+        public int _INTERNAL_LastFrameRendered { get { return m_LastFrameRendered; } }
         protected VolumetricLightBeamSD m_Master = null;
         protected MaterialModifier.Callback m_MaterialModifierCallbackCached = null;
 
@@ -89,7 +75,6 @@ namespace VLB
         protected abstract bool OnProcessOcclusion(ProcessOcclusionSource source);
         protected abstract void OnModifyMaterialCallback(MaterialModifier.Interface owner);
         protected abstract void OnEnablePostValidate();
-
 
         protected virtual void OnValidateProperties()
         {
@@ -112,7 +97,7 @@ namespace VLB
 
         protected virtual void OnEnable()
         {
-            // cache the delegate to prevent from being inlined as '() => OnModifyMaterialCallback' when calling _INTERNAL_SetDynamicOcclusionCallback and from generating GC garbage
+
             m_MaterialModifierCallbackCached = OnModifyMaterialCallback;
 
             OnValidateProperties();
@@ -149,13 +134,12 @@ namespace VLB
         }
 #endif
 
-
         void OnWillCameraRender(Camera cam)
         {
             Debug.Assert(Application.isPlaying);
 
             if (cam != null && cam.enabled
-                && Time.frameCount != m_LastFrameRendered) // prevent from updating multiple times if there are more than 1 camera
+                && Time.frameCount != m_LastFrameRendered)
             {
                 bool shouldUpdate = false;
 
@@ -182,4 +166,3 @@ namespace VLB
         }
     }
 }
-

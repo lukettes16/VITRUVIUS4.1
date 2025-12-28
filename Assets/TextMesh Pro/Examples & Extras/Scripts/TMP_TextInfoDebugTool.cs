@@ -3,14 +3,12 @@ using UnityEngine;
 using System.Collections;
 using UnityEditor;
 
-
 namespace TMPro.Examples
 {
 
     public class TMP_TextInfoDebugTool : MonoBehaviour
     {
-        // Since this script is used for debugging, we exclude it from builds.
-        // TODO: Rework this script to make it into an editor utility.
+
         #if UNITY_EDITOR
         public bool ShowCharacters;
         public bool ShowWords;
@@ -31,7 +29,6 @@ namespace TMPro.Examples
         private float m_ScaleMultiplier;
         private float m_HandleSize;
 
-
         void OnDrawGizmos()
         {
             if (m_TextComponent == null)
@@ -44,10 +41,8 @@ namespace TMPro.Examples
 
             m_Transform = m_TextComponent.transform;
 
-            // Get a reference to the text object's textInfo
             m_TextInfo = m_TextComponent.textInfo;
 
-            // Update Text Statistics
             ObjectStats = "Characters: " + m_TextInfo.characterCount + "   Words: " + m_TextInfo.wordCount + "   Spaces: " + m_TextInfo.spaceCount + "   Sprites: " + m_TextInfo.spriteCount + "   Links: " + m_TextInfo.linkCount
                           + "\nLines: " + m_TextInfo.lineCount + "   Pages: " + m_TextInfo.pageCount;
 
@@ -92,11 +87,6 @@ namespace TMPro.Examples
             #endregion
         }
 
-
-        /// <summary>
-        /// Method to draw a rectangle around each character.
-        /// </summary>
-        /// <param name="text"></param>
         void DrawCharactersBounds()
         {
             int characterCount = m_TextInfo.characterCount;
@@ -256,11 +246,6 @@ namespace TMPro.Examples
             }
         }
 
-
-        /// <summary>
-        /// Method to draw rectangles around each word of the text.
-        /// </summary>
-        /// <param name="text"></param>
         void DrawWordBounds()
         {
             for (int i = 0; i < m_TextInfo.wordCount; i++)
@@ -301,7 +286,7 @@ namespace TMPro.Examples
                         bottomLeft = new Vector3(currentCharInfo.bottomLeft.x, currentCharInfo.descender, 0);
                         topLeft = new Vector3(currentCharInfo.bottomLeft.x, currentCharInfo.ascender, 0);
 
-                        //Debug.Log("Start Word Region at [" + currentCharInfo.character + "]");
+                        //
 
                         // If Word is one character
                         if (wInfo.characterCount == 1)
@@ -316,7 +301,7 @@ namespace TMPro.Examples
                             // Draw Region
                             DrawRectangle(bottomLeft, topLeft, topRight, bottomRight, wordColor);
 
-                            //Debug.Log("End Word Region at [" + currentCharInfo.character + "]");
+                            //
                         }
                     }
 
@@ -333,7 +318,7 @@ namespace TMPro.Examples
                         // Draw Region
                         DrawRectangle(bottomLeft, topLeft, topRight, bottomRight, wordColor);
 
-                        //Debug.Log("End Word Region at [" + currentCharInfo.character + "]");
+                        //
                     }
                     // If Word is split on more than one line.
                     else if (isBeginRegion && currentLine != m_TextInfo.characterInfo[characterIndex + 1].lineNumber)
@@ -347,24 +332,18 @@ namespace TMPro.Examples
 
                         // Draw Region
                         DrawRectangle(bottomLeft, topLeft, topRight, bottomRight, wordColor);
-                        //Debug.Log("End Word Region at [" + currentCharInfo.character + "]");
+                        //
                         maxAscender = -Mathf.Infinity;
                         minDescender = Mathf.Infinity;
 
                     }
                 }
 
-                //Debug.Log(wInfo.GetWord(m_TextMeshPro.textInfo.characterInfo));
+                //
             }
-
 
         }
 
-
-        /// <summary>
-        /// Draw rectangle around each of the links contained in the text.
-        /// </summary>
-        /// <param name="text"></param>
         void DrawLinkBounds()
         {
             TMP_TextInfo textInfo = m_TextComponent.textInfo;
@@ -407,7 +386,7 @@ namespace TMPro.Examples
                         bottomLeft = new Vector3(currentCharInfo.bottomLeft.x, currentCharInfo.descender, 0);
                         topLeft = new Vector3(currentCharInfo.bottomLeft.x, currentCharInfo.ascender, 0);
 
-                        //Debug.Log("Start Word Region at [" + currentCharInfo.character + "]");
+                        //
 
                         // If Link is one character
                         if (linkInfo.linkTextLength == 1)
@@ -422,7 +401,7 @@ namespace TMPro.Examples
                             // Draw Region
                             DrawRectangle(bottomLeft, topLeft, topRight, bottomRight, linkColor);
 
-                            //Debug.Log("End Word Region at [" + currentCharInfo.character + "]");
+                            //
                         }
                     }
 
@@ -439,7 +418,7 @@ namespace TMPro.Examples
                         // Draw Region
                         DrawRectangle(bottomLeft, topLeft, topRight, bottomRight, linkColor);
 
-                        //Debug.Log("End Word Region at [" + currentCharInfo.character + "]");
+                        //
                     }
                     // If Link is split on more than one line.
                     else if (isBeginRegion && currentLine != textInfo.characterInfo[characterIndex + 1].lineNumber)
@@ -456,19 +435,14 @@ namespace TMPro.Examples
 
                         maxAscender = -Mathf.Infinity;
                         minDescender = Mathf.Infinity;
-                        //Debug.Log("End Word Region at [" + currentCharInfo.character + "]");
+                        //
                     }
                 }
 
-                //Debug.Log(wInfo.GetWord(m_TextMeshPro.textInfo.characterInfo));
+                //
             }
         }
 
-
-        /// <summary>
-        /// Draw Rectangles around each lines of the text.
-        /// </summary>
-        /// <param name="text"></param>
         void DrawLineBounds()
         {
             int lineCount = m_TextInfo.lineCount;
@@ -545,21 +519,15 @@ namespace TMPro.Examples
             }
         }
 
-
-        /// <summary>
-        /// Draw Rectangle around the bounds of the text object.
-        /// </summary>
         void DrawBounds()
         {
             Bounds meshBounds = m_TextComponent.bounds;
 
-            // Get Bottom Left and Top Right position of each word
             Vector3 bottomLeft = m_TextComponent.transform.position + meshBounds.min;
             Vector3 topRight = m_TextComponent.transform.position + meshBounds.max;
 
             DrawRectangle(bottomLeft, topRight, new Color(1, 0.5f, 0));
         }
-
 
         void DrawTextBounds()
         {
@@ -571,8 +539,6 @@ namespace TMPro.Examples
             DrawRectangle(bottomLeft, topRight, new Color(0f, 0.5f, 0.5f));
         }
 
-
-        // Draw Rectangles
         void DrawRectangle(Vector3 BL, Vector3 TR, Color color)
         {
             Gizmos.color = color;
@@ -621,8 +587,6 @@ namespace TMPro.Examples
             Handles.DrawLine(new Vector3(position.x, position.y - size, position.z), new Vector3(position.x, position.y + size, position.z));
         }
 
-
-        // Draw Rectangles
         void DrawRectangle(Vector3 bl, Vector3 tl, Vector3 tr, Vector3 br, Color color)
         {
             Gizmos.color = color;
@@ -633,8 +597,6 @@ namespace TMPro.Examples
             Gizmos.DrawLine(br, bl);
         }
 
-
-        // Draw Rectangles
         void DrawDottedRectangle(Vector3 bl, Vector3 tl, Vector3 tr, Vector3 br, Color color)
         {
             var cam = Camera.current;
@@ -649,4 +611,3 @@ namespace TMPro.Examples
         #endif
     }
 }
-

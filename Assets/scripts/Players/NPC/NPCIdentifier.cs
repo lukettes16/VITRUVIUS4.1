@@ -1,9 +1,5 @@
 ﻿using UnityEngine;
 
-
-
-
-
 [RequireComponent(typeof(NPCHealth))]
 public class NPCIdentifier : MonoBehaviour
 {
@@ -15,28 +11,19 @@ public class NPCIdentifier : MonoBehaviour
     [Tooltip("El color usado para el efecto Outline de objetos interactuables cuando este NPC esta cerca.")]
     [SerializeField] private Color npcOutlineColor = Color.green;
 
-    
-    
-    
     public Color NPCOutlineColor => npcOutlineColor;
 
     [Header("Component References")]
     [SerializeField] private NPCHealth npcHealth;
     [SerializeField] private NPCNoiseEmitter npcNoiseEmitter;
 
-    
-    
-    
     public NPCHealth NPCHealth => npcHealth;
 
-    
-    
-    
     public NPCNoiseEmitter NPCNoiseEmitter => npcNoiseEmitter;
 
     private void Awake()
     {
-        
+
         if (npcHealth == null)
             npcHealth = GetComponent<NPCHealth>();
 
@@ -44,4 +31,3 @@ public class NPCIdentifier : MonoBehaviour
             npcNoiseEmitter = GetComponent<NPCNoiseEmitter>();
     }
 }
-

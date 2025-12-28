@@ -45,8 +45,6 @@ namespace VLB
             static void Menu_CreateNewLODBeamGroup(MenuCommand menuCommand) { EditorExtensions.OnNewGameObjectCreated(EditorExtensions.LOD.NewLODBeamGroup(), menuCommand); }
         }
 
-
-
         const string kAddVolumetricBeam = "CONTEXT/Light/\U0001F4A1 Attach a Volumetric Beam ";
         static bool CanAddVolumetricBeam(Light light) { return !Application.isPlaying && light != null && light.type == LightType.Spot && light.GetComponent<VolumetricLightBeamAbstractBase>() == null; }
 
@@ -72,12 +70,10 @@ namespace VLB
         [MenuItem(kAddVolumetricBeam + "HD", true)]
         static bool Menu_AttachBeam_Validate() { return CanAddVolumetricBeam(GetActiveLight()); }
 
-
         const int kMenuItemPriorityBase = 1000;
 
-        /////////////////////////////
         // DOCUMENTATION
-        /////////////////////////////
+
         const int kMenuItemPriorityDocumentation = kMenuItemPriorityBase + 1;
         const string kDocumentationSuffix = "/\u2754 Documentation";
 
@@ -123,9 +119,8 @@ namespace VLB
         [MenuItem("CONTEXT/" + Config.ClassName + kDocumentationSuffix, false, kMenuItemPriorityDocumentation)]
         static void Menu_Config_Doc(MenuCommand menuCommand) { Application.OpenURL(Consts.Help.UrlConfig); }
 
-        /////////////////////////////
         // GLOBAL CONFIG
-        /////////////////////////////
+
         const int kMenuItemPriorityOpenConfig = kMenuItemPriorityBase + 2;
         const string kOpenConfigSuffix = "/\u2699 Open Global Config";
 
@@ -141,9 +136,8 @@ namespace VLB
         [MenuItem("CONTEXT/" + TrackRealtimeChangesOnLightHD.ClassName + kOpenConfigSuffix, false, kMenuItemPriorityOpenConfig)]
         public static void Menu_Beam_Config(MenuCommand menuCommand) { Config.EditorSelectInstance(); }
 
-        /////////////////////////////
         // ADDITIONAL COMPONENTS
-        /////////////////////////////
+
         const string kAddParticlesSD = "CONTEXT/" + VolumetricLightBeamSD.ClassName + "/Add Dust Particles";
         [MenuItem(kAddParticlesSD, false)] static void Menu_AddDustParticles_CommandSD(MenuCommand menuCommand) => Menu_AddDustParticles_Command_Common(menuCommand);
         [MenuItem(kAddParticlesSD, true)] static bool Menu_AddDustParticles_ValidateSD() => Menu_AddDustParticles_Validate_Common();
@@ -228,12 +222,8 @@ namespace VLB
         static Light GetActiveLight() { return Selection.activeGameObject != null ? Selection.activeGameObject.GetComponent<Light>() : null; }
         static VolumetricLightBeamAbstractBase GetActiveVolumetricLightBeam() { return Selection.activeGameObject != null ? Selection.activeGameObject.GetComponent<VolumetricLightBeamAbstractBase>() : null; }
 
-
-
-
-        /////////////////////////////
         // EDIT MENU
-        /////////////////////////////
+
         const string kEditMenu = "Edit/" + kCategoryName;
 
         [MenuItem(kEditMenu + "\u2699 Open Config", false, 20001)]
@@ -269,10 +259,8 @@ namespace VLB
         }
 #endif // UNITY_2019_3_OR_NEWER
 
-
-        /////////////////////////////
         // PROJECT BROWSER
-        /////////////////////////////
+
         const string kProjectBrowserMenuPrefix = "Assets/Create/" + kCategoryName;
 
         static string CurrentProjectFolderPath
@@ -301,7 +289,7 @@ namespace VLB
         {
             if (Application.isPlaying)
             {
-                Debug.LogError("Can't create new prefab during playmode");
+                
                 return;
             }
 
@@ -331,4 +319,3 @@ namespace VLB
     }
 }
 #endif
-

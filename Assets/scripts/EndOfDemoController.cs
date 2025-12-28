@@ -55,11 +55,10 @@ public class EndOfDemoController : MonoBehaviour
     {
         if (isShowing)
         {
-            Debug.LogWarning("[EndOfDemo] End screen already showing, ignoring duplicate call.");
+            
             return;
         }
 
-        Debug.Log("[EndOfDemo] Showing end screen...");
         isShowing = true;
 
         if (endScreenRoot == null)
@@ -72,14 +71,13 @@ public class EndOfDemoController : MonoBehaviour
 
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
-        
+
         Time.timeScale = 1f;
     }
 
     private void CreateEndScreenUI()
     {
-        Debug.Log("[EndOfDemo] Creating end screen UI...");
-
+        
         endScreenRoot = new GameObject("EndScreenCanvas");
         endScreenRoot.transform.SetParent(transform);
 
@@ -182,12 +180,11 @@ public class EndOfDemoController : MonoBehaviour
 
         endScreenRoot.SetActive(false);
 
-        Debug.Log("[EndOfDemo] End screen UI created successfully.");
     }
 
     private IEnumerator FadeInCoroutine()
     {
-        Debug.Log("[EndOfDemo] Starting fade-in animation...");
+        
         float elapsed = 0f;
 
         while (elapsed < fadeDuration)
@@ -200,15 +197,14 @@ public class EndOfDemoController : MonoBehaviour
         }
 
         canvasGroup.alpha = 1f;
-        Debug.Log("[EndOfDemo] Fade-in complete.");
+        
     }
 
     private void OnQuitButtonPressed()
     {
-        Debug.Log("[EndOfDemo] Quit button pressed. Exiting application...");
-
+        
         #if UNITY_EDITOR
-        Debug.Log("[EndOfDemo] Running in editor - would quit application in build.");
+        
         UnityEditor.EditorApplication.isPlaying = false;
         #else
         Application.Quit();
@@ -217,7 +213,7 @@ public class EndOfDemoController : MonoBehaviour
 
     public void ResetEndScreen()
     {
-        Debug.Log("[EndOfDemo] Resetting end screen state.");
+        
         isShowing = false;
         if (endScreenRoot != null)
         {

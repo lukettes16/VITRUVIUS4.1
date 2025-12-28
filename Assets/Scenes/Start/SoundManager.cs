@@ -58,7 +58,7 @@ public class SoundManager : MonoBehaviour
         sfxChannel[(int)id].loop = loop;
         sfxChannel[(int)id].volume = volumeSFX;
         sfxChannel[(int)id].pitch = pitch;
-        
+
     }
 
     public void StopAllSounds()
@@ -112,7 +112,7 @@ public class SoundManager : MonoBehaviour
         {
             sfxChannel[i].volume = volumeSFX;
         }
-        
+
         PlayerPrefs.SetFloat("volumeSFX", volumeSFX);
     }
 
@@ -184,7 +184,7 @@ public class SoundManager : MonoBehaviour
         {
             musicChannel[i].volume = volumeMusic;
         }
-        
+
         PlayerPrefs.SetFloat("volumeMusic", volumeMusic);
     }
 

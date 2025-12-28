@@ -22,7 +22,6 @@ public class EnemyCameraController : MonoBehaviour
     private bool isTrackingEnemy = false;
     private Coroutine transitionCoroutine = null;
 
-    
     private float originalMinSize;
     private float originalMaxSize;
     private float originalEdgeBuffer;
@@ -38,41 +37,31 @@ public class EnemyCameraController : MonoBehaviour
         }
     }
 
-    
-    
-    
     public void StartTrackingEnemy(Transform enemy)
     {
         if (isTrackingEnemy || enemy == null || cameraController == null) return;
 
         enemyTransform = enemy;
 
-        
         if (transitionCoroutine != null)
         {
             StopCoroutine(transitionCoroutine);
             transitionCoroutine = null;
         }
 
-        
         transitionCoroutine = StartCoroutine(SmoothStartTracking());
     }
 
-    
-    
-    
     public void StopTrackingEnemy()
     {
         if (!isTrackingEnemy || cameraController == null) return;
 
-        
         if (transitionCoroutine != null)
         {
             StopCoroutine(transitionCoroutine);
             transitionCoroutine = null;
         }
 
-        
         transitionCoroutine = StartCoroutine(SmoothStopTracking());
     }
 
@@ -83,18 +72,15 @@ public class EnemyCameraController : MonoBehaviour
         Camera mainCamera = Camera.main;
         if (mainCamera == null || !mainCamera.orthographic) yield break;
 
-        
         originalMinSize = GetCameraMinSize();
         originalMaxSize = GetCameraMaxSize();
         originalEdgeBuffer = GetCameraEdgeBuffer();
 
         float startSize = mainCamera.orthographicSize;
 
-        
         cameraController.AddTarget(enemyTransform);
         isTrackingEnemy = true;
 
-        
         float elapsedTime = 0f;
 
         while (elapsedTime < zoomOutDuration)
@@ -102,7 +88,6 @@ public class EnemyCameraController : MonoBehaviour
             elapsedTime += Time.deltaTime;
             float t = zoomCurve.Evaluate(elapsedTime / zoomOutDuration);
 
-            
             float newMinSize = Mathf.Lerp(originalMinSize, combatMinSize, t);
             float newMaxSize = Mathf.Lerp(originalMaxSize, combatMaxSize, t);
             float newEdgeBuffer = Mathf.Lerp(originalEdgeBuffer, combatEdgeBuffer, t);
@@ -112,7 +97,6 @@ public class EnemyCameraController : MonoBehaviour
             yield return null;
         }
 
-        
         SetCameraParameters(combatMinSize, combatMaxSize, combatEdgeBuffer);
 
         transitionCoroutine = null;
@@ -133,7 +117,6 @@ public class EnemyCameraController : MonoBehaviour
             elapsedTime += Time.deltaTime;
             float t = zoomCurve.Evaluate(elapsedTime / zoomInDuration);
 
-            
             float newMinSize = Mathf.Lerp(combatMinSize, originalMinSize, t);
             float newMaxSize = Mathf.Lerp(combatMaxSize, originalMaxSize, t);
             float newEdgeBuffer = Mathf.Lerp(combatEdgeBuffer, originalEdgeBuffer, t);
@@ -143,26 +126,22 @@ public class EnemyCameraController : MonoBehaviour
             yield return null;
         }
 
-        
         SetCameraParameters(originalMinSize, originalMaxSize, originalEdgeBuffer);
 
-        
         cameraController.RemoveTarget(enemyTransform);
 
-        
         isTrackingEnemy = false;
         enemyTransform = null;
         transitionCoroutine = null;
     }
 
-    
     private float GetCameraMinSize()
     {
         var field = typeof(CameraController).GetField("minSize",
             System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
         if (field != null)
             return (float)field.GetValue(cameraController);
-        return 6f; 
+        return 6f;
     }
 
     private float GetCameraMaxSize()
@@ -171,7 +150,7 @@ public class EnemyCameraController : MonoBehaviour
             System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
         if (field != null)
             return (float)field.GetValue(cameraController);
-        return 18f; 
+        return 18f;
     }
 
     private float GetCameraEdgeBuffer()
@@ -180,7 +159,7 @@ public class EnemyCameraController : MonoBehaviour
             System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
         if (field != null)
             return (float)field.GetValue(cameraController);
-        return 4f; 
+        return 4f;
     }
 
     private void SetCameraParameters(float minSize, float maxSize, float edgeBuffer)
@@ -197,9 +176,6 @@ public class EnemyCameraController : MonoBehaviour
         if (bufferField != null) bufferField.SetValue(cameraController, edgeBuffer);
     }
 
-    
-    
-    
     public bool IsTrackingEnemy()
     {
         return isTrackingEnemy;
@@ -207,7 +183,7 @@ public class EnemyCameraController : MonoBehaviour
 
     private void OnDestroy()
     {
-        
+
         if (isTrackingEnemy && transitionCoroutine != null)
         {
             StopCoroutine(transitionCoroutine);
@@ -218,7 +194,6 @@ public class EnemyCameraController : MonoBehaviour
             if (enemyTransform != null)
                 cameraController.RemoveTarget(enemyTransform);
 
-            
             SetCameraParameters(originalMinSize, originalMaxSize, originalEdgeBuffer);
         }
     }

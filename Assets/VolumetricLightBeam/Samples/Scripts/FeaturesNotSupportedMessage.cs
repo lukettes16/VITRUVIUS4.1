@@ -6,8 +6,6 @@ namespace VLB_Samples
     {
         void Start()
         {
-            if(!VLB.Noise3D.isSupported)
-                Debug.LogWarning(VLB.Noise3D.isNotSupportedString);
-        }
+            if (!VLB.Noise3D.isSupported) { }}
     }
 }

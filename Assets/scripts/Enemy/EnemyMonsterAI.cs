@@ -86,7 +86,6 @@ public class EnemyMonsterAI : MonoBehaviour
     [Header("Camera System")]
     public EnemyCameraController enemyCameraController;
 
-    
     [Header("Shader FX - Roar")]
     [Tooltip("Arrastra aqu el Material creado con SG_EnemyRoar (Mat_Roar)")]
     public Material roarMaterial;
@@ -94,14 +93,12 @@ public class EnemyMonsterAI : MonoBehaviour
     [Tooltip("Intensidad mxima de la distorsin.")]
     [Range(0, 0.1f)]
     public float maxRoarDistortion = 0.03f;
-    
 
     private float halfViewAngle;
     private bool isAttacking = false;
     private bool isRising = false;
     private bool isRoaring = false;
     private bool playerVisible = false;
-    private bool lastPlayerVisible = false;
     private bool returningToCrawl = false;
     private bool hasAwakened = false;
     private bool isTransitioning = false;
@@ -109,7 +106,6 @@ public class EnemyMonsterAI : MonoBehaviour
     public float reDetectionCooldown = 2f;
     private float lastReDetectionTime = -999f;
 
-    
     private int _roarIntensityID;
     private int _isActiveID;
     private Coroutine roarVisualCoroutine = null;
@@ -133,11 +129,10 @@ public class EnemyMonsterAI : MonoBehaviour
             audioSource.playOnAwake = false;
         }
 
-        
         audioSource.rolloffMode = AudioRolloffMode.Linear;
         audioSource.minDistance = 1f;
-        audioSource.maxDistance = 30f; 
-        audioSource.dopplerLevel = 0f; 
+        audioSource.maxDistance = 30f;
+        audioSource.dopplerLevel = 0f;
 
         halfViewAngle = viewAngle / 2f;
 
@@ -151,7 +146,6 @@ public class EnemyMonsterAI : MonoBehaviour
             agent.angularSpeed = 120f;
         }
 
-
         anim.SetBool(sleepAnimBool, true);
         anim.SetBool("isCrawling", false);
         anim.SetBool("isWalking", false);
@@ -159,17 +153,14 @@ public class EnemyMonsterAI : MonoBehaviour
 
         DisableAllHitboxes();
 
-
         if (enemyCameraController == null)
             enemyCameraController = FindObjectOfType<EnemyCameraController>();
 
-        
         if (roarMaterial != null)
         {
             _roarIntensityID = Shader.PropertyToID("_RoarIntensity");
             _isActiveID = Shader.PropertyToID("_IsActive");
 
-            
             roarMaterial.SetFloat(_isActiveID, 0f);
             roarMaterial.SetFloat(_roarIntensityID, 0f);
         }
@@ -187,14 +178,12 @@ public class EnemyMonsterAI : MonoBehaviour
             return;
         }
 
-
         if (currentState == State.Rising ||
             currentState == State.Roaring ||
             currentState == State.ReturningToCrawl)
         {
             return;
         }
-
 
         if (currentState == State.Attacking)
         {
@@ -205,13 +194,11 @@ public class EnemyMonsterAI : MonoBehaviour
             return;
         }
 
-
         if (currentState == State.Investigating)
         {
             Investigate();
             return;
         }
-
 
         if (!playerVisible || currentPlayer == null)
         {
@@ -229,17 +216,14 @@ public class EnemyMonsterAI : MonoBehaviour
             return;
         }
 
-
         float distance = Vector3.Distance(transform.position, currentPlayer.position);
         RotateToTarget(currentPlayer.position);
-
 
         if (currentState == State.Patrol)
         {
             StartCoroutine(RiseAndRoar());
             return;
         }
-
 
         if (currentState != State.Chasing)
         {
@@ -248,13 +232,11 @@ public class EnemyMonsterAI : MonoBehaviour
 
         agent.stoppingDistance = attackRange - attackStopDistanceOffset;
 
-
         if (IsWallBetweenPlayerAndMe(currentPlayer))
         {
             StartCoroutine(AttackWallCycle());
             return;
         }
-
 
         if (distance > agent.stoppingDistance + 0.1f)
         {
@@ -265,10 +247,6 @@ public class EnemyMonsterAI : MonoBehaviour
             StartCoroutine(AttackCycle());
         }
     }
-
-
-
-
 
     void HandleSleepingState()
     {
@@ -313,7 +291,6 @@ public class EnemyMonsterAI : MonoBehaviour
             return;
         }
 
-
         if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance + 0.1f)
         {
             if (!isWaiting)
@@ -329,7 +306,6 @@ public class EnemyMonsterAI : MonoBehaviour
             {
                 agent.isStopped = false;
             }
-
 
             bool isMoving = agent.velocity.sqrMagnitude > movementThreshold;
             anim.SetBool("isCrawling", isMoving);
@@ -351,7 +327,6 @@ public class EnemyMonsterAI : MonoBehaviour
 
         SetNextPatrol();
 
-
         yield return new WaitForSeconds(transitionDelay);
 
         agent.isStopped = false;
@@ -365,16 +340,11 @@ public class EnemyMonsterAI : MonoBehaviour
         agent.SetDestination(patrolPoints[patrolIndex].position);
     }
 
-
-
-
-
     void DetectPlayers()
     {
         Transform nearest = null;
         float minDist = Mathf.Infinity;
 
-        
         foreach (Transform player in playerTargets)
         {
             if (player == null) continue;
@@ -390,7 +360,6 @@ public class EnemyMonsterAI : MonoBehaviour
             bool canSeePlayer = dist <= lookRadius && IsPlayerInViewCone(player) && HasLineOfSight(player);
             bool canHearPlayer = dist <= audioDetectionRadius;
 
-            
             PlayerNoiseEmitter noiseEmitter = player.GetComponent<PlayerNoiseEmitter>();
             if (noiseEmitter != null && canHearPlayer && dist <= noiseEmitter.currentNoiseRadius)
             {
@@ -413,7 +382,6 @@ public class EnemyMonsterAI : MonoBehaviour
             }
         }
 
-        
         foreach (Transform npc in npcTargets)
         {
             if (npc == null) continue;
@@ -429,7 +397,6 @@ public class EnemyMonsterAI : MonoBehaviour
             bool canSeeNPC = dist <= lookRadius && IsPlayerInViewCone(npc) && HasLineOfSight(npc);
             bool canHearNPC = dist <= audioDetectionRadius;
 
-            
             NPCNoiseEmitter npcNoiseEmitter = npc.GetComponent<NPCNoiseEmitter>();
             if (npcNoiseEmitter != null && canHearNPC && dist <= npcNoiseEmitter.currentNoiseRadius)
             {
@@ -482,7 +449,6 @@ public class EnemyMonsterAI : MonoBehaviour
                 lastReDetectionTime = Time.time;
             }
         }
-
 
         if (!playerVisible && hadPlayer && hasAwakened &&
             !returningToCrawl && !isTransitioning &&
@@ -544,10 +510,6 @@ public class EnemyMonsterAI : MonoBehaviour
         return false;
     }
 
-
-
-
-
     IEnumerator RiseAndRoar()
     {
         if (isRising || isRoaring || isTransitioning) yield break;
@@ -556,7 +518,6 @@ public class EnemyMonsterAI : MonoBehaviour
         isTransitioning = true;
         ChangeState(State.Rising);
         isRising = true;
-
 
         if (enemyCameraController != null)
             enemyCameraController.StartTrackingEnemy(transform);
@@ -575,15 +536,11 @@ public class EnemyMonsterAI : MonoBehaviour
         PlayRoarSound();
         anim.SetTrigger("Roar");
 
-        
-        
-
         yield return new WaitForSeconds(roarDuration);
 
         isRoaring = false;
         isTransitioning = false;
         ChangeState(State.Chasing);
-
 
         yield return new WaitForSeconds(transitionDelay);
 
@@ -611,7 +568,6 @@ public class EnemyMonsterAI : MonoBehaviour
         {
             agent.isStopped = false;
         }
-
 
         bool isMoving = agent.velocity.sqrMagnitude > movementThreshold;
         anim.SetBool("isWalking", isMoving);
@@ -644,7 +600,6 @@ public class EnemyMonsterAI : MonoBehaviour
             UpdateFootsteps(walkFootstepClip, walkFootstepInterval);
         }
 
-        
         if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance + 0.5f)
         {
             DialogueManager.ShowEnemyChaseEndedDialogue();
@@ -678,7 +633,6 @@ public class EnemyMonsterAI : MonoBehaviour
         isAttacking = false;
         isTransitioning = false;
 
-
         yield return null;
 
         if (playerVisible && currentPlayer != null)
@@ -711,7 +665,6 @@ public class EnemyMonsterAI : MonoBehaviour
 
         GameObject wallToAttack = currentWallTarget;
 
-
         agent.speed = walkSpeed;
         agent.isStopped = false;
 
@@ -738,7 +691,6 @@ public class EnemyMonsterAI : MonoBehaviour
 
             yield return null;
         }
-
 
         isTransitioning = true;
         ChangeState(State.Attacking);
@@ -786,7 +738,6 @@ public class EnemyMonsterAI : MonoBehaviour
         returningToCrawl = true;
         ChangeState(State.ReturningToCrawl);
 
-
         if (enemyCameraController != null)
             enemyCameraController.StopTrackingEnemy();
 
@@ -804,7 +755,6 @@ public class EnemyMonsterAI : MonoBehaviour
 
         SetNextPatrol();
 
-
         yield return new WaitForSeconds(transitionDelay);
 
         agent.isStopped = false;
@@ -815,10 +765,6 @@ public class EnemyMonsterAI : MonoBehaviour
 
         UpdateFootsteps(crawlFootstepClip, crawlFootstepInterval);
     }
-
-
-
-
 
     void ChangeState(State newState)
     {
@@ -855,10 +801,6 @@ public class EnemyMonsterAI : MonoBehaviour
             transform.rotation = Quaternion.Slerp(transform.rotation, lookRot, Time.deltaTime * rotationSpeed);
         }
     }
-
-
-
-
 
     private void DisableAllHitboxes()
     {
@@ -932,10 +874,6 @@ public class EnemyMonsterAI : MonoBehaviour
         ChangeState(State.Dead);
     }
 
-
-
-
-
     private IEnumerator PlayFootsteps(AudioClip clip, float interval)
     {
 
@@ -950,8 +888,7 @@ public class EnemyMonsterAI : MonoBehaviour
 
             if (agent.velocity.sqrMagnitude <= movementThreshold)
             {
-                 
-                 
+
                  footstepCoroutine = null;
                  yield break;
             }
@@ -985,18 +922,15 @@ public class EnemyMonsterAI : MonoBehaviour
             return;
         }
 
-        
         if (IsInvoking(nameof(StartFootstepsDelayed)) && currentFootstepClip == clip && currentFootstepInterval == interval)
         {
             return;
         }
 
-
         StopFootsteps();
 
         currentFootstepClip = clip;
         currentFootstepInterval = interval;
-
 
         Invoke(nameof(StartFootstepsDelayed), 0.15f);
     }
@@ -1063,34 +997,23 @@ public class EnemyMonsterAI : MonoBehaviour
     }
 #endif
 
-    
-    
-    
-    
-
-    
     public void AE_StartRoarEffect()
     {
         if (roarMaterial == null) return;
 
-        
         roarMaterial.SetFloat(_isActiveID, 1f);
 
-        
         if (roarVisualCoroutine != null) StopCoroutine(roarVisualCoroutine);
         roarVisualCoroutine = StartCoroutine(RoarIntensityRoutine());
     }
 
-    
     public void AE_StopRoarEffect()
     {
         if (roarMaterial == null) return;
 
-        
         roarMaterial.SetFloat(_isActiveID, 0f);
         roarMaterial.SetFloat(_roarIntensityID, 0f);
 
-        
         if (roarVisualCoroutine != null)
         {
             StopCoroutine(roarVisualCoroutine);
@@ -1098,21 +1021,16 @@ public class EnemyMonsterAI : MonoBehaviour
         }
     }
 
-    
     private IEnumerator RoarIntensityRoutine()
     {
         float timer = 0f;
 
-        while (true) 
+        while (true)
         {
             timer += Time.deltaTime;
 
-            
-            
-            
             float pulse = Mathf.Abs(Mathf.Sin(timer * 10f));
 
-            
             float currentIntensity = pulse * maxRoarDistortion;
 
             roarMaterial.SetFloat(_roarIntensityID, currentIntensity);

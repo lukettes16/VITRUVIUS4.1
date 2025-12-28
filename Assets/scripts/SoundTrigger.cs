@@ -6,21 +6,21 @@ public class SoundTrigger : MonoBehaviour
     [Header("Configuracion del Sonido")]
     [Tooltip("El sonido que se reproducira al entrar en la zona")]
     public AudioClip soundToPlay;
-    
+
     [Tooltip("Volumen del sonido (0 a 1)")]
     [Range(0f, 1f)]
     public float volume = 1f;
-    
+
     [Tooltip("Si es verdadero, el sonido se reproducira solo la primera vez")]
     public bool playOnlyOnce = false;
-    
+
     [Tooltip("Si es verdadero, el sonido se reproducira con PlayOneShot (permite superposicion)")]
     public bool useOneShot = true;
 
     [Header("Configuracion del Trigger")]
     [Tooltip("Tag del objeto que activara el sonido (ej: Player)")]
     public string targetTag = "Player";
-    
+
     [Tooltip("Color del gizmo en el editor para identificar la zona")]
     public Color gizmoColor = new Color(0, 1, 0, 0.3f);
 
@@ -32,27 +32,26 @@ public class SoundTrigger : MonoBehaviour
     {
         audioSource = GetComponent<AudioSource>();
         myCollider = GetComponent<Collider>();
-        
-        
+
         if (myCollider != null)
         {
             myCollider.isTrigger = true;
         }
         else
         {
-            
+
             BoxCollider box = gameObject.AddComponent<BoxCollider>();
             box.isTrigger = true;
             myCollider = box;
         }
 
         audioSource.playOnAwake = false;
-        audioSource.spatialBlend = 1f; 
+        audioSource.spatialBlend = 1f;
     }
 
     private void Reset()
     {
-        
+
         audioSource = GetComponent<AudioSource>();
         if (audioSource == null)
         {
@@ -64,7 +63,7 @@ public class SoundTrigger : MonoBehaviour
         myCollider = GetComponent<Collider>();
         if (myCollider == null)
         {
-            
+
             BoxCollider box = gameObject.AddComponent<BoxCollider>();
             box.isTrigger = true;
         }
@@ -108,7 +107,7 @@ public class SoundTrigger : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = gizmoColor;
-        
+
         if (GetComponent<BoxCollider>() != null)
         {
             BoxCollider box = GetComponent<BoxCollider>();
@@ -116,7 +115,7 @@ public class SoundTrigger : MonoBehaviour
             Gizmos.DrawCube(box.center, box.size);
             Gizmos.DrawWireCube(box.center, box.size);
         }
-        
+
         else if (GetComponent<SphereCollider>() != null)
         {
             SphereCollider sphere = GetComponent<SphereCollider>();
@@ -126,7 +125,7 @@ public class SoundTrigger : MonoBehaviour
         }
         else
         {
-            
+
             Gizmos.DrawIcon(transform.position, "Audio Source Gizmo", true);
         }
     }

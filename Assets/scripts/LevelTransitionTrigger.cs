@@ -20,18 +20,17 @@ public class LevelTransitionTrigger : MonoBehaviour
     {
         if (isTransitioning) return;
 
-        // Check for PlayerIdentifier, FixedPlayerController, or Tags
-        bool isPlayer = other.GetComponent<PlayerIdentifier>() != null || 
+        bool isPlayer = other.GetComponent<PlayerIdentifier>() != null ||
                          other.GetComponentInParent<PlayerIdentifier>() != null ||
                          other.GetComponent<FixedPlayerController>() != null ||
                          other.GetComponentInParent<FixedPlayerController>() != null ||
-                         other.CompareTag("Player") || 
-                         other.CompareTag("Player1") || 
+                         other.CompareTag("Player") ||
+                         other.CompareTag("Player1") ||
                          other.CompareTag("Player2");
 
         if (isPlayer)
         {
-            Debug.Log("[LevelTransitionTrigger] Player detected: " + other.name);
+            
             StartCoroutine(PerformTransition());
         }
     }
@@ -39,28 +38,20 @@ public class LevelTransitionTrigger : MonoBehaviour
     private IEnumerator PerformTransition()
     {
         isTransitioning = true;
-        Debug.Log("[LevelTransitionTrigger] Starting transition to: " + nextSceneName);
-
-        // Save inventory before transition
+        
         SaveAllPlayersInventory();
 
         if (SceneTransitionManager.Instance != null)
         {
-            // Start Fade Out
+
             yield return StartCoroutine(SceneTransitionManager.Instance.Fade(1f));
 
-            // Load the next scene
             SceneManager.LoadScene(nextSceneName);
-            
-            // Note: SceneTransitionManager is persistent, so it will handle Fade In
-            // in its own Awake/Start or we can rely on it if we trigger it correctly.
-            // Actually, the TransitionToScene method in SceneTransitionManager 
-            // is better suited if we want it to handle everything.
-            // But LevelTransitionTrigger has its own SaveAllPlayersInventory logic.
+
         }
         else
         {
-            // Fallback if manager is missing
+
             SceneManager.LoadScene(nextSceneName);
         }
     }
@@ -78,24 +69,20 @@ public class LevelTransitionTrigger : MonoBehaviour
             {
                 savedItems[player.playerID] = inventory.GetCollectedItems();
                 savedKeyCards[player.playerID] = inventory.GetCollectedKeyCards();
-                
-                
+
                 if (!savedItems[player.playerID].Contains(requiredItem))
                 {
-                    
-                    
+
                 }
             }
         }
     }
 
-    
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void OnSceneLoaded()
     {
         if (savedItems.Count == 0 && savedKeyCards.Count == 0) return;
 
-        
         GameObject restorer = new GameObject("InventoryRestorer");
         restorer.AddComponent<InventoryRestorerHelper>();
     }
@@ -124,14 +111,14 @@ public class LevelTransitionTrigger : MonoBehaviour
                             PlayerInventory inventory = player.GetComponent<PlayerInventory>();
                             if (inventory != null)
                             {
-                                List<string> keyCards = savedKeyCards.ContainsKey(player.playerID) ? 
+                                List<string> keyCards = savedKeyCards.ContainsKey(player.playerID) ?
                                     savedKeyCards[player.playerID] : new List<string>();
-                                
+
                                 inventory.RestoreInventory(keyCards, items);
                             }
                         }
                     }
-                    
+
                     Destroy(gameObject);
                     yield break;
                 }

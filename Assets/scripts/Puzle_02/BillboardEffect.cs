@@ -1,9 +1,5 @@
 using UnityEngine;
 
-
-
-
-
 public class BillboardEffect : MonoBehaviour
 {
     [Header("Billboard Settings")]
@@ -19,7 +15,7 @@ public class BillboardEffect : MonoBehaviour
 
     void Start()
     {
-        
+
         mainCamera = Camera.main;
 
         if (mainCamera == null)
@@ -48,25 +44,18 @@ public class BillboardEffect : MonoBehaviour
     {
         if (mainCamera == null) return;
 
-        
         Vector3 directionToCamera = mainCamera.transform.position - transform.position;
 
-        
         if (freezeXAxis) directionToCamera.x = 0;
         if (freezeYAxis) directionToCamera.y = 0;
         if (freezeZAxis) directionToCamera.z = 0;
 
-        
         if (directionToCamera.sqrMagnitude > 0.001f)
         {
             transform.rotation = Quaternion.LookRotation(directionToCamera);
         }
     }
 
-    
-    
-    
-    
     public void SetCamera(Camera newCamera)
     {
         mainCamera = newCamera;

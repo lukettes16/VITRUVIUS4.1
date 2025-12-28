@@ -5,24 +5,24 @@ public class ChaseMusicController : MonoBehaviour
     [Header("Chase Music Configuration")]
     [Tooltip("AudioSource that will play the chase music")]
     public AudioSource musicAudioSource;
-    
+
     [Tooltip("The chase music clip to play")]
     public AudioClip chaseMusicClip;
-    
+
     [Tooltip("Should the music loop?")]
     public bool loopMusic = true;
-    
+
     [Tooltip("Volume of the chase music (0-1)")]
     [Range(0f, 1f)]
     public float musicVolume = 1f;
-    
+
     [Header("Debug Info")]
     [SerializeField] private bool hasPlayedOnce = false;
     [SerializeField] private bool isCurrentlyPlaying = false;
-    
+
     void Start()
     {
-        
+
         if (musicAudioSource == null)
         {
             musicAudioSource = GetComponent<AudioSource>();
@@ -31,21 +31,21 @@ public class ChaseMusicController : MonoBehaviour
 
             }
         }
-        
+
         ConfigureAudioSource();
     }
-    
+
     void ConfigureAudioSource()
     {
         if (musicAudioSource != null)
         {
             musicAudioSource.loop = loopMusic;
             musicAudioSource.volume = musicVolume;
-            musicAudioSource.spatialBlend = 0f; 
+            musicAudioSource.spatialBlend = 0f;
             musicAudioSource.playOnAwake = false;
         }
     }
-    
+
     void Update()
     {
         if (musicAudioSource != null)
@@ -53,10 +53,7 @@ public class ChaseMusicController : MonoBehaviour
             isCurrentlyPlaying = musicAudioSource.isPlaying;
         }
     }
-    
-    
-    
-    
+
     public void PlayChaseMusic()
     {
         if (hasPlayedOnce)
@@ -64,35 +61,31 @@ public class ChaseMusicController : MonoBehaviour
 
             return;
         }
-        
+
         if (musicAudioSource == null)
         {
 
             return;
         }
-        
+
         if (chaseMusicClip == null)
         {
 
             return;
         }
-        
+
         if (musicAudioSource.isPlaying)
         {
 
             return;
         }
-        
+
         musicAudioSource.clip = chaseMusicClip;
         musicAudioSource.Play();
         hasPlayedOnce = true;
-        
 
     }
-    
-    
-    
-    
+
     public void ResetChaseMusic()
     {
         hasPlayedOnce = false;
@@ -102,10 +95,7 @@ public class ChaseMusicController : MonoBehaviour
         }
 
     }
-    
-    
-    
-    
+
     public void StopChaseMusic()
     {
         if (musicAudioSource != null && musicAudioSource.isPlaying)
@@ -114,38 +104,32 @@ public class ChaseMusicController : MonoBehaviour
 
         }
     }
-    
-    
-    
-    
+
     public bool HasPlayedOnce() => hasPlayedOnce;
-    
-    
-    
-    
+
     public bool IsPlaying() => isCurrentlyPlaying;
-    
+
     [ContextMenu("Test Play Chase Music")]
     public void TestPlayChaseMusic()
     {
         PlayChaseMusic();
     }
-    
+
     [ContextMenu("Test Reset Chase Music")]
     public void TestResetChaseMusic()
     {
         ResetChaseMusic();
     }
-    
+
     [ContextMenu("Test Stop Chase Music")]
     public void TestStopChaseMusic()
     {
         StopChaseMusic();
     }
-    
+
     void OnValidate()
     {
-        
+
         if (Application.isPlaying && musicAudioSource != null)
         {
             musicAudioSource.loop = loopMusic;
@@ -153,7 +137,7 @@ public class ChaseMusicController : MonoBehaviour
             musicAudioSource.spatialBlend = 0f;
         }
     }
-    
+
     void OnDrawGizmosSelected()
     {
         #if UNITY_EDITOR
@@ -174,27 +158,27 @@ public class ChaseMusicControllerEditor : UnityEditor.Editor
     public override void OnInspectorGUI()
     {
         base.OnInspectorGUI();
-        
+
         ChaseMusicController controller = (ChaseMusicController)target;
-        
+
         GUILayout.Space(10);
         GUILayout.Label("Testing Tools", UnityEditor.EditorStyles.boldLabel);
-        
+
         if (GUILayout.Button("Test Play Chase Music"))
         {
             controller.TestPlayChaseMusic();
         }
-        
+
         if (GUILayout.Button("Test Stop Chase Music"))
         {
             controller.TestStopChaseMusic();
         }
-        
+
         if (GUILayout.Button("Test Reset Chase Music"))
         {
             controller.TestResetChaseMusic();
         }
-        
+
         GUILayout.Space(10);
         GUILayout.Label($"Status: {(controller.HasPlayedOnce() ? "Played Once" : "Ready to Play")}", UnityEditor.EditorStyles.miniLabel);
         GUILayout.Label($"Currently: {(controller.IsPlaying() ? "▶ Playing" : "⏸ Stopped")}", UnityEditor.EditorStyles.miniLabel);

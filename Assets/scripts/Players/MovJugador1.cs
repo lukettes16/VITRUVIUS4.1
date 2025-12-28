@@ -3,10 +3,6 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.VFX;
 
-
-
-
-
 public class MovJugador1 : PlayerControllerBase
 {
     #region Serialized Fields
@@ -48,20 +44,23 @@ public class MovJugador1 : PlayerControllerBase
         InitializeInputActions();
     }
 
-    private void OnEnable()
+    protected override void OnEnable()
     {
+        base.OnEnable();
         EnableInputActions();
         ResetGamepadVibration();
     }
 
-    private void OnDisable()
+    protected override void OnDisable()
     {
+        base.OnDisable();
         DisableInputActions();
         ResetGamepadVibration();
     }
 
-    private void Update()
+    protected override void Update()
     {
+        base.Update();
         UpdateVisualEffects();
 
         if (isInUI || !enabled || controller == null)
@@ -74,13 +73,15 @@ public class MovJugador1 : PlayerControllerBase
         UpdateMovement();
     }
 
-    private void OnTriggerEnter(Collider other)
+    protected override void OnTriggerEnter(Collider other)
     {
+        base.OnTriggerEnter(other);
         HandleTriggerEnter(other);
     }
 
-    private void OnTriggerExit(Collider other)
+    protected override void OnTriggerExit(Collider other)
     {
+        base.OnTriggerExit(other);
         HandleTriggerExit(other);
     }
 
@@ -240,7 +241,7 @@ public class MovJugador1 : PlayerControllerBase
 
     #region Input Callbacks
 
-    public void OnMove(InputValue value)
+    public override void OnMove(InputValue value)
     {
         if (isInUI)
         {
@@ -253,13 +254,15 @@ public class MovJugador1 : PlayerControllerBase
         isMoving = moveInput.magnitude > 0.1f;
     }
 
-    public void OnRun(InputValue value)
+    public override void OnRun(InputValue value)
     {
         if (isInUI) return;
-        isRunningInput = value.isPressed;
+
+        float triggerValue = value.Get<float>();
+        isRunningInput = value.isPressed && triggerValue > 0.1f;
     }
 
-    public void OnCrouch(InputValue value)
+    public override void OnCrouch(InputValue value)
     {
         if (isInUI) return;
         if (value.isPressed && !isTransitioning)
@@ -273,7 +276,7 @@ public class MovJugador1 : PlayerControllerBase
 
     #region Interaction System
 
-    private void TryInteract()
+    protected override void TryInteract()
     {
         if (isInUI) return;
 
@@ -323,7 +326,7 @@ public class MovJugador1 : PlayerControllerBase
         return false;
     }
 
-    private void TryCollectItems()
+    protected override void TryCollectItems()
     {
         if (isInUI) return;
 
@@ -335,12 +338,12 @@ public class MovJugador1 : PlayerControllerBase
         {
             if (pickupReach != null)
             {
-                
+
                 pickupReach.ReachForItem(closestItem, OnHandReachedItem);
             }
             else
             {
-                
+
                 CollectItem(closestItem);
             }
         }
@@ -388,18 +391,12 @@ public class MovJugador1 : PlayerControllerBase
                obj.GetComponent<CollectableItem>() != null;
     }
 
-    
-    
-    
     private void OnHandReachedItem(GameObject item)
     {
         if (item == null) return;
         CollectItem(item);
     }
 
-    
-    
-    
     private void CollectItem(GameObject item)
     {
         PickableItem pickable = item.GetComponent<PickableItem>();
@@ -492,7 +489,7 @@ public class MovJugador1 : PlayerControllerBase
 
     #region Door Lift System
 
-    private void OnLiftDoorPressed()
+    public override void OnLiftDoorPressed()
     {
         if (currentDoorToLift == null || isInUI) return;
 
@@ -502,7 +499,7 @@ public class MovJugador1 : PlayerControllerBase
         StartCoroutine(CheckLiftHold());
     }
 
-    private void OnLiftDoorReleased()
+    public override void OnLiftDoorReleased()
     {
         liftButtonPressed = false;
         liftButtonHoldTime = 0f;
@@ -532,7 +529,7 @@ public class MovJugador1 : PlayerControllerBase
         }
     }
 
-    public void OnDoorLiftAnimationStart()
+    public override void OnDoorLiftAnimationStart()
     {
         if (currentDoorToLift == null) return;
 
@@ -565,7 +562,7 @@ public class MovJugador1 : PlayerControllerBase
         }
     }
 
-    public void OnDoorLiftAnimationComplete()
+    public override void OnDoorLiftAnimationComplete()
     {
         if (currentDoorToLift == null) return;
 
@@ -900,9 +897,9 @@ public class MovJugador1 : PlayerControllerBase
                 staminaUI.HideStaminaBar();
                 wasRunning = false;
             }
-            
+
             bool isStealthMode = Input.GetKey(KeyCode.LeftShift);
-            
+
             if (playerCollider != null && !isTransitioning)
             {
                 if (isStealthMode && stealthPhysicsMaterial != null)
@@ -914,7 +911,7 @@ public class MovJugador1 : PlayerControllerBase
                     playerCollider.material = crouchPhysicsMaterial;
                 }
             }
-            
+
             return isStealthMode ? crouchStealthSpeed : crouchSpeed;
         }
         else if (isRunningInput && moving && canRun)
@@ -938,7 +935,7 @@ public class MovJugador1 : PlayerControllerBase
         currentSpeedScalar = Mathf.MoveTowards(currentSpeedScalar, desiredSpeed, accel * Time.deltaTime);
     }
 
-    private Vector3 CalculateMovementDirection()
+    protected override Vector3 CalculateMovementDirection()
     {
         Vector3 movement;
 
@@ -1127,12 +1124,12 @@ public class MovJugador1 : PlayerControllerBase
     private void StartCrouchTransition()
     {
         if (isTransitioning) return;
-        
+
         isTransitioning = true;
         transitionTimer = 0f;
         previousHeight = controller.height;
         previousCenter = controller.center;
-        
+
         StartCoroutine(SmoothCrouchTransition());
     }
 
@@ -1143,40 +1140,40 @@ public class MovJugador1 : PlayerControllerBase
         float targetMass = isCrouching ? crouchMass : standMass;
         float targetDrag = isCrouching ? crouchDrag : standDrag;
         PhysicMaterial targetPhysicsMaterial = isCrouching ? crouchPhysicsMaterial : standPhysicsMaterial;
-        
+
         while (transitionTimer < transitionDuration)
         {
             transitionTimer += Time.deltaTime;
             float t = transitionTimer / transitionDuration;
             t = Mathf.SmoothStep(0f, 1f, t);
-            
+
             controller.height = Mathf.Lerp(previousHeight, targetHeight, t);
             controller.center = Vector3.Lerp(previousCenter, targetCenter, t);
-            
+
             if (playerRigidbody != null)
             {
                 playerRigidbody.mass = Mathf.Lerp(playerRigidbody.mass, targetMass, t);
                 playerRigidbody.drag = Mathf.Lerp(playerRigidbody.drag, targetDrag, t);
             }
-            
+
             yield return null;
         }
-        
+
         controller.height = targetHeight;
         controller.center = targetCenter;
-        
+
         if (playerRigidbody != null)
         {
             playerRigidbody.mass = targetMass;
             playerRigidbody.drag = targetDrag;
         }
-        
+
         if (playerCollider != null && targetPhysicsMaterial != null)
         {
             playerCollider.material = targetPhysicsMaterial;
             currentPhysicsMaterial = targetPhysicsMaterial;
         }
-        
+
         isTransitioning = false;
     }
 

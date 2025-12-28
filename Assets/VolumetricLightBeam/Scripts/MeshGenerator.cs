@@ -8,13 +8,13 @@ namespace VLB
 
         static float GetAngleOffset(int numSides)
         {
-            // rotate square beams so they are properly oriented to scale them more easily
+
             return numSides == 4 ? (Mathf.PI * 0.25f) : 0f;
         }
 
         static float GetRadiiScale(int numSides)
         {
-            // with 4 sides, place the vertices in the square's corners to fit with the depth buffer camera frustum
+
             return numSides == 4 ? Mathf.Sqrt(2f) : 1f;
         }
 
@@ -32,8 +32,6 @@ namespace VLB
             return GenerateConeZ_RadiusAndAngle(lengthZ, 0f, coneAngle, numSides, numSegments, cap, doubleSided);
         }
 
-
-        // Cone with optional cap (at start only), optional segments count, vertices + UVs (storing info about cap and side)
         public static Mesh GenerateConeZ_Radii(float lengthZ, float radiusStart, float radiusEnd, int numSides, int numSegments, bool cap, bool doubleSided)
         {
             Debug.Assert(lengthZ > 0f);
@@ -44,8 +42,6 @@ namespace VLB
             var mesh = new Mesh();
             bool genCap = cap && radiusStart > 0f;
 
-            // We use the XY position of the vertices to compute the cone normal in the shader.
-            // With a perfectly sharp cone, we couldn't compute accurate normals at its top.
             radiusStart = Mathf.Max(radiusStart, kMinTruncatedRadius);
 
             {
@@ -60,7 +56,6 @@ namespace VLB
             if (genCap)
                 vertCountTotal += numSides + 1;
 
-            // VERTICES
             {
                 float angleOffset = GetAngleOffset(numSides);
 
@@ -113,9 +108,6 @@ namespace VLB
                 }
             }
 
-            // UV (used to flags vertices as sides or cap)
-            // X: 0 = sides ; 1 = cap
-            // Y: 0 = front face ; 1 = back face (doubleSided only)
             {
                 var uv = new Vector2[vertCountTotal];
                 int ind = 0;
@@ -129,7 +121,6 @@ namespace VLB
                 }
 
                 Debug.Assert(ind == uv.Length);
-
 
                 if (!doubleSided)
                 {
@@ -151,7 +142,6 @@ namespace VLB
                 }
             }
 
-            // INDICES
             {
                 int triCountSides = numSides * 2 * Mathf.Max(numSegments + 1, 1);
                 int indCountSides = triCountSides * 3;
@@ -207,14 +197,14 @@ namespace VLB
                 {
                     var indices2 = new int[indices.Length * 2];
                     indices.CopyTo(indices2, 0);
-                    
+
                     for (int i = 0; i < indices.Length; i += 3)
                     {
                         indices2[indices.Length + i + 0] = indices[i + 0] + vertCountTotal;
                         indices2[indices.Length + i + 1] = indices[i + 2] + vertCountTotal;
                         indices2[indices.Length + i + 2] = indices[i + 1] + vertCountTotal;
                     }
-                    
+
                     mesh.triangles = indices2;
                 }
             }
@@ -227,8 +217,6 @@ namespace VLB
             return mesh;
         }
 
-
-        // Cone with double caps, no segments, vertices only (no UVs)
         public static Mesh GenerateConeZ_Radii_DoubleCaps(float lengthZ, float radiusStart, float radiusEnd, int numSides, bool inverted)
         {
             Debug.Assert(lengthZ > 0f);
@@ -237,8 +225,6 @@ namespace VLB
 
             var mesh = new Mesh();
 
-            // We use the XY position of the vertices to compute the cone normal in the shader.
-            // With a perfectly sharp cone, we couldn't compute accurate normals at its top.
             radiusStart = Mathf.Max(radiusStart, kMinTruncatedRadius);
 
             int vertCountSides = numSides * 2;
@@ -254,9 +240,8 @@ namespace VLB
                 return vertCountSides + slideID;
             };
 
-            vertCountTotal += 2; // caps
+            vertCountTotal += 2;
 
-            // VERTICES
             {
                 float angleOffset = GetAngleOffset(numSides);
 
@@ -277,20 +262,19 @@ namespace VLB
                     }
                 }
 
-                vertices[vertCenterFromSlide(0)] = Vector3.zero;                    // cap start
-                vertices[vertCenterFromSlide(1)] = new Vector3(0f, 0f, lengthZ);    // cap end
+                vertices[vertCenterFromSlide(0)] = Vector3.zero;
+                vertices[vertCenterFromSlide(1)] = new Vector3(0f, 0f, lengthZ);
 
                 mesh.vertices = vertices;
             }
 
-            // INDICES
             {
                 int triCountSides = numSides * 2;
                 int indCountSides = triCountSides * 3;
                 int indCountTotal = indCountSides;
 
-                indCountTotal += numSides * 3;  // cap start
-                indCountTotal += numSides * 3;  // cap end
+                indCountTotal += numSides * 3;
+                indCountTotal += numSides * 3;
 
                 var indices = new int[indCountTotal];
                 int ind = 0;
@@ -335,8 +319,8 @@ namespace VLB
                     ind += 3;
                 };
 
-                generateCapIndexes(0, inverted);    // cap start
-                generateCapIndexes(1, !inverted);   // cap end
+                generateCapIndexes(0, inverted);
+                generateCapIndexes(1, !inverted);
 
                 Debug.Assert(ind == indices.Length);
 

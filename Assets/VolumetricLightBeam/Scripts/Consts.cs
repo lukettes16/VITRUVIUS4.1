@@ -71,11 +71,11 @@ namespace VLB
 
             public const float IntensityDefault = 1f;
             public const float IntensityMin = 0f;
-            
+
             public const float HDRPExposureWeightDefault = 0f;
             public const float HDRPExposureWeightMin = 0f;
             public const float HDRPExposureWeightMax = 1f;
-            
+
             public const float SpotAngleDefault = 35f;
             public const float SpotAngleMin = 0.1f;
             public const float SpotAngleMax = 179.9f;
@@ -169,7 +169,7 @@ namespace VLB
 
         public static class DynOcclusion
         {
-            public static readonly LayerMask LayerMaskDefault = 1; // Default layer
+            public static readonly LayerMask LayerMaskDefault = 1;
             public const DynamicOcclusionUpdateRate UpdateRateDefault = DynamicOcclusionUpdateRate.EveryXFrames;
             public const int WaitFramesCountDefault = 3;
 
@@ -179,13 +179,12 @@ namespace VLB
             public const float RaycastingMinSurfaceRatioDefault = 0.5f;
             public const float RaycastingMinSurfaceRatioMin = 50f;
             public const float RaycastingMinSurfaceRatioMax = 100f;
-            public const float RaycastingMaxSurfaceDotDefault = 0.25f; // around 75 degrees
+            public const float RaycastingMaxSurfaceDotDefault = 0.25f;
             public const float RaycastingMaxSurfaceAngleMin = 45f;
             public const float RaycastingMaxSurfaceAngleMax = 90f;
             public const PlaneAlignment RaycastingPlaneAlignmentDefault = PlaneAlignment.Surface;
             public const float RaycastingPlaneOffsetDefault = 0.1f;
             public const float RaycastingFadeDistanceToSurfaceDefault = 0.25f;
-
 
             public const int DepthBufferDepthMapResolutionDefault = 128;
             public const bool DepthBufferOcclusionCullingDefault = true;
@@ -210,7 +209,7 @@ namespace VLB
             public const float StrengthDefault = 1.0f;
             public const float StrengthMin = 0.0f;
             public const float StrengthMax = 1.0f;
-            public static readonly LayerMask LayerMaskDefault = 1; // Default layer
+            public static readonly LayerMask LayerMaskDefault = 1;
             public const ShadowUpdateRate UpdateRateDefault = ShadowUpdateRate.EveryXFrames;
             public const int WaitFramesCountDefault = 3;
             public const int DepthMapResolutionDefault = 128;

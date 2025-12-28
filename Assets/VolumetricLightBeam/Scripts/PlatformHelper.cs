@@ -24,7 +24,7 @@ namespace VLB
 
         static RuntimePlatform BuildTargetToRuntimePlatform(BuildTarget buildTarget)
         {
-#pragma warning disable 0618 // obsolete BuildTargets
+#pragma warning disable 0618
             switch (buildTarget)
             {
                 case BuildTarget.Android:               return RuntimePlatform.Android;
@@ -62,7 +62,6 @@ namespace VLB
                 case BuildTarget.PS5:                   return RuntimePlatform.PS5;
 #endif
 
-                // obsolete
                 case BuildTarget.StandaloneOSXIntel:    return RuntimePlatform.OSXPlayer;
                 case BuildTarget.StandaloneOSXIntel64:  return RuntimePlatform.OSXPlayer;
                 case BuildTarget.StandaloneLinuxUniversal:return RuntimePlatform.LinuxPlayer;
@@ -88,7 +87,7 @@ namespace VLB
             }
             return false;
         }
-#endif // UNITY_EDITOR
+#endif
 
         public static string GetCurrentPlatformSuffix()
         {

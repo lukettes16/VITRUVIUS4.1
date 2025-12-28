@@ -84,7 +84,6 @@ public abstract class PlayerControllerBase : MonoBehaviour
     [Header("Popup Flotante sobre cabeza")]
     [SerializeField] protected PlayerPopupBillboard popupBillboard;
 
-    
     protected CharacterController controller;
     protected Animator animator;
     protected PlayerInventory playerInventory;
@@ -93,7 +92,6 @@ public abstract class PlayerControllerBase : MonoBehaviour
     protected PlayerInput playerInput;
     protected Gamepad gamepad;
 
-    
     protected Vector2 moveInput;
     protected bool isRunningInput = false;
     protected bool isCrouching = false;
@@ -104,41 +102,33 @@ public abstract class PlayerControllerBase : MonoBehaviour
     protected Vector3 verticalVelocity;
     protected bool wasRunning = false;
     protected bool staminaWasEmpty = false;
-    
-    
+
     protected bool isInUI = false;
     protected KeypadUIManager currentLockUI = null;
 
-    
     protected FallenDoor currentDoorToLift = null;
     protected bool isHoldingDoor = false;
     protected bool isAnimationInLiftState = false;
     protected float liftButtonHoldTime = 0f;
     protected bool liftButtonPressed = false;
 
-    
     protected PuertaDobleAccion currentDoor = null;
     protected ElectricBox currentElectricBox = null;
     protected PuertaDobleConLlave currentKeyDoor = null;
 
-    
     protected Vector3 currentVfxPosition;
     protected Vector3 vfxVelocity;
 
-    
     protected Transform cameraTransform;
     protected Vector3 originalCameraPosition;
         protected bool isShaking = false;
 
-    /// <summary>
-    /// Asigna una cámara específica a este jugador para movimiento relativo
-    /// </summary>
     public void AssignCamera(Camera cam)
     {
         if (cam != null)
         {
             cameraTransform = cam.transform;
-            Debug.Log($"[PlayerControllerBase] Cámara asignada a {gameObject.name}: {cam.name}");
+            
         }
     }
 
@@ -157,7 +147,7 @@ public abstract class PlayerControllerBase : MonoBehaviour
         staminaUI = GetComponent<PlayerStaminaUI>();
         noiseEmitter = GetComponent<PlayerNoiseEmitter>();
         playerInput = GetComponent<PlayerInput>();
-        
+
         if (fatigueFeedback == null) fatigueFeedback = GetComponent<StaminaFatigueFeedback>();
         if (audioSource == null) audioSource = GetComponent<AudioSource>();
 
@@ -173,7 +163,7 @@ public abstract class PlayerControllerBase : MonoBehaviour
         if (collectAction != null) collectAction.action.performed += ctx => TryInteract();
         if (toggleRingAction != null) toggleRingAction.action.performed += ctx => OnToggleRing();
         if (inventoryAction != null) inventoryAction.action.performed += ctx => ToggleInventory();
-        
+
         if (liftDoorAction != null)
         {
             liftDoorAction.action.performed += ctx => OnLiftDoorPressed();
@@ -185,7 +175,7 @@ public abstract class PlayerControllerBase : MonoBehaviour
     {
         currentStamina = maxStamina;
         currentSpeedScalar = moveSpeed;
-        
+
         if (controller != null)
         {
             controller.height = standHeight;
@@ -245,31 +235,25 @@ public abstract class PlayerControllerBase : MonoBehaviour
         bool moving = moveInput.magnitude > 0.1f;
         float desiredSpeed = GetDesiredSpeed();
 
-        
         float accel = currentSpeedScalar < desiredSpeed ? acceleration : deceleration;
         currentSpeedScalar = Mathf.MoveTowards(currentSpeedScalar, desiredSpeed, accel * Time.deltaTime);
 
-        
         Vector3 movement = CalculateMovementDirection();
 
-        
         if (controller.isGrounded)
             verticalVelocity.y = -2f;
         else
             verticalVelocity.y += gravity * Time.deltaTime;
 
-        
         Vector3 finalMovement = (movement * currentSpeedScalar) + new Vector3(0, verticalVelocity.y, 0);
         controller.Move(finalMovement * Time.deltaTime);
 
-        
         if (movement != Vector3.zero)
         {
             Quaternion targetRotation = Quaternion.LookRotation(movement);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
         }
 
-        
         animator.SetBool("IsCrouching", isCrouching);
         animator.SetBool("IsRunning", isRunningInput && moving && canRun);
         animator.SetFloat("Speed", moving ? (isRunningInput && canRun ? (isCrouching ? 1.5f : 2f) : (isCrouching ? 1.0f : 1f)) : 0f);
@@ -303,14 +287,13 @@ public abstract class PlayerControllerBase : MonoBehaviour
     protected virtual void HandleStamina()
     {
         bool moving = moveInput.magnitude > 0.1f;
-        
-        
+
         if (currentStamina < maxStamina && !isRunningInput)
         {
             float prev = currentStamina;
             currentStamina = Mathf.Clamp(currentStamina + staminaRechargeRate * Time.deltaTime, 0, maxStamina);
             if (staminaUI != null) staminaUI.UpdateStaminaValue(currentStamina, maxStamina);
-            
+
             if (prev < maxStamina && currentStamina >= maxStamina && staminaWasEmpty)
             {
                 staminaUI?.OnStaminaFullyRecharged();
@@ -318,20 +301,17 @@ public abstract class PlayerControllerBase : MonoBehaviour
             }
         }
 
-        
         if (isRunningInput && moving && canRun)
         {
             currentStamina = Mathf.Clamp(currentStamina - staminaDepletionRate * Time.deltaTime, 0, maxStamina);
             staminaUI?.UpdateStaminaValue(currentStamina, maxStamina);
         }
 
-        
         if (currentStamina <= 0 && canRun)
         {
             SetExhaustedState(true);
         }
 
-        
         if (!canRun)
         {
             cooldownTimer -= Time.deltaTime;
@@ -353,7 +333,7 @@ public abstract class PlayerControllerBase : MonoBehaviour
             cooldownTimer = runCooldown;
             staminaWasEmpty = true;
             staminaUI?.HideStaminaBar();
-            
+
             if (audioSource != null && pantingSound != null)
             {
                 audioSource.clip = pantingSound;
@@ -386,21 +366,18 @@ public abstract class PlayerControllerBase : MonoBehaviour
         }
     }
 
-    
-    public void OnMove(InputValue value) { if (!isInUI) moveInput = value.Get<Vector2>(); }
-    public void OnRun(InputValue value) { if (!isInUI) isRunningInput = value.isPressed; }
-    public void OnCrouch(InputValue value) { if (!isInUI && value.isPressed) isCrouching = !isCrouching; }
+    public virtual void OnMove(InputValue value) { if (!isInUI) moveInput = value.Get<Vector2>(); }
+    public virtual void OnRun(InputValue value) { if (!isInUI) isRunningInput = value.isPressed; }
+    public virtual void OnCrouch(InputValue value) { if (!isInUI && value.isPressed) isCrouching = !isCrouching; }
 
     protected virtual void TryInteract()
     {
         if (isInUI) return;
 
-        
         if (currentDoor != null) { currentDoor.IntentoDeAccion(this.gameObject); return; }
-        if (currentKeyDoor != null) { currentKeyDoor.IntentoAbrirPuerta(this); return; } 
-        if (currentElectricBox != null) { currentElectricBox.TryDeactivatePower(this); return; } 
+        if (currentKeyDoor != null) { currentKeyDoor.IntentoAbrirPuerta(this); return; }
+        if (currentElectricBox != null) { currentElectricBox.TryDeactivatePower(this); return; }
 
-        
         TryCollectItems();
     }
 
@@ -430,24 +407,22 @@ public abstract class PlayerControllerBase : MonoBehaviour
     }
 
     protected void OnToggleRing() { if (!isInUI) noiseEmitter?.ToggleRingVisibility(); }
-    
+
     protected void ToggleInventory()
     {
-        if (playerInventory != null && playerInventory.HasKeyCard("Card") && !isInUI) 
+        if (playerInventory != null && playerInventory.HasKeyCard("Card") && !isInUI)
             inventoryCanvas.SetActive(!inventoryCanvas.activeSelf);
     }
-    
-    
+
     protected virtual void OnTriggerEnter(Collider other)
     {
-        
+
         FallenDoor doorScript = other.GetComponent<FallenDoor>();
         if (doorScript != null) currentDoorToLift = doorScript;
 
          ElectricBox box = other.GetComponentInParent<ElectricBox>() ?? other.GetComponent<ElectricBox>();
         if (box != null) currentElectricBox = box;
-        
-        
+
     }
 
     protected virtual void OnTriggerExit(Collider other)
@@ -458,18 +433,17 @@ public abstract class PlayerControllerBase : MonoBehaviour
             currentDoorToLift = null;
             if (isHoldingDoor || isAnimationInLiftState) OnLiftDoorReleased();
         }
-        
-    }
-    
-    
-    public void OnLiftDoorPressed() { liftButtonPressed = true; liftButtonHoldTime = 0f; }
-    public void OnLiftDoorReleased() 
-    { 
-        liftButtonPressed = false; 
-        if (isAnimationInLiftState) animator.SetBool("ShouldCancelLift", true); 
+
     }
 
-    public void OnDoorLiftAnimationStart() { if (currentDoorToLift == null || !isHoldingDoor) OnLiftDoorReleased(); else isAnimationInLiftState = true; }
-    public void OnDoorLiftAnimationComplete() { isAnimationInLiftState = false; isHoldingDoor = false; animator.SetBool("IsLifting", false); }
+    public virtual void OnLiftDoorPressed() { liftButtonPressed = true; liftButtonHoldTime = 0f; }
+    public virtual void OnLiftDoorReleased()
+    {
+        liftButtonPressed = false;
+        if (isAnimationInLiftState) animator.SetBool("ShouldCancelLift", true);
+    }
+
+    public virtual void OnDoorLiftAnimationStart() { if (currentDoorToLift == null || !isHoldingDoor) OnLiftDoorReleased(); else isAnimationInLiftState = true; }
+    public virtual void OnDoorLiftAnimationComplete() { isAnimationInLiftState = false; isHoldingDoor = false; animator.SetBool("IsLifting", false); }
 
 }

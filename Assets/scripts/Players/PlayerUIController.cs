@@ -1,23 +1,21 @@
 using System.Collections;
 using UnityEngine;
 using TMPro;
-using System; 
+using System;
 
 public class PlayerUIController : MonoBehaviour
 {
-    
+
     [Header("Game Manager")]
     [Tooltip("Asignar el script GameManager aqu. (No usado directamente para respawn, pero se mantiene).")]
     [SerializeField] private MonoBehaviour gameManager;
 
-    
     [Header("UI Notification (solo compatibilidad, no visible)")]
     [SerializeField] private GameObject notificationPanel;
     [SerializeField] private TextMeshProUGUI notificationText;
     [SerializeField] private float displayTime = 3.0f;
     private Coroutine hideCoroutine;
 
-    
     [Header("UI Respawn References")]
     [Tooltip("Panel del respawn del jugador.")]
     [SerializeField] private GameObject respawnPanel;
@@ -28,7 +26,6 @@ public class PlayerUIController : MonoBehaviour
     private Coroutine respawnCoroutine;
     private Action onRespawnReadyCallback;
 
-    
     [Header("Popup Flotante sobre la cabeza del jugador")]
     [Tooltip("Referencia al PlayerPopupBillboard del mismo jugador.")]
     [SerializeField] private PlayerPopupBillboard popupBillboard;
@@ -46,10 +43,6 @@ public class PlayerUIController : MonoBehaviour
         if (popupBillboard == null)
             popupBillboard = GetComponent<PlayerPopupBillboard>();
     }
-
-    
-    
-    
 
     public void StartRespawnTimer(Action readyCallback)
     {
@@ -96,13 +89,6 @@ public class PlayerUIController : MonoBehaviour
             respawnPanel.SetActive(false);
     }
 
-    
-    
-    
-
-    
-    
-    
     public void ShowNotification(string message)
     {
         if (popupBillboard != null)
@@ -111,7 +97,6 @@ public class PlayerUIController : MonoBehaviour
             return;
         }
 
-        
         if (notificationText != null)
         {
             notificationText.text = message;

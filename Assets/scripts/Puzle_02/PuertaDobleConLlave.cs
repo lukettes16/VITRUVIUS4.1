@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
-using UnityEngine.Events; 
+using UnityEngine.Events;
 
 public class PuertaDobleConLlave : MonoBehaviour
 {
@@ -40,7 +40,7 @@ public class PuertaDobleConLlave : MonoBehaviour
 
     [Header("Eventos de Escena")]
     [Tooltip("Arrastra aqui el NPC y selecciona la funcion NPCBehaviorManager.RunToDoorAndVanish")]
-    public UnityEvent OnDoorOpened; 
+    public UnityEvent OnDoorOpened;
 
     private List<PlayerIdentifier> activePlayers = new List<PlayerIdentifier>();
     private List<Renderer> doorRenderers = new List<Renderer>();
@@ -224,8 +224,6 @@ public class PuertaDobleConLlave : MonoBehaviour
 
         SetOutlineState(Color.black, 0.0f);
 
-        
-        
         if (OnDoorOpened != null)
         {
             OnDoorOpened.Invoke();

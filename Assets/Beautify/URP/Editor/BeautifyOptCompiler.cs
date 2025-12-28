@@ -17,7 +17,7 @@ namespace Beautify.Universal {
 
             try {
                 if (shaderCompilerData == null) return;
-                
+
                 if (!"Hidden/Universal Render Pipeline/UberPost".Equals(shader.name) && !"Hidden/Kronnect/Beautify".Equals(shader.name)) return;
 
                 string strippedKeywords = PlayerPrefs.GetString(PLAYER_PREF_KEYNAME);

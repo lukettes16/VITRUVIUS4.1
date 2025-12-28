@@ -63,7 +63,6 @@ namespace VLB_Installer
                 "Clicking on install will:\n- Remove the previous version of the plugin (if found)\n- Import the new 'VolumetricLightBeam.unitypackage'.",
                 MessageType.Info);
 
-
             EditorGUILayout.Separator();
 
             EditorGUILayout.HelpBox(
@@ -78,12 +77,11 @@ namespace VLB_Installer
 
         void Install()
         {
-            Debug.Log("Opening empty scene...");
+            
             EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo();
             EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             AssetDatabase.Refresh();
 
-            Debug.Log("Removing previous VolumetricLightBeam folder...");
             foreach(var path in OldPluginPath)
                 AssetDatabase.DeleteAsset(path);
             AssetDatabase.Refresh();
@@ -93,7 +91,6 @@ namespace VLB_Installer
             AssetDatabase.ImportPackage(packagePath, false);
             AssetDatabase.Refresh();
 
-            Debug.Log("Done!");
         }
 
         void RestartUnity()

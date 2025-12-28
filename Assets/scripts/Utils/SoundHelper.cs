@@ -10,7 +10,7 @@ public static class SoundHelper
             AudioManager.Instance.PlaySFX(clip, position, volume, pitch);
         }
     }
-    
+
     public static void PlayInteractionSound(Vector3 position, float volume = 1f, float pitch = 1f)
     {
         if (AudioManager.Instance != null && AudioManager.Instance.GetAudioConfig() != null)
@@ -19,7 +19,7 @@ public static class SoundHelper
             PlayRandomSound(sounds, position, volume, pitch);
         }
     }
-    
+
     public static void PlayDoorOpenSound(Vector3 position, float volume = 1f, float pitch = 1f)
     {
         if (AudioManager.Instance != null && AudioManager.Instance.GetAudioConfig() != null)
@@ -28,7 +28,7 @@ public static class SoundHelper
             PlayRandomSound(sounds, position, volume, pitch);
         }
     }
-    
+
     public static void PlayDoorCloseSound(Vector3 position, float volume = 1f, float pitch = 1f)
     {
         if (AudioManager.Instance != null && AudioManager.Instance.GetAudioConfig() != null)
@@ -37,7 +37,7 @@ public static class SoundHelper
             PlayRandomSound(sounds, position, volume, pitch);
         }
     }
-    
+
     public static void PlayDoorLockedSound(Vector3 position, float volume = 1f, float pitch = 1f)
     {
         if (AudioManager.Instance != null && AudioManager.Instance.GetAudioConfig() != null)
@@ -46,7 +46,7 @@ public static class SoundHelper
             PlayRandomSound(sounds, position, volume, pitch);
         }
     }
-    
+
     public static void PlayDoorUnlockSound(Vector3 position, float volume = 1f, float pitch = 1f)
     {
         if (AudioManager.Instance != null && AudioManager.Instance.GetAudioConfig() != null)
@@ -55,7 +55,7 @@ public static class SoundHelper
             PlayRandomSound(sounds, position, volume, pitch);
         }
     }
-    
+
     public static void PlayPuzzleSound(Vector3 position, float volume = 1f, float pitch = 1f)
     {
         if (AudioManager.Instance != null && AudioManager.Instance.GetAudioConfig() != null)
@@ -64,7 +64,7 @@ public static class SoundHelper
             PlayRandomSound(sounds, position, volume, pitch);
         }
     }
-    
+
     public static void PlayFlashlightSound(Vector3 position, float volume = 1f, float pitch = 1f)
     {
         if (AudioManager.Instance != null && AudioManager.Instance.GetAudioConfig() != null)
@@ -73,7 +73,7 @@ public static class SoundHelper
             PlayRandomSound(sounds, position, volume, pitch);
         }
     }
-    
+
     public static void PlayPickupSound(Vector3 position, float volume = 1f, float pitch = 1f)
     {
         if (AudioManager.Instance != null && AudioManager.Instance.GetAudioConfig() != null)

@@ -16,7 +16,7 @@ public class SceneTransitionManager : MonoBehaviour
                 {
                     GameObject go = new GameObject("SceneTransitionManager");
                     _instance = go.AddComponent<SceneTransitionManager>();
-                    Debug.Log("[SceneTransitionManager] Automatic Runtime Instance Created");
+                    
                 }
             }
             return _instance;
@@ -27,7 +27,7 @@ public class SceneTransitionManager : MonoBehaviour
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void AutoInitialize()
     {
-        // Simply accessing the Instance property will trigger the creation if it doesn't exist
+
         var inst = Instance;
     }
 
@@ -51,7 +51,6 @@ public class SceneTransitionManager : MonoBehaviour
 
         SetupUI();
 
-        // Ensure we start with a clear screen
         if (faderCanvasGroup != null)
         {
             faderCanvasGroup.alpha = 0f;
@@ -68,23 +67,22 @@ public class SceneTransitionManager : MonoBehaviour
 
         if (faderCanvasGroup == null)
         {
-            // Create a basic UI if missing
-            Debug.Log("[SceneTransitionManager] No CanvasGroup found, creating automatic UI...");
+
             GameObject canvasGo = new GameObject("FadeCanvas");
             canvasGo.transform.SetParent(transform);
-            
+
             Canvas canvas = canvasGo.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             canvas.sortingOrder = 999;
-            
+
             canvasGo.AddComponent<GraphicRaycaster>();
             faderCanvasGroup = canvasGo.AddComponent<CanvasGroup>();
-            
+
             GameObject imageGo = new GameObject("FadeImage");
             imageGo.transform.SetParent(canvasGo.transform);
             Image image = imageGo.AddComponent<Image>();
             image.color = Color.black;
-            
+
             RectTransform rect = image.rectTransform;
             rect.anchorMin = Vector2.zero;
             rect.anchorMax = Vector2.one;
@@ -102,7 +100,7 @@ public class SceneTransitionManager : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        // Automatically fade in when a new scene is loaded
+
         StartCoroutine(Fade(0f));
     }
 
@@ -113,17 +111,15 @@ public class SceneTransitionManager : MonoBehaviour
 
     private IEnumerator PerformTransition(string sceneName)
     {
-        // Fade Out
+
         yield return StartCoroutine(Fade(1f));
 
-        // Load Scene
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
         while (!asyncLoad.isDone)
         {
             yield return null;
         }
 
-        // Fade In
         yield return StartCoroutine(Fade(0f));
     }
 

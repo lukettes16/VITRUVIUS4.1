@@ -10,13 +10,12 @@ public class EnemyMotor : MonoBehaviour
     public float rotationSpeed = 8f;
     public float movementThreshold = 0.05f;
 
-    
     public bool IsMoving { get; private set; }
 
     void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
-        
+
         agent.updateRotation = false;
         agent.acceleration = 12f;
         agent.angularSpeed = 120f;
@@ -24,7 +23,7 @@ public class EnemyMotor : MonoBehaviour
 
     void Update()
     {
-        
+
         float actualSpeed = agent.velocity.magnitude;
         bool hasIntent = agent.desiredVelocity.magnitude > 0.5f && !agent.isStopped;
         bool calculatingPath = agent.pathPending;

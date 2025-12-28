@@ -5,14 +5,10 @@ using UnityEngine.Animations.Rigging;
 
 public class EnemyVisuals : MonoBehaviour
 {
-    
+
     private Animator anim;
     private AudioSource audioSource;
     private EnemyMotor motor;
-
-    
-    
-    
 
     [Header("--- AUDIO ---")]
     public AudioClip roarClip;
@@ -66,31 +62,19 @@ public class EnemyVisuals : MonoBehaviour
     private float overrideT = 0f;
     public bool IsScanning { get; private set; }
 
-    
-    
-    
-
-    
     public bool AnimImpactReceived { get; private set; }
     public bool AnimFinishedReceived { get; private set; }
 
-    
     private Coroutine footstepCoroutine;
     private AudioClip currentStepClip;
     private float currentStepInterval;
 
-    
     private int _roarIntensityID;
     private int _isActiveID;
     private Coroutine roarVisualCoroutine;
 
-    
     private bool isInvestigating = false;
-    private Vector3 initialTargetLocalPos; 
-
-    
-    
-    
+    private Vector3 initialTargetLocalPos;
 
     void Awake()
     {
@@ -102,12 +86,10 @@ public class EnemyVisuals : MonoBehaviour
         if (audioSource == null)
             audioSource = gameObject.AddComponent<AudioSource>();
 
-        
         DisableAllHitboxes();
         EnsureHitboxSetup(rightHandCollider);
         EnsureHitboxSetup(leftHandCollider);
 
-        
         if (roarMaterial != null)
         {
             _roarIntensityID = Shader.PropertyToID("_RoarIntensity");
@@ -115,14 +97,12 @@ public class EnemyVisuals : MonoBehaviour
             roarMaterial.SetFloat(_isActiveID, 0f);
         }
 
-        
         if (lookTarget != null)
         {
-            
+
             initialTargetLocalPos = lookTarget.localPosition;
         }
 
-        
         if (headAimRig != null)
         {
             headAimRig.weight = 0f;
@@ -134,23 +114,16 @@ public class EnemyVisuals : MonoBehaviour
         HandleHeadScanningLogic();
     }
 
-    
-    
-    
-
     private void HandleHeadScanningLogic()
     {
         if (lookTarget == null || headAimRig == null) return;
 
-        
-        
         float targetWeight = isInvestigating ? 1f : 0f;
         headAimRig.weight = Mathf.MoveTowards(headAimRig.weight, targetWeight, Time.deltaTime * investigateRigBlendSpeed);
 
-        
         if (headAimRig.weight > 0.01f)
         {
-            
+
             bool isCrawlingAnim = anim != null && anim.GetBool("isCrawling");
             float useSpeed = isCrawlingAnim ? crawlScanSpeed : scanSpeed;
             float useWidth = isCrawlingAnim ? crawlScanWidth : scanWidth;
@@ -158,7 +131,6 @@ public class EnemyVisuals : MonoBehaviour
             float oscX = Mathf.Sin(t) * useWidth;
             float oscY = isCrawlingAnim ? Mathf.Sin(t * 0.5f) * verticalScanAmplitude : 0f;
 
-            
             if (headBone != null)
             {
                 Vector3 basePos = headBone.position + headBone.forward * lookTargetDistance;
@@ -173,19 +145,17 @@ public class EnemyVisuals : MonoBehaviour
                 lookTarget.localPosition = targetPosLocal;
             }
 
-            
             Vector3 targetPos = initialTargetLocalPos;
             targetPos.x += oscX;
-            
+
         }
         else
         {
-            
+
             lookTarget.localPosition = Vector3.Lerp(lookTarget.localPosition, initialTargetLocalPos, Time.deltaTime * 5f);
         }
     }
 
-    
     public void SetInvestigatingMode(bool state)
     {
         isInvestigating = state;
@@ -195,20 +165,15 @@ public class EnemyVisuals : MonoBehaviour
     {
         return anim != null && anim.GetBool("isCrawling");
     }
-    
-    
-    
 
     public void UpdateAnimationState(bool isCrawling)
     {
-        
+
         anim.SetBool("isCrawling", isCrawling);
 
-        
         float targetSpeed = motor.IsMoving ? 1f : 0f;
         float currentSpeed = anim.GetFloat("Speed");
 
-        
         if (!motor.IsMoving)
         {
             anim.SetFloat("Speed", 0f);
@@ -219,7 +184,6 @@ public class EnemyVisuals : MonoBehaviour
             anim.SetFloat("Speed", newSpeed);
         }
 
-        
         if (motor.IsMoving)
         {
             AudioClip targetClip = isCrawling ? crawlFootstepClip : walkFootstepClip;
@@ -232,12 +196,10 @@ public class EnemyVisuals : MonoBehaviour
         }
     }
 
-    
     public void SetPassiveState(int stateIndex)
     {
         anim.SetFloat("PassiveType", (float)stateIndex);
 
-        
         if (stateIndex == 1 && eatingSound != null)
         {
             if (!audioSource.isPlaying || audioSource.clip != eatingSound)
@@ -254,13 +216,8 @@ public class EnemyVisuals : MonoBehaviour
         }
     }
 
-    
     public void SetSleep(bool state) { if (state) SetPassiveState(0); }
     public void SetEat(bool state) { if (state) SetPassiveState(1); }
-
-    
-    
-    
 
     public void TriggerAttack(int attackIndex)
     {
@@ -292,15 +249,12 @@ public class EnemyVisuals : MonoBehaviour
 
     public void StopAttack() => DisableAllHitboxes();
 
-    
-
     public void ResetSyncFlags()
     {
         AnimImpactReceived = false;
         AnimFinishedReceived = false;
     }
 
-    
     public void AE_ActionImpact()
     {
         AnimImpactReceived = true;
@@ -308,16 +262,11 @@ public class EnemyVisuals : MonoBehaviour
         EnableLeftHand();
     }
 
-    
     public void AE_ActionFinish()
     {
         AnimFinishedReceived = true;
         DisableAllHitboxes();
     }
-
-    
-    
-    
 
     public void PlayRoarSound() => PlayOneShot(roarClip, 0.7f);
 
@@ -338,17 +287,12 @@ public class EnemyVisuals : MonoBehaviour
         }
     }
 
-    
     public void EnableRightHand() { if (rightHandCollider) rightHandCollider.SetActive(true); }
     public void DisableRightHand() { if (rightHandCollider) rightHandCollider.SetActive(false); }
     public void EnableLeftHand() { if (leftHandCollider) leftHandCollider.SetActive(true); }
     public void DisableLeftHand() { if (leftHandCollider) leftHandCollider.SetActive(false); }
 
     private void DisableAllHitboxes() { DisableRightHand(); DisableLeftHand(); }
-
-    
-    
-    
 
     private void EnsureHitboxSetup(GameObject go)
     {
@@ -395,10 +339,6 @@ public class EnemyVisuals : MonoBehaviour
             yield return null;
         }
     }
-
-    
-    
-    
 
     private void UpdateFootsteps(AudioClip clip, float interval)
     {

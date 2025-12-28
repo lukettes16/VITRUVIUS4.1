@@ -91,13 +91,13 @@ namespace Michsky.UI.Dark
 
         public void AntiAlisasingSet(int index)
         {
-            // 0, 2, 4, 8 - Zero means off
+
             QualitySettings.antiAliasing = index;
         }
 
         public void VsyncSet(int index)
         {
-            // 0, 1 - Zero means off
+
             QualitySettings.vSyncCount = index;
         }
 
@@ -123,13 +123,13 @@ namespace Michsky.UI.Dark
 
         public void ShadowsCascasedSet(int index)
         {
-            //0 = No, 2 = Two, 4 = Four
+
             QualitySettings.shadowCascades = index;
         }
 
         public void TextureSet(int index)
         {
-            // 0 = Full, 4 = Eight Resolution
+
             QualitySettings.globalTextureMipmapLimit = index;
         }
 

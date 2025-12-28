@@ -12,31 +12,25 @@ public class CameraShake : MonoBehaviour
 
     void Awake()
     {
-        
+
         initialPosition = transform.localPosition;
     }
 
     private void OnDisable()
     {
-        
+
         StopShake();
     }
 
-    
-    
-    
     public void Shake()
     {
-        
+
         if (shakeCoroutine != null)
             StopCoroutine(shakeCoroutine);
 
         shakeCoroutine = StartCoroutine(ShakeRoutine());
     }
 
-    
-    
-    
     public void StopShake()
     {
         if (shakeCoroutine != null)
@@ -44,7 +38,7 @@ public class CameraShake : MonoBehaviour
             StopCoroutine(shakeCoroutine);
             shakeCoroutine = null;
         }
-        
+
         transform.localPosition = initialPosition;
     }
 
@@ -54,7 +48,7 @@ public class CameraShake : MonoBehaviour
 
         while (elapsed < shakeDuration)
         {
-            
+
             Vector3 offset = Random.insideUnitSphere * shakeMagnitude;
             transform.localPosition = initialPosition + offset;
 
@@ -62,7 +56,6 @@ public class CameraShake : MonoBehaviour
             yield return null;
         }
 
-        
         transform.localPosition = initialPosition;
         shakeCoroutine = null;
     }

@@ -7,7 +7,6 @@ public class FlashlightController : MonoBehaviour
     public Light flashlight;
     public float rotationSpeed = 100f;
 
-    
     public Behaviour volumetricBeam;
 
     [Header("Input Settings")]
@@ -26,7 +25,6 @@ public class FlashlightController : MonoBehaviour
 
     public bool isFlashlightOn = true;
 
-    
     [HideInInspector] public float originalIntensity;
 
     void Start()
@@ -38,13 +36,11 @@ public class FlashlightController : MonoBehaviour
         {
             if (volumetricBeam == null)
             {
-                
+
             }
 
-            
             originalIntensity = flashlight.intensity;
 
-            
             SetFlashlightState(isFlashlightOn, true);
         }
 
@@ -85,58 +81,49 @@ public class FlashlightController : MonoBehaviour
         }
     }
 
-    
-    
-    
     public void SetFlashlightState(bool state, bool immediate = false)
     {
         isFlashlightOn = state;
 
-        
         if (flashlight != null)
         {
             flashlight.intensity = state ? originalIntensity : 0f;
-            flashlight.enabled = state; 
+            flashlight.enabled = state;
         }
 
-        
         if (volumetricBeam != null)
         {
             volumetricBeam.enabled = state;
         }
 
-        
         if (flashlightAnimator != null)
         {
-            
+
             flashlightAnimator.SetBool("FlashlightOn", state);
         }
 
-        
         ToggleAllChildObjects(state);
     }
 
-    
     private void ToggleAllChildObjects(bool state)
     {
-        
+
         Light[] allLights = GetComponentsInChildren<Light>(true);
         foreach (Light light in allLights)
         {
-            if (light != flashlight) 
+            if (light != flashlight)
             {
                 light.enabled = state;
             }
         }
 
-        
         Behaviour[] allBehaviours = GetComponentsInChildren<Behaviour>(true);
         foreach (Behaviour behaviour in allBehaviours)
         {
             if (behaviour != volumetricBeam && behaviour != this)
             {
-                
-                if (behaviour.GetType().Name.Contains("Spotlight") || 
+
+                if (behaviour.GetType().Name.Contains("Spotlight") ||
                     behaviour.GetType().Name.Contains("Light") ||
                     behaviour.GetType().Name.Contains("VLB"))
                 {
@@ -145,7 +132,6 @@ public class FlashlightController : MonoBehaviour
             }
         }
 
-        
         Renderer[] allRenderers = GetComponentsInChildren<Renderer>(true);
         foreach (Renderer renderer in allRenderers)
         {
@@ -155,7 +141,7 @@ public class FlashlightController : MonoBehaviour
 
     void ToggleFlashlight()
     {
-        
+
         PlayerInventory inventory = GetComponentInParent<PlayerInventory>();
         if (inventory == null || !inventory.HasItem("Flashlight"))
         {
@@ -163,7 +149,6 @@ public class FlashlightController : MonoBehaviour
             return;
         }
 
-        
         if (playFlashlightSounds)
         {
             if (AudioManager.Instance != null && AudioManager.Instance.GetAudioConfig().doorOpenSounds.Length > 0)
@@ -174,7 +159,6 @@ public class FlashlightController : MonoBehaviour
             }
         }
 
-        
         SetFlashlightState(!isFlashlightOn);
     }
 

@@ -117,7 +117,7 @@ namespace Michsky.UI.Dark
                 nextButton = buttons[currentButtonlIndex + 1];
 
                 currentPanelAnimator = currentPanel.GetComponent<Animator>();
-                currentButtonAnimator = currentButton.GetComponent<Animator>();           
+                currentButtonAnimator = currentButton.GetComponent<Animator>();
                 currentButtonAnimator.Play(buttonFadeOut);
                 currentPanelAnimator.Play(panelFadeOut);
 

@@ -30,17 +30,14 @@ public class ObjectCarryingSystem : MonoBehaviour
     [Tooltip("Dibuja la curva en el inspector: Eje Y(0 a 1) es el progreso. Haz que empiece lento y suba rapido.")]
     public AnimationCurve throwVelocityCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
-    
     private float _currentThrowForward;
     private float _currentThrowUpward;
     private float _currentThrowSpeed;
 
-    
     private float defaultThrowForward = 1.2f;
     private float defaultThrowUpward = 0.1f;
     private float defaultThrowSpeed = 15f;
 
-    
     private Transform _gripL;
     private Transform _gripR;
 
@@ -53,7 +50,6 @@ public class ObjectCarryingSystem : MonoBehaviour
     private Quaternion _throwTargetRotL;
     private Quaternion _throwTargetRotR;
 
-    
     private Vector3 _defaultHintPosL;
     private Vector3 _defaultHintPosR;
 
@@ -65,7 +61,6 @@ public class ObjectCarryingSystem : MonoBehaviour
         _currentThrowUpward = defaultThrowUpward;
         _currentThrowSpeed = defaultThrowSpeed;
 
-        
         if (leftElbowHint) _defaultHintPosL = leftElbowHint.localPosition;
         if (rightElbowHint) _defaultHintPosR = rightElbowHint.localPosition;
     }
@@ -74,11 +69,8 @@ public class ObjectCarryingSystem : MonoBehaviour
     {
         if (carryingRig == null) return;
 
-        
         carryingRig.weight = Mathf.Lerp(carryingRig.weight, _targetWeight, Time.deltaTime * transitionSpeed);
 
-        
-        
         if (_isCarrying || _isThrowing)
         {
             if (leftElbowHint)
@@ -89,28 +81,22 @@ public class ObjectCarryingSystem : MonoBehaviour
         }
         else
         {
-            
+
             if (leftElbowHint) leftElbowHint.localPosition = Vector3.Lerp(leftElbowHint.localPosition, _defaultHintPosL, Time.deltaTime * 5f);
             if (rightElbowHint) rightElbowHint.localPosition = Vector3.Lerp(rightElbowHint.localPosition, _defaultHintPosR, Time.deltaTime * 5f);
         }
 
-        
         if (_isThrowing)
         {
-            
-            
+
         }
         else if (_isCarrying && _gripL != null && _gripR != null)
         {
-            
-            
+
             float breathingEffect = Mathf.Sin(Time.time * bobSpeed) * bobAmount;
             Vector3 bobVector = new Vector3(0, breathingEffect, 0);
 
-            
-            
-            
-            float handFollowSpeed = 20f; 
+            float handFollowSpeed = 20f;
 
             leftHandTarget.position = Vector3.Lerp(leftHandTarget.position, _gripL.position + bobVector, Time.deltaTime * handFollowSpeed);
             leftHandTarget.rotation = Quaternion.Slerp(leftHandTarget.rotation, _gripL.rotation, Time.deltaTime * handFollowSpeed);
@@ -176,7 +162,6 @@ public class ObjectCarryingSystem : MonoBehaviour
         Vector3 upDir = transform.up;
         Vector3 displacement = (forwardDir * _currentThrowForward) + (upDir * _currentThrowUpward);
 
-        
         Vector3 startPosL = leftHandTarget.position;
         Vector3 startPosR = rightHandTarget.position;
 
@@ -186,38 +171,31 @@ public class ObjectCarryingSystem : MonoBehaviour
         _throwTargetRotL = leftHandTarget.rotation;
         _throwTargetRotR = rightHandTarget.rotation;
 
-        
         StartCoroutine(AnimateThrowCurve(startPosL, startPosR));
     }
 
-    
     private IEnumerator AnimateThrowCurve(Vector3 startL, Vector3 startR)
     {
         float timer = 0f;
-        
-        
-        float duration = 0.25f; 
+
+        float duration = 0.25f;
 
         while (timer < duration)
         {
             timer += Time.deltaTime;
             float progress = timer / duration;
 
-            
             float curveValue = throwVelocityCurve.Evaluate(progress);
 
-            
             leftHandTarget.position = Vector3.Lerp(startL, _throwTargetPosL, curveValue);
             rightHandTarget.position = Vector3.Lerp(startR, _throwTargetPosR, curveValue);
 
-            
             leftHandTarget.rotation = _throwTargetRotL;
             rightHandTarget.rotation = _throwTargetRotR;
 
             yield return null;
         }
 
-        
         yield return new WaitForSeconds(0.15f);
 
         _isThrowing = false;

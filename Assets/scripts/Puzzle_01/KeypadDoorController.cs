@@ -89,7 +89,6 @@ public class KeypadDoorController : MonoBehaviour
         }
     }
 
-
     private void SetOutlineState(Color color, float scale)
     {
         if (meshRenderer == null) return;
@@ -109,7 +108,6 @@ public class KeypadDoorController : MonoBehaviour
             SetOutlineState(cooperativeOutlineColor, activeOutlineScale);
         UpdatePromptVisuals();
     }
-
 
     private void OnTriggerEnter(Collider other)
     {
@@ -175,7 +173,6 @@ public class KeypadDoorController : MonoBehaviour
         }
     }
 
-
     private void OnInteractP1(InputAction.CallbackContext ctx)
     {
         if (!isActive && !isOpen && nearbyP1 != null)
@@ -192,21 +189,16 @@ public class KeypadDoorController : MonoBehaviour
     {
         if (player == null) return;
 
-        
         isActive = true;
         currentP1 = player;
 
-        
         ShowPrompt(false);
 
-        
         keypadCanvas.SetActive(true);
         PositionCanvasOnScreen(keypadCanvas);
 
-        
         uiManager.Open(this, player.GetComponent<PlayerInput>());
 
-        
         player.EnterLockMode(uiManager);
     }
 
@@ -214,24 +206,18 @@ public class KeypadDoorController : MonoBehaviour
     {
         if (player == null) return;
 
-        
         isActive = true;
         currentP2 = player;
 
-        
         ShowPrompt(false);
 
-        
         keypadCanvas.SetActive(true);
         PositionCanvasOnScreen(keypadCanvas);
 
-        
         uiManager.Open(this, player.GetComponent<PlayerInput>());
 
-        
         player.EnterLockMode(uiManager);
     }
-
 
     public void ReleasePlayer()
     {
@@ -249,11 +235,9 @@ public class KeypadDoorController : MonoBehaviour
         isActive = false;
         keypadCanvas.SetActive(false);
 
-        
         if (!isOpen && activePlayers.Count > 0)
             ShowPrompt(true);
     }
-
 
     public void OpenDoor()
     {
@@ -283,7 +267,6 @@ public class KeypadDoorController : MonoBehaviour
         ReleasePlayer();
         ShowPrompt(false);
     }
-
 
     private void ShowPrompt(bool state)
     {

@@ -1,11 +1,11 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
-using System.Linq; 
+using System.Linq;
 
 public class GamepadRumbler : MonoBehaviour
 {
-    
+
     private Gamepad specificGamepad;
 
     [Header("Rumble Settings")]
@@ -17,13 +17,12 @@ public class GamepadRumbler : MonoBehaviour
 
     void Awake()
     {
-        
+
         PlayerInput playerInput = GetComponent<PlayerInput>();
 
         if (playerInput != null)
         {
-            
-            
+
             specificGamepad = playerInput.devices.OfType<Gamepad>().FirstOrDefault();
         }
 
@@ -35,13 +34,10 @@ public class GamepadRumbler : MonoBehaviour
 
     private void OnDisable()
     {
-        
+
         StopRumble();
     }
 
-    
-    
-    
     public void Rumble()
     {
         if (specificGamepad == null) return;
@@ -52,9 +48,6 @@ public class GamepadRumbler : MonoBehaviour
         rumbleCoroutine = StartCoroutine(RumbleRoutine(lowFrequency, highFrequency, rumbleDuration));
     }
 
-    
-    
-    
     public void RumbleStrong()
     {
         if (specificGamepad == null) return;
@@ -62,17 +55,13 @@ public class GamepadRumbler : MonoBehaviour
         if (rumbleCoroutine != null)
             StopCoroutine(rumbleCoroutine);
 
-        
-        float strongLow = Mathf.Clamp01(lowFrequency * 4f); 
-        float strongHigh = Mathf.Clamp01(highFrequency * 4f); 
-        float strongDuration = rumbleDuration * 2.5f; 
+        float strongLow = Mathf.Clamp01(lowFrequency * 4f);
+        float strongHigh = Mathf.Clamp01(highFrequency * 4f);
+        float strongDuration = rumbleDuration * 2.5f;
 
         rumbleCoroutine = StartCoroutine(RumbleRoutine(strongLow, strongHigh, strongDuration));
     }
 
-    
-    
-    
     public void StopRumble()
     {
         if (rumbleCoroutine != null)
@@ -83,18 +72,17 @@ public class GamepadRumbler : MonoBehaviour
 
         if (specificGamepad != null)
         {
-            
+
             specificGamepad.SetMotorSpeeds(0f, 0f);
         }
     }
 
-
     private IEnumerator RumbleRoutine(float low, float high, float duration)
     {
-        
+
         specificGamepad.SetMotorSpeeds(low, high);
         yield return new WaitForSeconds(duration);
-        specificGamepad.SetMotorSpeeds(0f, 0f); 
+        specificGamepad.SetMotorSpeeds(0f, 0f);
         rumbleCoroutine = null;
     }
 }

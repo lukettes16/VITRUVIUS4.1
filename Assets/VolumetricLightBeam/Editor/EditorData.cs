@@ -15,13 +15,13 @@ namespace VLB
         [SerializeField] Texture2D buttonAddShadowHD = null;
         [SerializeField] Texture2D buttonAddTrackRealtimeChangesOnLightHD = null;
 
-        public GUIContent contentAddDustParticles       { get { return new GUIContent(Instance.buttonAddDustParticles, EditorStrings.Beam.ButtonAddDustParticles); } } 
-        public GUIContent contentAddDynamicOcclusion    { get { return new GUIContent(Instance.buttonAddDynamicOcclusion, EditorStrings.Beam.ButtonAddDynamicOcclusion); } } 
-        public GUIContent contentAddTriggerZone         { get { return new GUIContent(Instance.buttonAddTriggerZone, EditorStrings.Beam.ButtonAddTriggerZone); } } 
-        public GUIContent contentAddEffect              { get { return new GUIContent(Instance.buttonAddEffect, EditorStrings.Beam.ButtonAddEffect); } } 
+        public GUIContent contentAddDustParticles       { get { return new GUIContent(Instance.buttonAddDustParticles, EditorStrings.Beam.ButtonAddDustParticles); } }
+        public GUIContent contentAddDynamicOcclusion    { get { return new GUIContent(Instance.buttonAddDynamicOcclusion, EditorStrings.Beam.ButtonAddDynamicOcclusion); } }
+        public GUIContent contentAddTriggerZone         { get { return new GUIContent(Instance.buttonAddTriggerZone, EditorStrings.Beam.ButtonAddTriggerZone); } }
+        public GUIContent contentAddEffect              { get { return new GUIContent(Instance.buttonAddEffect, EditorStrings.Beam.ButtonAddEffect); } }
         public GUIContent contentFromSpotLight          { get { return new GUIContent(Instance.buttonFromSpotLight, EditorStrings.Beam.FromSpotLight); } }
 
-        public GUIContent contentAddCookieHD            { get { return new GUIContent(Instance.buttonAddCookieHD, EditorStrings.Beam.HD.ButtonAddCookie); } } 
+        public GUIContent contentAddCookieHD            { get { return new GUIContent(Instance.buttonAddCookieHD, EditorStrings.Beam.HD.ButtonAddCookie); } }
         public GUIContent contentAddShadowHD            { get { return new GUIContent(Instance.buttonAddShadowHD, EditorStrings.Beam.HD.ButtonAddShadow); } }
         public GUIContent contentAddTrackRealtimeChangesOnLightHD { get { return new GUIContent(Instance.buttonAddTrackRealtimeChangesOnLightHD, EditorStrings.Beam.HD.ButtonAddTrackRealtimeChangesOnLight); } }
 
@@ -41,4 +41,3 @@ namespace VLB
     }
 }
 #endif
-

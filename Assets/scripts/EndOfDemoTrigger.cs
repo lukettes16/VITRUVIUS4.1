@@ -24,7 +24,7 @@ public class EndOfDemoTrigger : MonoBehaviour
 
         if (IsPlayer(other.gameObject))
         {
-            Debug.Log($"[EndOfDemoTrigger] Player detected: {other.gameObject.name}. Activating end screen...");
+            
             hasTriggered = true;
             ActivateEndScreen();
         }
@@ -36,20 +36,20 @@ public class EndOfDemoTrigger : MonoBehaviour
         {
             if (obj.CompareTag(tag))
             {
-                Debug.Log($"[EndOfDemoTrigger] Matched player by tag: {tag}");
+                
                 return true;
             }
         }
 
         if (obj.GetComponent<MovJugador1>() != null || obj.GetComponent<MovJugador2>() != null)
         {
-            Debug.Log("[EndOfDemoTrigger] Matched player by MovJugador component");
+            
             return true;
         }
 
         if (obj.name.Contains("Player1") || obj.name.Contains("Player2"))
         {
-            Debug.Log("[EndOfDemoTrigger] Matched player by name");
+            
             return true;
         }
 
@@ -58,13 +58,12 @@ public class EndOfDemoTrigger : MonoBehaviour
 
     private void ActivateEndScreen()
     {
-        Debug.Log("[EndOfDemoTrigger] Activating end of demo sequence...");
-
+        
         EndOfDemoController.Instance.ShowEndScreen();
 
         if (hideOnTrigger)
         {
-            Debug.Log("[EndOfDemoTrigger] Hiding trigger GameObject...");
+            
             gameObject.SetActive(false);
         }
 
@@ -73,7 +72,7 @@ public class EndOfDemoTrigger : MonoBehaviour
             Collider col = GetComponent<Collider>();
             if (col != null)
             {
-                Debug.Log("[EndOfDemoTrigger] Disabling trigger collider...");
+                
                 col.enabled = false;
             }
         }

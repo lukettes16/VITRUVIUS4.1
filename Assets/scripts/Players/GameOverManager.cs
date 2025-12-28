@@ -16,20 +16,20 @@ public class GameOverManager : MonoBehaviour
     [Tooltip("Duration of the fade to black effect.")]
     [SerializeField] private float fadeDuration = 1.5f;
     [Tooltip("Intensity of the shake effect for the GAME OVER text.")]
-    [SerializeField] private float shakeIntensity = 3f; 
+    [SerializeField] private float shakeIntensity = 3f;
     [Tooltip("Duration of the shake effect.")]
     [SerializeField] private float shakeDuration = 1.5f;
     [Tooltip("Whether to automatically pause the game when Game Over is triggered.")]
-    [SerializeField] private bool autoPauseOnGameOver = false; 
+    [SerializeField] private bool autoPauseOnGameOver = false;
     [Tooltip("Font size for the GAME OVER text. Default is 67 (approx 30% smaller than original 96).")]
-    [SerializeField] private float gameOverTextSize = 67f; 
+    [SerializeField] private float gameOverTextSize = 67f;
 
     [Header("References")]
     [Tooltip("The NPC that must survive. If null, will try to auto-find by tag.")]
     [SerializeField] private NPCHealth npcToProtect;
     [Tooltip("Tag to search for the NPC. Default: NPC")]
     [SerializeField] private string npcTag = "NPC";
-    
+
     [Tooltip("The players in the scene. If empty, will try to auto-find.")]
     [SerializeField] private List<PlayerHealth> players;
 
@@ -37,14 +37,13 @@ public class GameOverManager : MonoBehaviour
     private bool gameOverTriggered = false;
     private Canvas fadeCanvas;
     private Image fadeImage;
-    
-    
+
     [Header("UI Assignment")]
     [Tooltip("The Retry button. If null, one will be created programmatically.")]
     [SerializeField] private Button retryButton;
     [Tooltip("The Quit (Respawn) button. If null, one will be created programmatically.")]
     [SerializeField] private Button quitButton;
-    
+
     private Canvas gameOverCanvas;
     public Canvas gameOverButtonsCanvas;
     public GameObject gameOverCanvasPrefab;
@@ -53,8 +52,7 @@ public class GameOverManager : MonoBehaviour
     private Button internalRetryButton;
     private Button internalQuitButton;
     private CanvasGroup buttonCanvasGroup;
-    
-    
+
     [Header("UI Audio")]
     [Tooltip("Sound played when navigating between buttons.")]
     [SerializeField] private AudioClip hoverSound;
@@ -86,7 +84,7 @@ public class GameOverManager : MonoBehaviour
 
         uiAudioSource = gameObject.AddComponent<AudioSource>();
         uiAudioSource.playOnAwake = false;
-        uiAudioSource.spatialBlend = 0f; // 2D Sound
+        uiAudioSource.spatialBlend = 0f;
         uiAudioSource.ignoreListenerPause = true;
     }
 
@@ -98,8 +96,7 @@ public class GameOverManager : MonoBehaviour
         CreateGameOverUI();
         SetupButtonListeners();
         StartCoroutine(InitialFadeIn());
-        
-        
+
         if (npcToProtect == null)
         {
             StartCoroutine(SearchForNPCLater());
@@ -108,16 +105,16 @@ public class GameOverManager : MonoBehaviour
 
     private void InitializeReferences()
     {
-        
+
         if (npcToProtect == null)
         {
             npcToProtect = FindNPCByTag();
-            
+
             if (npcToProtect == null)
             {
                 npcToProtect = FindObjectOfType<NPCHealth>();
             }
-            
+
             if (npcToProtect == null)
             {
 
@@ -128,7 +125,6 @@ public class GameOverManager : MonoBehaviour
             }
         }
 
-        
         if (players == null || players.Count == 0)
         {
             players = new List<PlayerHealth>(FindObjectsOfType<PlayerHealth>());
@@ -145,9 +141,9 @@ public class GameOverManager : MonoBehaviour
 
     private NPCHealth FindNPCByTag()
     {
-        
+
         GameObject[] npcsWithTag = GameObject.FindGameObjectsWithTag(npcTag);
-        
+
         foreach (GameObject npcObj in npcsWithTag)
         {
             NPCHealth npcHealth = npcObj.GetComponent<NPCHealth>();
@@ -156,8 +152,7 @@ public class GameOverManager : MonoBehaviour
                 return npcHealth;
             }
         }
-        
-        
+
         if (npcTag != "NPC")
         {
             GameObject npcWithDefaultTag = GameObject.FindGameObjectWithTag("NPC");
@@ -166,7 +161,7 @@ public class GameOverManager : MonoBehaviour
                 return npcWithDefaultTag.GetComponent<NPCHealth>();
             }
         }
-        
+
         return null;
     }
 
@@ -206,7 +201,6 @@ public class GameOverManager : MonoBehaviour
     {
         if (gameOverTriggered) return;
 
-        
         if (npcToProtect == null)
         {
             npcToProtect = FindNPCByTag();
@@ -226,7 +220,6 @@ public class GameOverManager : MonoBehaviour
 
         deadPlayersCount++;
 
-
         if (deadPlayersCount >= players.Count)
         {
             TriggerGameOver();
@@ -236,53 +229,43 @@ public class GameOverManager : MonoBehaviour
     public void TriggerGameOver()
     {
         gameOverTriggered = true;
-        
-        
+
         if (autoPauseOnGameOver)
         {
             PauseGame();
         }
-        
+
         StartCoroutine(GameOverSequence());
     }
-    
-    
-    
-    
+
     private void PauseGame()
     {
         originalTimeScale = Time.timeScale;
         wasGamePaused = Mathf.Approximately(Time.timeScale, 0f);
-        
+
         if (!wasGamePaused)
         {
             Time.timeScale = 0f;
 
         }
-        
-        
+
         DisableAllPlayerInput();
-        
-        
+
         DisableAllEnemyAI();
-        
-        
+
         PauseGameAudio();
     }
-    
-    
-    
-    
+
     public void ManualPause()
     {
         PauseGame();
     }
-    
+
     public void ManualResume()
     {
         ResumeGame();
     }
-    
+
     private void ResumeGame()
     {
         if (!wasGamePaused)
@@ -290,20 +273,14 @@ public class GameOverManager : MonoBehaviour
             Time.timeScale = originalTimeScale;
 
         }
-        
-        
+
         EnableAllPlayerInput();
-        
-        
+
         EnableAllEnemyAI();
-        
-        
+
         ResumeGameAudio();
     }
-    
-    
-    
-    
+
     private void DisableAllPlayerInput()
     {
         var playerInputs = FindObjectsOfType<UnityEngine.InputSystem.PlayerInput>();
@@ -315,19 +292,15 @@ public class GameOverManager : MonoBehaviour
                 input.SwitchCurrentActionMap("UI");
             }
         }
-        
+
         var playerControllers = FindObjectsOfType<PlayerControllerBase>();
         foreach (var controller in playerControllers)
         {
             controller.enabled = false;
         }
-        
 
     }
-    
-    
-    
-    
+
     private void EnableAllPlayerInput()
     {
         var playerInputs = FindObjectsOfType<UnityEngine.InputSystem.PlayerInput>();
@@ -339,19 +312,15 @@ public class GameOverManager : MonoBehaviour
                 input.SwitchCurrentActionMap("Player");
             }
         }
-        
+
         var playerControllers = FindObjectsOfType<PlayerControllerBase>();
         foreach (var controller in playerControllers)
         {
             controller.enabled = true;
         }
-        
 
     }
-    
-    
-    
-    
+
     private void DisableAllEnemyAI()
     {
         var navMeshAgents = FindObjectsOfType<UnityEngine.AI.NavMeshAgent>();
@@ -363,7 +332,7 @@ public class GameOverManager : MonoBehaviour
             }
         }
     }
-    
+
     private void EnableAllEnemyAI()
     {
         var navMeshAgents = FindObjectsOfType<UnityEngine.AI.NavMeshAgent>();
@@ -375,28 +344,21 @@ public class GameOverManager : MonoBehaviour
             }
         }
     }
-    
-    
-    
-    
+
     private void PauseGameAudio()
     {
         var audioSources = FindObjectsOfType<AudioSource>();
         foreach (var audioSource in audioSources)
         {
-            
+
             if (audioSource.GetComponentInParent<Canvas>() == null)
             {
                 audioSource.Pause();
             }
         }
-        
 
     }
-    
-    
-    
-    
+
     private void ResumeGameAudio()
     {
         var audioSources = FindObjectsOfType<AudioSource>();
@@ -407,13 +369,12 @@ public class GameOverManager : MonoBehaviour
                 audioSource.UnPause();
             }
         }
-        
 
     }
 
     public void AssignNPCToProtect(NPCHealth npc)
     {
-        
+
         if (npcToProtect != null)
         {
             npcToProtect.OnNPCDied -= HandleNPCDeath;
@@ -421,18 +382,15 @@ public class GameOverManager : MonoBehaviour
 
         npcToProtect = npc;
 
-        
         if (npcToProtect != null)
         {
             npcToProtect.OnNPCDied += HandleNPCDeath;
-            
-            
+
             if (npcToProtect.gameObject.tag != npcTag && !string.IsNullOrEmpty(npcTag))
             {
                 npcToProtect.gameObject.tag = npcTag;
 
             }
-            
 
         }
     }
@@ -441,7 +399,7 @@ public class GameOverManager : MonoBehaviour
     {
         yield return StartCoroutine(FadeToBlack());
         yield return new WaitForSecondsRealtime(reloadDelay);
-        
+
         ShowGameOverUI();
     }
 
@@ -454,27 +412,23 @@ public class GameOverManager : MonoBehaviour
             color.a = 0f;
             fadeImage.color = color;
 
-            
             float elapsed = 0f;
             while (elapsed < fadeDuration)
             {
                 elapsed += Time.deltaTime;
                 float fadeProgress = elapsed / fadeDuration;
-                
-                
+
                 float smoothProgress = Mathf.SmoothStep(0f, 1f, fadeProgress);
-                
-                
+
                 color.r = 0f;
                 color.g = 0f;
                 color.b = 0f;
                 color.a = smoothProgress;
-                
+
                 fadeImage.color = color;
                 yield return null;
             }
-            
-            
+
             color = Color.black;
             color.a = 1f;
             fadeImage.color = color;
@@ -526,7 +480,7 @@ public class GameOverManager : MonoBehaviour
                 fadeImage.color = color;
                 yield return null;
             }
-            
+
             fadeCanvas.gameObject.SetActive(false);
         }
         yield return null;
@@ -549,7 +503,7 @@ public class GameOverManager : MonoBehaviour
                 fadeImage.color = color;
                 yield return null;
             }
-            
+
             fadeCanvas.gameObject.SetActive(false);
         }
         yield return null;
@@ -557,10 +511,10 @@ public class GameOverManager : MonoBehaviour
 
     private void RespawnAllPlayers()
     {
-        
+
         if (GameManager.Instance != null)
         {
-            
+
             foreach (var player in players)
             {
                 if (player != null && player.GetComponent<PlayerIdentifier>() != null)
@@ -572,12 +526,12 @@ public class GameOverManager : MonoBehaviour
         }
         else
         {
-            
+
             foreach (var player in players)
             {
                 if (player != null && player.IsDead)
                 {
-                    
+
                     player.RestoreState();
                 }
             }
@@ -586,14 +540,12 @@ public class GameOverManager : MonoBehaviour
 
     private void ResetGameOverState()
     {
-        
+
         deadPlayersCount = 0;
         gameOverTriggered = false;
-        
-        
+
         players = new List<PlayerHealth>(FindObjectsOfType<PlayerHealth>());
-        
-        
+
         foreach (var player in players)
         {
             if (player != null)
@@ -614,7 +566,7 @@ public class GameOverManager : MonoBehaviour
             internalRetryButton.onClick.AddListener(() => PlayClickSound());
             internalRetryButton.onClick.AddListener(OnContinueButtonClicked);
             AddButtonTriggers(internalRetryButton);
-            
+
             internalRetryButton.transition = Selectable.Transition.ColorTint;
             ColorBlock cb = internalRetryButton.colors;
             cb.normalColor = new Color(1, 1, 1, 1f);
@@ -630,7 +582,7 @@ public class GameOverManager : MonoBehaviour
             internalQuitButton.onClick.AddListener(() => PlayClickSound());
             internalQuitButton.onClick.AddListener(OnQuitButtonClicked);
             AddButtonTriggers(internalQuitButton);
-            
+
             internalQuitButton.transition = Selectable.Transition.ColorTint;
             ColorBlock cb = internalQuitButton.colors;
             cb.normalColor = new Color(1, 1, 1, 1f);
@@ -639,7 +591,7 @@ public class GameOverManager : MonoBehaviour
             cb.pressedColor = new Color(0.5f, 0.5f, 0.5f, 1f);
             internalQuitButton.colors = cb;
         }
-        
+
         if (internalRetryButton != null && internalQuitButton != null)
         {
             Navigation retryNav = new Navigation();
@@ -690,7 +642,7 @@ public class GameOverManager : MonoBehaviour
 
     private void CreateGameOverUI()
     {
-        // Ensure EventSystem exists for UI navigation
+
          if (EventSystem.current == null)
          {
              GameObject eventSystemGO = new GameObject("EventSystem");
@@ -713,8 +665,7 @@ public class GameOverManager : MonoBehaviour
                 }
             }
          }
- 
-        // Use user-provided canvas or prefab; avoid auto-creation unless enabled
+
         if (gameOverButtonsCanvas != null)
         {
             gameOverCanvas = gameOverButtonsCanvas;
@@ -734,13 +685,13 @@ public class GameOverManager : MonoBehaviour
         {
             return;
         }
- 
+
          GameObject canvasGO = new GameObject("GameOverCanvas");
         canvasGO.transform.SetParent(transform);
         gameOverCanvas = canvasGO.AddComponent<Canvas>();
         gameOverButtonsCanvas = gameOverCanvas;
         gameOverCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        gameOverCanvas.sortingOrder = 1001; 
+        gameOverCanvas.sortingOrder = 1001;
         gameOverCanvas.gameObject.SetActive(false);
 
         CanvasScaler scaler = canvasGO.AddComponent<CanvasScaler>();
@@ -749,11 +700,10 @@ public class GameOverManager : MonoBehaviour
 
         GraphicRaycaster raycaster = canvasGO.AddComponent<GraphicRaycaster>();
 
-        
         GameObject panelGO = new GameObject("BackgroundPanel", typeof(RectTransform));
         panelGO.transform.SetParent(canvasGO.transform, false);
         Image panelImage = panelGO.AddComponent<Image>();
-        panelImage.color = new Color(0f, 0f, 0f, 0.85f); 
+        panelImage.color = new Color(0f, 0f, 0f, 0.85f);
 
         RectTransform panelRect = panelGO.GetComponent<RectTransform>();
         panelRect.anchorMin = Vector2.zero;
@@ -765,11 +715,11 @@ public class GameOverManager : MonoBehaviour
         textGO.transform.SetParent(canvasGO.transform, false);
         gameOverText = textGO.AddComponent<TextMeshProUGUI>();
         gameOverText.text = "GAME OVER";
-        gameOverText.fontSize = gameOverTextSize; 
-        gameOverText.color = new Color(1f, 1f, 1f, 0f); 
+        gameOverText.fontSize = gameOverTextSize;
+        gameOverText.color = new Color(1f, 1f, 1f, 0f);
         gameOverText.alignment = TextAlignmentOptions.Center;
         gameOverText.fontStyle = FontStyles.Bold;
-        
+
         TMP_FontAsset liberationFont = Resources.Load<TMP_FontAsset>("Fonts & Materials/LiberationSans SDF");
         if (liberationFont != null)
         {
@@ -778,15 +728,15 @@ public class GameOverManager : MonoBehaviour
 
         gameOverText.enableVertexGradient = true;
         gameOverText.colorGradient = new VertexGradient(
-            new Color(0.9f, 0.9f, 0.9f, 1f),      
-            new Color(0.7f, 0.7f, 0.7f, 1f),      
-            new Color(0.5f, 0.5f, 0.5f, 1f),      
-            new Color(0.3f, 0.3f, 0.3f, 1f)       
+            new Color(0.9f, 0.9f, 0.9f, 1f),
+            new Color(0.7f, 0.7f, 0.7f, 1f),
+            new Color(0.5f, 0.5f, 0.5f, 1f),
+            new Color(0.3f, 0.3f, 0.3f, 1f)
         );
-        
+
         gameOverText.gameObject.AddComponent<Shadow>().effectColor = new Color(0.05f, 0.05f, 0.05f, 0.6f);
         gameOverText.gameObject.GetComponent<Shadow>().effectDistance = new Vector2(2f, -2f);
-        
+
         gameOverText.gameObject.AddComponent<Outline>().effectColor = new Color(0.15f, 0.15f, 0.15f, 0.4f);
         gameOverText.gameObject.GetComponent<Outline>().effectDistance = new Vector2(1f, -1f);
 
@@ -796,10 +746,8 @@ public class GameOverManager : MonoBehaviour
         textRect.sizeDelta = new Vector2(800, 200);
         textRect.anchoredPosition = Vector2.zero;
 
-        
         Material textMaterial = new Material(Shader.Find("TextMeshPro/Distance Field"));
-        
-        
+
         Texture2D grungeTexture = Resources.Load<Texture2D>("Dark UI/Textures/Grunge/Background 3");
         if (grungeTexture != null)
         {
@@ -809,10 +757,8 @@ public class GameOverManager : MonoBehaviour
             gameOverText.fontMaterial = textMaterial;
         }
 
-        
-        gameOverText.color = new Color(0.85f, 0.85f, 0.85f, 1f); 
+        gameOverText.color = new Color(0.85f, 0.85f, 0.85f, 1f);
 
-        
         GameObject buttonContainer = new GameObject("ButtonContainer", typeof(RectTransform));
         buttonContainer.transform.SetParent(canvasGO.transform, false);
         buttonCanvasGroup = buttonContainer.AddComponent<CanvasGroup>();
@@ -824,13 +770,12 @@ public class GameOverManager : MonoBehaviour
         containerRect.sizeDelta = new Vector2(600, 300);
         containerRect.anchoredPosition = Vector2.zero;
 
-        
         if (retryButton == null)
         {
             GameObject continueButtonGO = new GameObject("ContinueButton", typeof(RectTransform));
             continueButtonGO.transform.SetParent(buttonContainer.transform, false);
             internalRetryButton = continueButtonGO.AddComponent<Button>();
-            
+
             Image continueImage = continueButtonGO.AddComponent<Image>();
 
             Texture2D buttonGrungeTexture = Resources.Load<Texture2D>("Dark UI/Textures/Grunge/Background 3");
@@ -872,13 +817,12 @@ public class GameOverManager : MonoBehaviour
             continueTextRect.anchoredPosition = Vector2.zero;
         }
 
-        
         if (quitButton == null)
         {
             GameObject quitButtonGO = new GameObject("QuitButton", typeof(RectTransform));
             quitButtonGO.transform.SetParent(buttonContainer.transform, false);
             internalQuitButton = quitButtonGO.AddComponent<Button>();
-            
+
             Image quitImage = quitButtonGO.AddComponent<Image>();
 
             Texture2D buttonGrungeTexture = Resources.Load<Texture2D>("Dark UI/Textures/Grunge/Background 3");
@@ -928,8 +872,7 @@ public class GameOverManager : MonoBehaviour
         if (targetCanvas != null)
         {
             targetCanvas.gameObject.SetActive(true);
-            
-            // Focus on the retry button for joystick navigation
+
             if (internalRetryButton != null)
             {
                 internalRetryButton.Select();
@@ -951,33 +894,33 @@ public class GameOverManager : MonoBehaviour
                     }
                 }
             }
-            
+
             if (gameOverText != null)
             {
                 StartCoroutine(FadeInGameOverText());
             }
         }
     }
-    
+
     private IEnumerator FadeInGameOverText()
     {
         if (gameOverText != null)
         {
-            // Ensure buttons are active and set to 0 alpha
+
             if (buttonCanvasGroup != null) buttonCanvasGroup.alpha = 0f;
-            
+
             Color textColor = gameOverText.color;
             textColor.a = 0f;
             gameOverText.color = textColor;
-            
-            float duration = 1.5f; // Slightly faster
+
+            float duration = 1.5f;
             float elapsed = 0f;
-            
+
             while (elapsed < duration)
             {
                 elapsed += Time.unscaledDeltaTime;
                 float alpha = Mathf.SmoothStep(0f, 1f, elapsed / duration);
-                
+
                 textColor.a = alpha;
                 gameOverText.color = textColor;
 
@@ -985,66 +928,62 @@ public class GameOverManager : MonoBehaviour
                 {
                     buttonCanvasGroup.alpha = alpha;
                 }
-                
+
                 yield return null;
             }
-            
+
             textColor.a = 1f;
             gameOverText.color = textColor;
             if (buttonCanvasGroup != null) buttonCanvasGroup.alpha = 1f;
-            
+
             StartCoroutine(ShakeGameOverText());
         }
     }
-    
+
     private IEnumerator ShakeGameOverText()
     {
         if (gameOverText != null)
         {
             RectTransform textRect = gameOverText.GetComponent<RectTransform>();
             Vector3 originalPosition = textRect.anchoredPosition;
-            
+
             float elapsed = 0f;
-            float smoothShakeSpeed = 8f; 
-            
+            float smoothShakeSpeed = 8f;
+
             while (elapsed < shakeDuration)
             {
-                
+
                 float shakeProgress = elapsed / shakeDuration;
-                float intensityMultiplier = (1f - shakeProgress) * 0.5f; 
-                
-                
+                float intensityMultiplier = (1f - shakeProgress) * 0.5f;
+
                 float shakeX = Mathf.Sin(elapsed * smoothShakeSpeed) * shakeIntensity * intensityMultiplier;
                 float shakeY = Mathf.Cos(elapsed * smoothShakeSpeed * 0.7f) * shakeIntensity * 0.5f * intensityMultiplier;
-                
+
                 textRect.anchoredPosition = originalPosition + new Vector3(shakeX, shakeY, 0f);
-                
-                
+
                 float flicker = Mathf.Lerp(0.95f, 1f, Mathf.Sin(elapsed * 4f) * 0.5f + 0.5f);
                 Color currentColor = gameOverText.color;
                 currentColor.a = flicker;
                 gameOverText.color = currentColor;
-                
+
                 elapsed += Time.unscaledDeltaTime;
                 yield return null;
             }
-            
-            
+
             float returnDuration = 0.3f;
             float returnElapsed = 0f;
             Vector3 currentPos = textRect.anchoredPosition;
-            
+
             while (returnElapsed < returnDuration)
             {
                 returnElapsed += Time.unscaledDeltaTime;
                 float t = returnElapsed / returnDuration;
-                t = Mathf.SmoothStep(0f, 1f, t); 
-                
+                t = Mathf.SmoothStep(0f, 1f, t);
+
                 textRect.anchoredPosition = Vector3.Lerp(currentPos, originalPosition, t);
                 yield return null;
             }
-            
-            
+
             textRect.anchoredPosition = originalPosition;
             gameOverText.color = Color.white;
         }
@@ -1062,83 +1001,65 @@ public class GameOverManager : MonoBehaviour
     private void OnContinueButtonClicked()
     {
 
-        
         HideGameOverUI();
-        
-        
+
         ResumeGame();
-        
-        
+
         ResetGameOverState();
-        
-        
+
         StartCoroutine(RestartLevel());
     }
-    
-    
-    
-    
+
     private IEnumerator RestartLevel()
     {
-        
-        string currentSceneName = SceneManager.GetActiveScene().name;
-        
 
-        
-        
+        string currentSceneName = SceneManager.GetActiveScene().name;
+
         yield return StartCoroutine(FadeToBlack());
-        
-        
+
         yield return new WaitForSecondsRealtime(0.5f);
-        
-        
+
         SceneManager.LoadScene(currentSceneName);
-        
 
     }
 
     private void OnQuitButtonClicked()
     {
-        // Stop any pending logic
+
         StopAllCoroutines();
-        
-        // Ensure time is back to normal
+
         Time.timeScale = 1f;
-        
-        // Load the main menu scene
+
         SceneManager.LoadScene("Main Menu");
     }
 
     private IEnumerator FadeInAfterUI()
     {
         yield return StartCoroutine(FadeIn());
-        
+
         ResetGameOverState();
     }
 
     private IEnumerator SearchForNPCLater()
     {
         yield return new WaitForSeconds(2f);
-        
+
         while (npcToProtect == null)
         {
             npcToProtect = FindNPCByTag();
-            
+
             if (npcToProtect != null)
             {
 
-                
                 if (npcToProtect != null)
                 {
                     npcToProtect.OnNPCDied += HandleNPCDeath;
                 }
                 break;
             }
-            
+
             yield return new WaitForSeconds(3f);
         }
     }
 
-    
 }
-

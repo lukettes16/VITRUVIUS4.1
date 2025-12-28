@@ -9,38 +9,38 @@ public class JoystickMenuNavigation : MonoBehaviour
     public InputActionReference navigateAction;
     public InputActionReference submitAction;
     public InputActionReference startAction;
-    
+
     [Header("UI Configuration")]
     public GameObject defaultSelected;
-    
+
     private void OnEnable()
     {
         navigateAction.action.Enable();
         submitAction.action.Enable();
         startAction.action.Enable();
-        
+
         navigateAction.action.performed += OnNavigate;
         submitAction.action.performed += OnSubmit;
         startAction.action.performed += OnStart;
-        
+
         SetDefaultSelection();
     }
-    
+
     private void OnDisable()
     {
         navigateAction.action.performed -= OnNavigate;
         submitAction.action.performed -= OnSubmit;
         startAction.action.performed -= OnStart;
-        
+
         navigateAction.action.Disable();
         submitAction.action.Disable();
         startAction.action.Disable();
     }
-    
+
     private void OnNavigate(InputAction.CallbackContext context)
     {
         Vector2 input = context.ReadValue<Vector2>();
-        
+
         if (input.y > 0.5f)
         {
             MoveSelectionUp();
@@ -58,7 +58,7 @@ public class JoystickMenuNavigation : MonoBehaviour
             MoveSelectionLeft();
         }
     }
-    
+
     private void OnSubmit(InputAction.CallbackContext context)
     {
         if (context.performed)
@@ -66,7 +66,7 @@ public class JoystickMenuNavigation : MonoBehaviour
             SubmitCurrentSelection();
         }
     }
-    
+
     private void OnStart(InputAction.CallbackContext context)
     {
         if (context.performed)
@@ -74,7 +74,7 @@ public class JoystickMenuNavigation : MonoBehaviour
             SubmitCurrentSelection();
         }
     }
-    
+
     private void SetDefaultSelection()
     {
         if (defaultSelected != null)
@@ -82,7 +82,7 @@ public class JoystickMenuNavigation : MonoBehaviour
             EventSystem.current.SetSelectedGameObject(defaultSelected);
         }
     }
-    
+
     private void MoveSelectionUp()
     {
         if (EventSystem.current.currentSelectedGameObject == null)
@@ -90,14 +90,14 @@ public class JoystickMenuNavigation : MonoBehaviour
             SetDefaultSelection();
             return;
         }
-        
+
         Selectable current = EventSystem.current.currentSelectedGameObject.GetComponent<Selectable>();
         if (current != null && current.FindSelectableOnUp() != null)
         {
             current.FindSelectableOnUp().Select();
         }
     }
-    
+
     private void MoveSelectionDown()
     {
         if (EventSystem.current.currentSelectedGameObject == null)
@@ -105,14 +105,14 @@ public class JoystickMenuNavigation : MonoBehaviour
             SetDefaultSelection();
             return;
         }
-        
+
         Selectable current = EventSystem.current.currentSelectedGameObject.GetComponent<Selectable>();
         if (current != null && current.FindSelectableOnDown() != null)
         {
             current.FindSelectableOnDown().Select();
         }
     }
-    
+
     private void MoveSelectionLeft()
     {
         if (EventSystem.current.currentSelectedGameObject == null)
@@ -120,14 +120,14 @@ public class JoystickMenuNavigation : MonoBehaviour
             SetDefaultSelection();
             return;
         }
-        
+
         Selectable current = EventSystem.current.currentSelectedGameObject.GetComponent<Selectable>();
         if (current != null && current.FindSelectableOnLeft() != null)
         {
             current.FindSelectableOnLeft().Select();
         }
     }
-    
+
     private void MoveSelectionRight()
     {
         if (EventSystem.current.currentSelectedGameObject == null)
@@ -135,14 +135,14 @@ public class JoystickMenuNavigation : MonoBehaviour
             SetDefaultSelection();
             return;
         }
-        
+
         Selectable current = EventSystem.current.currentSelectedGameObject.GetComponent<Selectable>();
         if (current != null && current.FindSelectableOnRight() != null)
         {
             current.FindSelectableOnRight().Select();
         }
     }
-    
+
     private void SubmitCurrentSelection()
     {
         if (EventSystem.current.currentSelectedGameObject != null)

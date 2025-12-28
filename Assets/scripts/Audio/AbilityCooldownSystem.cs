@@ -25,7 +25,6 @@ public class AbilityCooldownSystem : MonoBehaviour
         if (cooldownAudioSource == null)
             cooldownAudioSource = gameObject.AddComponent<AudioSource>();
 
-        
         foreach (var abilitySound in abilitySounds)
         {
             abilitySoundDict[abilitySound.abilityName] = abilitySound;
@@ -37,12 +36,10 @@ public class AbilityCooldownSystem : MonoBehaviour
         if (abilitySoundDict.ContainsKey(abilityName))
         {
             var sound = abilitySoundDict[abilityName];
-            
-            
+
             if (sound.cooldownStartSound != null)
                 cooldownAudioSource.PlayOneShot(sound.cooldownStartSound);
 
-            
             StartCoroutine(CooldownCompleteSound(abilityName, cooldownDuration));
         }
 

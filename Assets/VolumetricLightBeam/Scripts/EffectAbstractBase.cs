@@ -5,7 +5,7 @@ using UnityEngine.Serialization;
 
 namespace VLB
 {
-    [AddComponentMenu("")] // hide it from Component search
+    [AddComponentMenu("")]
     public class EffectAbstractBase : MonoBehaviour
     {
         public const string ClassName = "EffectAbstractBase";
@@ -18,17 +18,8 @@ namespace VLB
             VolumetricDustParticles = 1 << 2,
         }
 
-        /// <summary>
-        /// Decide which component to change among:
-        /// - Unity's Light
-        /// - Volumetric Light Beam
-        /// - Volumetric Dust Particles
-        /// </summary>
         public ComponentsToChange componentsToChange = Consts.Effects.ComponentsToChangeDefault;
 
-        /// <summary>
-        /// Restore the default intensity when this component is disabled.
-        /// </summary>
         [FormerlySerializedAs("restoreBaseIntensity")]
         public bool restoreIntensityOnDisable = Consts.Effects.RestoreIntensityOnDisableDefault;
 
@@ -55,7 +46,7 @@ namespace VLB
         {
             if (beam)
             {
-                // Si no está en modo avanzado, usar el mismo valor para ambos
+
                 if (!beam.intensityModeAdvanced)
                 {
                     m_BaseIntensityBeamInside = beam.intensityOutside;
@@ -82,8 +73,7 @@ namespace VLB
             if (beam)
             {
                 float newIntensity = Mathf.Max(0.0f, m_BaseIntensityBeamOutside + additive);
-                
-                // Si no está en modo avanzado, mantener ambos valores iguales
+
                 if (!beam.intensityModeAdvanced)
                 {
                     beam.intensityInside = newIntensity;

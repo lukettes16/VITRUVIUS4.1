@@ -18,7 +18,6 @@ public class FlashlightAnimationController : MonoBehaviour
     [Header("Transition Settings")]
     [SerializeField] private float armRaiseDuration = 0.5f;
     [SerializeField] private float armLowerDuration = 0.4f;
-    [SerializeField] private float transitionSmoothing = 0.1f;
 
     [Header("Collision Detection")]
     [SerializeField] private bool enableCollisionDetection = true;
@@ -30,28 +29,25 @@ public class FlashlightAnimationController : MonoBehaviour
     [Header("State Validation")]
     [SerializeField] public bool debugMode = true;
 
-    // Private state variables
     private FlashlightState currentState = FlashlightState.None;
     private FlashlightState previousState = FlashlightState.None;
     private bool isTransitioning = false;
     private Coroutine currentTransitionCoroutine;
     private float currentArmPosition = 0f;
-    private float targetArmPosition = 0f;
 
-    // State tracking
     private bool hasFlashlightEquipped = false;
     private bool isFlashlightOn = false;
     private bool shouldShowArmAnimation = false;
 
     public enum FlashlightState
     {
-        None,                    // No flashlight in inventory
-        Unequipped,              // Has flashlight but not equipped
-        EquippedOff,             // Equipped but turned off
-        EquippedOn,              // Equipped and turned on
-        RaisingArm,              // Transition: raising arm
-        LoweringArm,             // Transition: lowering arm
-        Blocked                  // Arm position blocked by collision
+        None,
+        Unequipped,
+        EquippedOff,
+        EquippedOn,
+        RaisingArm,
+        LoweringArm,
+        Blocked
     }
 
     void Start()
@@ -87,11 +83,7 @@ public class FlashlightAnimationController : MonoBehaviour
     {
         if (debugMode)
         {
-            Debug.Log($"[FlashlightAnimationController] Initializing for {gameObject.name}");
-            Debug.Log($"  - Has Flashlight Controller: {flashlightController != null}");
-            Debug.Log($"  - Has Player Inventory: {playerInventory != null}");
-            Debug.Log($"  - Has Player Animator: {playerAnimator != null}");
-            Debug.Log($"  - Has Arm Transform: {armTransform != null}");
+            
         }
 
         UpdateFlashlightState();
@@ -102,17 +94,17 @@ public class FlashlightAnimationController : MonoBehaviour
     {
         flashlightController = controller;
         isFlashlightOn = initialFlashlightState;
-        
+
         if (armTransform == null && flashlightController != null)
         {
             armTransform = flashlightController.armTransform;
         }
-        
+
         if (debugMode)
         {
-            Debug.Log($"[FlashlightAnimationController] Initialized from flashlight controller: {initialFlashlightState}");
+            
         }
-        
+
         UpdateFlashlightState();
         SetInitialAnimatorParameters();
     }
@@ -131,17 +123,13 @@ public class FlashlightAnimationController : MonoBehaviour
     {
         previousState = currentState;
 
-        // Check if player has flashlight in inventory
         bool hasFlashlightInInventory = playerInventory != null && playerInventory.HasItem("Flashlight");
-        
-        // Check if flashlight controller exists and is active
+
         bool flashlightControllerActive = flashlightController != null && flashlightController.gameObject.activeInHierarchy;
-        
-        // Update state tracking
+
         hasFlashlightEquipped = hasFlashlightInInventory && flashlightControllerActive;
         isFlashlightOn = hasFlashlightEquipped && flashlightController != null && flashlightController.isFlashlightOn;
 
-        // Determine current state
         if (!hasFlashlightEquipped)
         {
             currentState = FlashlightState.None;
@@ -158,13 +146,11 @@ public class FlashlightAnimationController : MonoBehaviour
             shouldShowArmAnimation = true;
         }
 
-        // Handle collision state
         if (shouldShowArmAnimation && IsArmBlockedByCollision())
         {
             currentState = FlashlightState.Blocked;
         }
 
-        // Handle transition states
         if (isTransitioning)
         {
             if (shouldShowArmAnimation && previousState != FlashlightState.EquippedOn)
@@ -184,13 +170,13 @@ public class FlashlightAnimationController : MonoBehaviour
         {
             if (debugMode)
             {
-                Debug.Log($"[FlashlightAnimationController] State transition: {previousState} -> {currentState}");
+                
             }
 
             switch (currentState)
             {
                 case FlashlightState.EquippedOn:
-                    if (previousState != FlashlightState.EquippedOn && 
+                    if (previousState != FlashlightState.EquippedOn &&
                         previousState != FlashlightState.RaisingArm)
                     {
                         StartArmRaiseAnimation();
@@ -199,7 +185,7 @@ public class FlashlightAnimationController : MonoBehaviour
 
                 case FlashlightState.EquippedOff:
                 case FlashlightState.None:
-                    if (previousState == FlashlightState.EquippedOn || 
+                    if (previousState == FlashlightState.EquippedOn ||
                         previousState == FlashlightState.Blocked)
                     {
                         StartArmLowerAnimation();
@@ -207,7 +193,7 @@ public class FlashlightAnimationController : MonoBehaviour
                     break;
 
                 case FlashlightState.Blocked:
-                    // Handle blocked state - arm should be lowered
+
                     if (previousState == FlashlightState.EquippedOn)
                     {
                         StartArmLowerAnimation();
@@ -235,7 +221,6 @@ public class FlashlightAnimationController : MonoBehaviour
         }
 
         isTransitioning = true;
-        targetArmPosition = 1f;
         currentTransitionCoroutine = StartCoroutine(ArmRaiseCoroutine());
     }
 
@@ -247,7 +232,6 @@ public class FlashlightAnimationController : MonoBehaviour
         }
 
         isTransitioning = true;
-        targetArmPosition = 0f;
         currentTransitionCoroutine = StartCoroutine(ArmLowerCoroutine());
     }
 
@@ -260,21 +244,20 @@ public class FlashlightAnimationController : MonoBehaviour
         {
             elapsedTime += Time.deltaTime;
             float t = elapsedTime / armRaiseDuration;
-            
-            // Smooth step interpolation for natural movement
+
             t = t * t * (3f - 2f * t);
-            
+
             currentArmPosition = Mathf.Lerp(startPosition, 1f, t);
-            
+
             yield return null;
         }
 
         currentArmPosition = 1f;
         isTransitioning = false;
-        
+
         if (debugMode)
         {
-            Debug.Log("[FlashlightAnimationController] Arm raise animation completed");
+            
         }
     }
 
@@ -287,21 +270,20 @@ public class FlashlightAnimationController : MonoBehaviour
         {
             elapsedTime += Time.deltaTime;
             float t = elapsedTime / armLowerDuration;
-            
-            // Smooth step interpolation for natural movement
+
             t = t * t * (3f - 2f * t);
-            
+
             currentArmPosition = Mathf.Lerp(startPosition, 0f, t);
-            
+
             yield return null;
         }
 
         currentArmPosition = 0f;
         isTransitioning = false;
-        
+
         if (debugMode)
         {
-            Debug.Log("[FlashlightAnimationController] Arm lower animation completed");
+            
         }
     }
 
@@ -325,9 +307,9 @@ public class FlashlightAnimationController : MonoBehaviour
         {
             if (debugMode)
             {
-                Debug.Log("[FlashlightAnimationController] Arm collision detected - lowering arm");
+                
             }
-            // Arm is blocked, should lower automatically
+
             if (isFlashlightOn)
             {
                 StartArmLowerAnimation();
@@ -337,9 +319,9 @@ public class FlashlightAnimationController : MonoBehaviour
         {
             if (debugMode)
             {
-                Debug.Log("[FlashlightAnimationController] Arm collision cleared - can raise arm");
+                
             }
-            // Clear to raise arm again
+
             if (isFlashlightOn && !isTransitioning)
             {
                 StartArmRaiseAnimation();
@@ -355,14 +337,12 @@ public class FlashlightAnimationController : MonoBehaviour
         Vector3 armForward = armTransform.forward;
         Vector3 armUp = armTransform.up;
 
-        // Check multiple directions for comprehensive collision detection
-        bool forwardBlocked = Physics.SphereCast(armPosition, collisionCheckRadius, armForward, 
+        bool forwardBlocked = Physics.SphereCast(armPosition, collisionCheckRadius, armForward,
                                                   out RaycastHit forwardHit, collisionCheckDistance, collisionLayers);
-        
-        bool upBlocked = Physics.SphereCast(armPosition, collisionCheckRadius * 0.7f, armUp, 
+
+        bool upBlocked = Physics.SphereCast(armPosition, collisionCheckRadius * 0.7f, armUp,
                                            out RaycastHit upHit, collisionCheckDistance * 0.5f, collisionLayers);
 
-        // Debug visualization
         if (debugMode)
         {
             Color debugColor = (forwardBlocked || upBlocked) ? Color.red : Color.green;
@@ -373,7 +353,6 @@ public class FlashlightAnimationController : MonoBehaviour
         return forwardBlocked || upBlocked;
     }
 
-    // Public methods for external validation and testing
     public FlashlightState GetCurrentState()
     {
         return currentState;
@@ -410,10 +389,10 @@ public class FlashlightAnimationController : MonoBehaviour
         isFlashlightOn = flashlightState;
         UpdateFlashlightState();
         HandleStateTransitions();
-        
+
         if (debugMode)
         {
-            Debug.Log($"[FlashlightAnimationController] Force updated state to: {flashlightState}");
+            
         }
     }
 
@@ -421,9 +400,9 @@ public class FlashlightAnimationController : MonoBehaviour
     {
         if (debugMode)
         {
-            Debug.Log("[FlashlightAnimationController] Flashlight turned on - starting arm raise animation");
+            
         }
-        
+
         isFlashlightOn = true;
         UpdateFlashlightState();
         HandleStateTransitions();
@@ -433,9 +412,9 @@ public class FlashlightAnimationController : MonoBehaviour
     {
         if (debugMode)
         {
-            Debug.Log("[FlashlightAnimationController] Flashlight turned off - starting arm lower animation");
+            
         }
-        
+
         isFlashlightOn = false;
         UpdateFlashlightState();
         HandleStateTransitions();
@@ -445,16 +424,7 @@ public class FlashlightAnimationController : MonoBehaviour
     [ContextMenu("Debug Current State")]
     public void DebugCurrentState()
     {
-        Debug.Log($"[FlashlightAnimationController] Debug State for {gameObject.name}");
-        Debug.Log($"  Current State: {currentState}");
-        Debug.Log($"  Previous State: {previousState}");
-        Debug.Log($"  Has Flashlight Equipped: {hasFlashlightEquipped}");
-        Debug.Log($"  Is Flashlight On: {isFlashlightOn}");
-        Debug.Log($"  Should Show Arm Animation: {shouldShowArmAnimation}");
-        Debug.Log($"  Is Transitioning: {isTransitioning}");
-        Debug.Log($"  Current Arm Position: {currentArmPosition}");
-        Debug.Log($"  Is Arm Raised: {IsArmRaised()}");
-        Debug.Log($"  Is Arm Blocked: {IsArmBlockedByCollision()}");
+        
     }
     #endif
 }

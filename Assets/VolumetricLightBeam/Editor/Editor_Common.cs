@@ -25,7 +25,7 @@ namespace VLB
         {
             serializedObject.Update();
     #if UNITY_2019_3_OR_NEWER
-            // no vertical space in 2019.3 looks better
+
     #else
             EditorGUILayout.Separator();
     #endif
@@ -41,17 +41,15 @@ namespace VLB
                 Config.EditorSelectInstance();
         }
 
-
-        // SERIALIZED PROPERTY RETRIEVAL
         string GetThisNamespaceAsString() { return GetType().Namespace; }
 
         SerializedProperty FindProperty(string prefix, string name)
         {
             Debug.Assert(serializedObject != null);
-            var prop = serializedObject.FindProperty(name); // try first with the plain name
+            var prop = serializedObject.FindProperty(name);
             if (prop == null)
             {
-                name = string.Format("{0}{1}{2}", prefix, char.ToUpperInvariant(name[0]), name.Substring(1)); // try with a different name to catch private props: get '_Name' from 'name'
+                name = string.Format("{0}{1}{2}", prefix, char.ToUpperInvariant(name[0]), name.Substring(1));
                 prop = serializedObject.FindProperty(name);
             }
             return prop;
@@ -125,5 +123,4 @@ namespace VLB
         }
     }
 }
-#endif // UNITY_EDITOR
-
+#endif

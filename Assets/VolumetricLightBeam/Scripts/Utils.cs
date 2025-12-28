@@ -57,7 +57,6 @@ namespace VLB
             return self.gameObject.GetOrAddComponent<T>();
         }
 
-        // Call the function for each component placed on any children (every depth), but not on itself
         public static void ForeachComponentsInAnyChildrenOnly<T>(this GameObject self, Action<T> lambda, bool includeInactive = false) where T : Component
         {
             var components = self.GetComponentsInChildren<T>(includeInactive);
@@ -70,7 +69,6 @@ namespace VLB
             }
         }
 
-        // Call the function for each component placed on any direct children on this GameObject
         public static void ForeachComponentsInDirectChildrenOnly<T>(this GameObject self, Action<T> lambda, bool includeInactive = false) where T : Component
         {
             var components = self.GetComponentsInChildren<T>(includeInactive);
@@ -107,7 +105,7 @@ namespace VLB
 
             if (!Mathf.Approximately(lossyScale.y * lossyScale.z, 0))
             {
-                float kMinNearClipPlane = isPersp ? 0.1f : 0.0f; // should be the same than in shader
+                float kMinNearClipPlane = isPersp ? 0.1f : 0.0f;
                 float absScaleZ = Mathf.Abs(lossyScale.z);
                 depthCamera.nearClipPlane = Mathf.Max(apexDist * absScaleZ, kMinNearClipPlane * (shouldScaleMinNearClipPlane ? absScaleZ : 1.0f));
                 depthCamera.farClipPlane = (maxGeometryDistance + apexDist * (isScalable ? 1 : absScaleZ)) * (isScalable ? absScaleZ : 1);
@@ -126,10 +124,7 @@ namespace VLB
             }
         }
 
-        /// <summary>
-        /// true if the bit field or bit fields that are set in flags are also set in the current instance; otherwise, false.
-        /// </summary>
-        public static bool HasFlag(this Enum mask, Enum flags) // Same behavior than Enum.HasFlag is .NET 4
+        public static bool HasFlag(this Enum mask, Enum flags)
         {
 #if DEBUG
             if (mask.GetType() != flags.GetType())
@@ -138,9 +133,6 @@ namespace VLB
             return ((int)(IConvertible)mask & (int)(IConvertible)flags) == (int)(IConvertible)flags;
         }
 
-        /// <summary>
-        /// Returns this vector divided by the vector passed as argument
-        /// </summary>
         public static Vector3 Divide(this Vector3 aVector, Vector3 scale)
         {
             if(Mathf.Approximately(scale.x * scale.y * scale.z, 0.0f))
@@ -202,16 +194,14 @@ namespace VLB
             UnityEditor.Handles.matrix = prevMat;
             UnityEditor.Handles.color = prevColor;
         }
-#endif // UNITY_EDITOR
+#endif
 
-        // Plane.Translate is not available in Unity 5
         public static Plane TranslateCustom(this Plane plane, Vector3 translation)
         {
             plane.distance += Vector3.Dot(translation.normalized, plane.normal) * translation.magnitude;
             return plane;
         }
 
-        // Plane.ClosestPointOnPlaneCustom is not available in Unity 5
         public static Vector3 ClosestPointOnPlaneCustom(this Plane plane, Vector3 point)
         {
             return point - plane.GetDistanceToPoint(point) * plane.normal;
@@ -275,9 +265,6 @@ namespace VLB
         public enum FloatPackingPrecision { High = 64, Low = 8, Undef = 0 }
         static FloatPackingPrecision ms_FloatPackingPrecision = FloatPackingPrecision.Undef;
 
-        // OpenGL ES 2.0 GPU (graphicsShaderLevel = 30) usually have low float precision (16 bits on fragments)
-        // So we lower the float packing precision on them (8 seems fine on Adreno (TM) 220, NVIDIA Tegra 3 and on Mali-450 MP)
-        // https://docs.unity3d.com/Manual/SL-DataTypesAndPrecision.html
         const int kFloatPackingHighMinShaderLevel = 35;
 
         public static FloatPackingPrecision GetFloatPackingPrecision()
@@ -289,9 +276,6 @@ namespace VLB
             return ms_FloatPackingPrecision;
         }
 
-        /// <summary>
-        /// true if at least one of the bit of 'flags' is also set in the current instance; otherwise, false.
-        /// </summary>
         public static bool HasAtLeastOneFlag(this Enum mask, Enum flags)
         {
 #if DEBUG
@@ -346,15 +330,14 @@ namespace VLB
 
         public static void SetSameSceneVisibilityStatesThan(this GameObject self, GameObject model)
         {
-            // SceneVisibilityManager is a feature available from 2019.2, but fixed for transient objects only from 2019.3.14f1
-            // https://issuetracker.unity3d.com/issues/toggling-of-picking-and-visibility-flags-of-a-gameobject-is-ignored-when-gameobject-dot-hideflags-is-set-to-hideflags-dot-dontsave
+
     #if UNITY_2019_3_OR_NEWER
             bool pickingDisabled = UnityEditor.SceneVisibilityManager.instance.IsPickingDisabled(model);
             self.SetScenePickabilityState(!pickingDisabled);
 
             bool hidden = UnityEditor.SceneVisibilityManager.instance.IsHidden(model);
             self.SetSceneVisibilityState(!hidden);
-    #endif // UNITY_2019_3_OR_NEWER
+    #endif
         }
 
 #if UNITY_2019_3_OR_NEWER
@@ -369,8 +352,8 @@ namespace VLB
             if (visible) UnityEditor.SceneVisibilityManager.instance.Show(self, true);
             else UnityEditor.SceneVisibilityManager.instance.Hide(self, true);
         }
-#endif // UNITY_2019_3_OR_NEWER
-#endif // UNITY_EDITOR
+#endif
+#endif
     }
 
 }

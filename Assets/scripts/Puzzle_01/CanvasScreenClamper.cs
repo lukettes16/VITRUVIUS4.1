@@ -2,7 +2,7 @@
 
 public class CanvasScreenClamper : MonoBehaviour
 {
-    
+
     [Tooltip("Margen que el Canvas debe mantener desde los bordes de la pantalla (ej: 0.05 es 5%).")]
     [Range(0f, 0.5f)]
     [SerializeField] private float marginPercentage = 0.05f;
@@ -11,7 +11,7 @@ public class CanvasScreenClamper : MonoBehaviour
 
     void Start()
     {
-        
+
         if (Camera.main != null)
         {
             mainCameraTransform = Camera.main.transform;
@@ -23,7 +23,6 @@ public class CanvasScreenClamper : MonoBehaviour
         if (mainCameraTransform == null)
             return;
 
-        
         if (!gameObject.activeSelf)
             return;
 

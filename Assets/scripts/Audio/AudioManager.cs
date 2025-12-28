@@ -23,14 +23,14 @@ public class AudioManager : MonoBehaviour
     public AudioSource sfxSource;
 
     private List<AudioSource> sfxPool = new List<AudioSource>();
-    private int sfxPoolSize = 10; 
+    private int sfxPoolSize = 10;
 
     private void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
-            transform.SetParent(null); 
+            transform.SetParent(null);
             DontDestroyOnLoad(gameObject);
         }
         else
@@ -83,7 +83,6 @@ public class AudioManager : MonoBehaviour
             }
         }
 
-        
         GameObject obj = new GameObject("SFX_AudioSource_" + sfxPool.Count);
         obj.transform.SetParent(this.transform);
         AudioSource newSource = obj.AddComponent<AudioSource>();
@@ -100,17 +99,12 @@ public class AudioManager : MonoBehaviour
         return newSource;
     }
 
-    
-    
-    
     public void PlayMusic(AudioClip clip, float fadeDuration = 1f)
     {
         if (musicSource.isPlaying && musicSource.clip == clip) return;
 
         StartCoroutine(FadeTrack(musicSource, clip, fadeDuration));
     }
-
-
 
     public void PlaySFX(AudioClip clip, Vector3 position, float spatialBlend = 1f, float volume = 1f)
     {
@@ -140,12 +134,10 @@ public class AudioManager : MonoBehaviour
         sfxSource.PlayOneShot(clip, volume);
     }
 
-
-
     public void PlayFootstep(FootstepType footstepType, Vector3 position = default, float volume = 1f)
     {
         AudioClip[] footstepClips = null;
-        
+
         switch (footstepType)
         {
             case FootstepType.Player1:
@@ -155,7 +147,7 @@ public class AudioManager : MonoBehaviour
                 footstepClips = audioConfig.player2Footsteps;
                 break;
         }
-        
+
         if (footstepClips != null && footstepClips.Length > 0)
         {
             AudioClip clipToPlay = footstepClips[Random.Range(0, footstepClips.Length)];
@@ -204,7 +196,7 @@ public class AudioManager : MonoBehaviour
             yield return null;
         }
         source.Stop();
-        source.volume = startVolume; 
+        source.volume = startVolume;
         onComplete?.Invoke();
     }
 

@@ -1,8 +1,3 @@
-/// <summary>
-/// This class is a modification on the class shared publicly by Glenn Powell (glennpow) that can be found here
-/// http://forum.unity3d.com/threads/free-script-particle-systems-in-ui-screen-space-overlay.406862/
-/// </summary>
-
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -44,7 +39,7 @@ namespace Michsky.UI.Dark
 
         protected bool Initialize()
         {
-            // initialize members
+
             if (_transform == null)
             {
                 _transform = transform;
@@ -62,12 +57,12 @@ namespace Michsky.UI.Dark
                 if (pSystem.main.maxParticles > 14000)
                 {
                     mainModule.maxParticles = 14000;
-                }                  
+                }
 
                 pRenderer = pSystem.GetComponent<ParticleSystemRenderer>();
                 if (pRenderer != null)
                     pRenderer.enabled = false;
-                
+
                 Shader foundShader = Shader.Find("UI/Particles/Additive");
                 Material pMaterial = new Material(foundShader);
 
@@ -82,7 +77,7 @@ namespace Michsky.UI.Dark
                         currentTexture = Texture2D.whiteTexture;
                 }
                 material = currentMaterial;
-                // automatically set scaling
+
                 mainModule.scalingMode = ParticleSystemScalingMode.Hierarchy;
 
                 particles = null;
@@ -92,7 +87,6 @@ namespace Michsky.UI.Dark
 
             imageUV = new Vector4(0, 0, 1, 1);
 
-            // prepare texture sheet animation
             textureSheetAnimation = pSystem.textureSheetAnimation;
             textureSheetAnimationFrames = 0;
             textureSheetAnimationFrameSize = Vector2.zero;
@@ -112,7 +106,6 @@ namespace Michsky.UI.Dark
                 enabled = false;
         }
 
-        
         protected override void OnPopulateMesh(VertexHelper vh)
         {
 #if UNITY_EDITOR
@@ -124,7 +117,7 @@ namespace Michsky.UI.Dark
                 }
             }
 #endif
-            // prepare vertices
+
             vh.Clear();
 
             if (!gameObject.activeInHierarchy)
@@ -135,26 +128,23 @@ namespace Michsky.UI.Dark
             Vector2 temp = Vector2.zero;
             Vector2 corner1 = Vector2.zero;
             Vector2 corner2 = Vector2.zero;
-            // iterate through current particles
+
             int count = pSystem.GetParticles(particles);
 
             for (int i = 0; i < count; ++i)
             {
                 ParticleSystem.Particle particle = particles[i];
 
-                // get particle properties
                 Vector2 position = (mainModule.simulationSpace == ParticleSystemSimulationSpace.Local ? particle.position : _transform.InverseTransformPoint(particle.position));
-               
+
                 float rotation = -particle.rotation * Mathf.Deg2Rad;
                 float rotation90 = rotation + Mathf.PI / 2;
                 Color32 color = particle.GetCurrentColor(pSystem);
                 float size = particle.GetCurrentSize(pSystem) * 0.5f;
 
-                // apply scale
                 if (mainModule.scalingMode == ParticleSystemScalingMode.Shape)
                     position /= canvas.scaleFactor;
 
-                // apply texture sheet animation
                 Vector4 particleUV = imageUV;
                 if (textureSheetAnimation.enabled)
                 {
@@ -174,9 +164,7 @@ namespace Michsky.UI.Dark
                             frame = Mathf.FloorToInt(frameProgress * textureSheetAnimation.numTilesX);
 
                             int row = textureSheetAnimation.rowIndex;
-                            //                    if (textureSheetAnimation.useRandomRow) { // FIXME - is this handled internally by rowIndex?
-                            //                        row = Random.Range(0, textureSheetAnimation.numTilesY, using: particle.randomSeed);
-                            //                    }
+
                             frame += row * textureSheetAnimation.numTilesX;
                             break;
 
@@ -217,7 +205,7 @@ namespace Michsky.UI.Dark
 
                 if (rotation == 0)
                 {
-                    // no rotation
+
                     corner1.x = position.x - size;
                     corner1.y = position.y - size;
                     corner2.x = position.x + size;
@@ -238,7 +226,7 @@ namespace Michsky.UI.Dark
                 }
                 else
                 {
-                    // apply rotation
+
                     Vector2 right = new Vector2(Mathf.Cos(rotation), Mathf.Sin(rotation)) * size;
                     Vector2 up = new Vector2(Mathf.Cos(rotation90), Mathf.Sin(rotation90)) * size;
 
@@ -288,7 +276,7 @@ namespace Michsky.UI.Dark
                     }
                 }
             }
-            if (material == currentMaterial) 
+            if (material == currentMaterial)
                 return;
             pSystem = null;
             Initialize();

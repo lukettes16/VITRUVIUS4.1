@@ -29,7 +29,7 @@ namespace Michsky.UI.Dark
 
                 catch
                 {
-                    Debug.LogError("UI Element Sound - Cannot initalize AudioSource due to missing resources.", this);
+                    
                 }
             }
         }

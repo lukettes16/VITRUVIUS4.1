@@ -32,7 +32,7 @@ namespace VLB_Samples
                                                             Quaternion.Euler(Random.Range(-45, 45) + 90f, Random.Range(0, 360), 0));
 
                     var beam = gao.GetComponent<VLB.VolumetricLightBeamSD>();
-               
+
                     if (AddLight)
                     {
                         var light = gao.GetComponent<Light>();
@@ -44,7 +44,7 @@ namespace VLB_Samples
 
                         if(VLB.Config.Instance.geometryOverrideLayer)
                         {
-                            // remove the layer of the beams from the light's culling mask to prevent from breaking GPU Instancing
+
                             light.cullingMask = ~(1 << VLB.Config.Instance.geometryLayerID);
                         }
                     }
@@ -84,4 +84,3 @@ namespace VLB_Samples
     }
 #endif
 }
-

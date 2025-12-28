@@ -86,7 +86,6 @@ public class NPCEnhancedDialogueSystem : MonoBehaviour
     private Coroutine canvasArrangementCoroutine;
     private float lastNavigateTime = 0f;
 
-    
     private NPCBehaviorManager npcBehavior;
 
     #endregion
@@ -98,7 +97,6 @@ public class NPCEnhancedDialogueSystem : MonoBehaviour
         InitializeComponents();
         CachePlayerReferences();
 
-        
         npcBehavior = GetComponent<NPCBehaviorManager>();
     }
 
@@ -236,10 +234,9 @@ public class NPCEnhancedDialogueSystem : MonoBehaviour
 
     private void UpdateInteractionPrompt()
     {
-        
+
         bool shouldShowPrompt = playersInRange.Count > 0 && !DialogueManager.IsDialogueActive();
 
-        
         if (npcBehavior != null && npcBehavior.IsFollowing)
         {
             shouldShowPrompt = false;
@@ -261,7 +258,7 @@ public class NPCEnhancedDialogueSystem : MonoBehaviour
 
     private void TryStartDialogue(string playerTag)
     {
-        
+
         if (npcBehavior != null && npcBehavior.IsFollowing)
             return;
 
@@ -558,7 +555,6 @@ public class NPCEnhancedDialogueSystem : MonoBehaviour
             return;
         }
 
-        
         string flagName = node.options[optionIndex].flagToTrigger;
         if (!string.IsNullOrEmpty(flagName) && dialogueDataManager != null)
         {
@@ -568,7 +564,6 @@ public class NPCEnhancedDialogueSystem : MonoBehaviour
 
         int nextNodeIndex = node.options[optionIndex].nextNodeIndex;
 
-        
         if (nextNodeIndex < 0 || nextNodeIndex >= dialogueNodes.Count)
         {
             EndDialogue();

@@ -16,9 +16,8 @@ namespace VLB
 
         void Start()
         {
-            DestroyOrphanBeamGeom(); // Handle copy / paste the LightBeam in Editor
+            DestroyOrphanBeamGeom();
         }
-
 
         void OnDestroy()
         {
@@ -37,7 +36,7 @@ namespace VLB
                 var beamGeom = master.GetBeamGeometry();
                 if(beamGeom == this)
                 {
-                    // do not destroy me only if I have a master, and this master knows me as its beam geom
+
                     return;
                 }
             }

@@ -2,10 +2,6 @@
 using UnityEngine.UI;
 using System.Collections;
 
-
-
-
-
 public class PlayerStaminaUI : MonoBehaviour
 {
     [Header("UI World Space Settings")]
@@ -25,11 +21,9 @@ public class PlayerStaminaUI : MonoBehaviour
     [Tooltip("Si esta activado, la barra siempre mirara hacia la camara principal.")]
     [SerializeField] private bool enableBillboard = true;
 
-    
     private Transform mainCameraTransform;
     private Coroutine fadeCoroutine;
 
-    
     private bool isVisible = false;
     private float maxStamina = 100f;
 
@@ -37,7 +31,7 @@ public class PlayerStaminaUI : MonoBehaviour
 
     void Awake()
     {
-        
+
         if (Camera.main != null)
         {
             mainCameraTransform = Camera.main.transform;
@@ -46,7 +40,7 @@ public class PlayerStaminaUI : MonoBehaviour
 
     void Start()
     {
-        
+
         if (staminaCanvasGroup != null)
         {
             staminaCanvasGroup.alpha = 0f;
@@ -54,7 +48,6 @@ public class PlayerStaminaUI : MonoBehaviour
             staminaCanvasGroup.blocksRaycasts = false;
         }
 
-        
         if (staminaSlider != null)
         {
             staminaSlider.value = maxStamina;
@@ -63,16 +56,15 @@ public class PlayerStaminaUI : MonoBehaviour
 
     void Update()
     {
-        
+
         if (enableBillboard && staminaCanvasGroup != null && mainCameraTransform != null)
         {
-            
+
             staminaCanvasGroup.transform.LookAt(
                 staminaCanvasGroup.transform.position + mainCameraTransform.rotation * Vector3.forward,
                 mainCameraTransform.rotation * Vector3.up
             );
 
-            
             staminaCanvasGroup.transform.rotation *= Quaternion.Euler(0, 180f, 0);
         }
     }
@@ -81,14 +73,10 @@ public class PlayerStaminaUI : MonoBehaviour
 
     #region Public Methods - Control de Visibilidad
 
-    
-    
-    
     public void ShowStaminaBar()
     {
         if (staminaCanvasGroup == null) return;
 
-        
         if (fadeCoroutine != null)
             StopCoroutine(fadeCoroutine);
 
@@ -96,14 +84,10 @@ public class PlayerStaminaUI : MonoBehaviour
         isVisible = true;
     }
 
-    
-    
-    
     public void HideStaminaBar()
     {
         if (staminaCanvasGroup == null) return;
 
-        
         if (fadeCoroutine != null)
             StopCoroutine(fadeCoroutine);
 
@@ -111,23 +95,16 @@ public class PlayerStaminaUI : MonoBehaviour
         isVisible = false;
     }
 
-    
-    
-    
     public void OnStaminaFullyRecharged()
     {
         if (staminaCanvasGroup == null) return;
 
-        
         if (fadeCoroutine != null)
             StopCoroutine(fadeCoroutine);
 
         fadeCoroutine = StartCoroutine(ShowBrieflyOnFullRoutine());
     }
 
-    
-    
-    
     public void HideImmediate()
     {
         if (fadeCoroutine != null)
@@ -145,11 +122,6 @@ public class PlayerStaminaUI : MonoBehaviour
 
     #region Public Methods - Actualizacion de Valores
 
-    
-    
-    
-    
-    
     public void UpdateStaminaValue(float currentStamina, float maxStamina)
     {
         this.maxStamina = maxStamina;
@@ -161,9 +133,6 @@ public class PlayerStaminaUI : MonoBehaviour
         }
     }
 
-    
-    
-    
     public void InitializeMaxStamina(float max)
     {
         maxStamina = max;
@@ -213,7 +182,7 @@ public class PlayerStaminaUI : MonoBehaviour
 
     private IEnumerator ShowBrieflyOnFullRoutine()
     {
-        
+
         float timer = 0f;
         float startAlpha = staminaCanvasGroup.alpha;
 
@@ -225,10 +194,8 @@ public class PlayerStaminaUI : MonoBehaviour
         }
         staminaCanvasGroup.alpha = 1f;
 
-        
         yield return new WaitForSeconds(displayTimeAfterFull);
 
-        
         timer = 0f;
         startAlpha = staminaCanvasGroup.alpha;
 
@@ -247,9 +214,6 @@ public class PlayerStaminaUI : MonoBehaviour
 
     #region Getters
 
-    
-    
-    
     public bool IsVisible => isVisible;
 
     #endregion

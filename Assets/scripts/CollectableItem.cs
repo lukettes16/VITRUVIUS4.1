@@ -16,10 +16,9 @@ public class CollectableItem : MonoBehaviour
     [SerializeField] private float bobHeight = 0.3f;
     [SerializeField] private float bobSpeed = 2f;
 
-    
     [Header("Player Restriction")]
     [Tooltip("El ID del jugador que PUEDE activar el outline y reclamar este objeto. 0 = Ambos pueden reclamar. 1 = Solo P1. 2 = Solo P2.")]
-    [SerializeField] private int requiredPlayerID = 0; 
+    [SerializeField] private int requiredPlayerID = 0;
 
     [Header("Outline Multiplayer")]
     [SerializeField] private string outlineColorProperty = "_Outline_Color";
@@ -32,7 +31,6 @@ public class CollectableItem : MonoBehaviour
     private int outlineScaleID;
     private Color originalOutlineColor = Color.black;
 
-    
     private GameObject currentHoveringPlayer = null;
 
     private Vector3 startPosition;
@@ -40,16 +38,12 @@ public class CollectableItem : MonoBehaviour
 
     public string ItemID => itemID;
 
-    
-    
-    
     [Header("UI Prompt Settings")]
     [SerializeField] private Canvas promptCanvas;
     [SerializeField] private TextMeshProUGUI promptText;
     [SerializeField] private Image promptButtonImage;
     [SerializeField] private RectTransform buttonAnchor;
     [SerializeField] private Vector2 buttonImageOffset = Vector2.zero;
-    
 
     private void Start()
     {
@@ -69,7 +63,6 @@ public class CollectableItem : MonoBehaviour
 
         }
 
-        
         if (promptCanvas != null)
         {
             promptCanvas.enabled = false;
@@ -79,7 +72,7 @@ public class CollectableItem : MonoBehaviour
     private void Update()
     {
         if (isCollected) return;
-        
+
         transform.Rotate(0, rotationSpeed * Time.deltaTime, 0);
         float newY = startPosition.y + Mathf.Sin(Time.time * bobSpeed) * bobHeight;
         transform.position = new Vector3(transform.position.x, newY, transform.position.z);
@@ -96,7 +89,6 @@ public class CollectableItem : MonoBehaviour
         }
     }
 
-    
     private bool IsPlayerAllowed(int playerID)
     {
         if (requiredPlayerID == 0) return true;
@@ -109,19 +101,15 @@ public class CollectableItem : MonoBehaviour
 
         if (playerIdentifier != null)
         {
-            
+
             if (!IsPlayerAllowed(playerIdentifier.playerID)) return;
 
-            
             if (currentHoveringPlayer != null) return;
 
-            
             currentHoveringPlayer = playerIdentifier.gameObject;
 
-            
             SetOutlineState(playerIdentifier.PlayerOutlineColor, activeOutlineScale);
 
-            
             if (promptCanvas != null && promptText != null)
             {
                 promptCanvas.enabled = true;
@@ -139,11 +127,10 @@ public class CollectableItem : MonoBehaviour
         {
             if (playerIdentifier.gameObject == currentHoveringPlayer)
             {
-                
+
                 SetOutlineState(originalOutlineColor, 0.0f);
                 currentHoveringPlayer = null;
 
-                
                 if (promptCanvas != null)
                 {
                     promptCanvas.enabled = false;
@@ -185,7 +172,6 @@ public class CollectableItem : MonoBehaviour
                     AudioManager.Instance.PlaySFX(collectSound, transform.position, 0.7f, Random.Range(0.9f, 1.1f));
                 }
 
-                
                 SetOutlineState(originalOutlineColor, 0.0f);
                 currentHoveringPlayer = null;
 

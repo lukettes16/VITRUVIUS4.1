@@ -13,10 +13,9 @@ public class KeyCard : MonoBehaviour
     [SerializeField] private float bobHeight = 0.3f;
     [SerializeField] private float bobSpeed = 2f;
 
-   
     [Header("Player Restriction")]
     [Tooltip("El ID del jugador que PUEDE activar el outline y recolectar este objeto. 0 = Cualquier jugador.")]
-    [SerializeField] private int requiredPlayerID = 0; 
+    [SerializeField] private int requiredPlayerID = 0;
 
     [Header("Outline Multiplayer")]
     [Tooltip("The name of the 'Color' property in the Shader Graph.")]
@@ -25,18 +24,14 @@ public class KeyCard : MonoBehaviour
     [SerializeField] private string outlineScaleProperty = "_Outline_Scale";
     [SerializeField] private float activeOutlineScale = 0.0125f;
 
-    
-    
     [Tooltip("El color usado cuando dos o mas jugadores estan en el trigger.")]
     public Color cooperativeOutlineColor = Color.yellow;
-   
-   
+
     [Header("Interaction Prompt")]
-    [SerializeField] private GameObject interactPromptCanvas; 
+    [SerializeField] private GameObject interactPromptCanvas;
     [SerializeField] private Image promptButtonImage;
     [SerializeField] private RectTransform buttonAnchor;
     [SerializeField] private Vector2 buttonImageOffset = Vector2.zero;
-    
 
     private Renderer meshRenderer;
     private MaterialPropertyBlock propertyBlock;
@@ -44,7 +39,6 @@ public class KeyCard : MonoBehaviour
     private int outlineScaleID;
     private Color originalOutlineColor = Color.black;
     private GameObject currentHoveringPlayer = null;
-   
 
     private Vector3 startPosition;
     private bool isCollected = false;
@@ -59,8 +53,6 @@ public class KeyCard : MonoBehaviour
             interactPromptCanvas.SetActive(false);
         if (promptButtonImage != null)
             promptButtonImage.gameObject.SetActive(false);
-       
-
 
         meshRenderer = GetComponent<Renderer>();
         if (meshRenderer != null)
@@ -119,7 +111,7 @@ public class KeyCard : MonoBehaviour
 
             ShowPrompt(true);
             UpdatePromptButtonVisuals();
-         
+
         }
     }
 
@@ -130,10 +122,9 @@ public class KeyCard : MonoBehaviour
             SetOutlineState(originalOutlineColor, 0.0f);
             currentHoveringPlayer = null;
 
-            
             ShowPrompt(false);
             UpdatePromptButtonVisuals();
-          
+
         }
     }
 
@@ -170,13 +161,11 @@ public class KeyCard : MonoBehaviour
                 }
                 if (collectSound != null)
                 {
-                    
+
                     AudioManager.Instance.PlaySFX(collectSound, transform.position, 0.7f, Random.Range(0.9f, 1.1f));
                 }
 
-              
                 ShowPrompt(false);
-             
 
                 SetOutlineState(originalOutlineColor, 0.0f);
 
@@ -185,10 +174,9 @@ public class KeyCard : MonoBehaviour
         }
     }
 
-    
     private void ShowPrompt(bool state)
     {
-       
+
         if (interactPromptCanvas != null)
             interactPromptCanvas.SetActive(state && !isCollected);
         UpdatePromptButtonVisuals();
@@ -207,5 +195,5 @@ public class KeyCard : MonoBehaviour
                 promptButtonImage.rectTransform.anchoredPosition = buttonImageOffset;
         }
     }
- 
+
 }

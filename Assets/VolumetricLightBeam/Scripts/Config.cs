@@ -1,5 +1,5 @@
 ﻿#if UNITY_EDITOR
-//#define PROFILE_INSTANCE_LOADING
+
 using UnityEditor;
 #endif
 using UnityEngine;
@@ -19,31 +19,15 @@ namespace VLB
         public const string kAssetName = "VLBConfigOverride";
         public const string kAssetNameExt = ".asset";
 
-        /// <summary>
-        /// Override the layer on which the procedural geometry is created or not
-        /// </summary>
         public bool geometryOverrideLayer = Consts.Config.GeometryOverrideLayerDefault;
 
-        /// <summary>
-        /// The layer the procedural geometry gameObject is in (only if geometryOverrideLayer is enabled)
-        /// </summary>
         public int geometryLayerID = Consts.Config.GeometryLayerIDDefault;
 
-        /// <summary>
-        /// The tag applied on the procedural geometry gameObject
-        /// </summary>
         public string geometryTag = Consts.Config.GeometryTagDefault;
 
-        /// <summary>
-        /// Determine in which order beams are rendered compared to other objects.
-        /// This way for example transparent objects are rendered after opaque objects, and so on.
-        /// </summary>
         public int geometryRenderQueue = (int)Consts.Config.GeometryRenderQueueDefault;
         public int geometryRenderQueueHD = (int)Consts.Config.HD.GeometryRenderQueueDefault;
 
-        /// <summary>
-        /// Select the Render Pipeline (Built-In or SRP) in use.
-        /// </summary>
         public RenderPipeline renderPipeline
         {
             get { return m_RenderPipeline; }
@@ -52,19 +36,13 @@ namespace VLB
 #if UNITY_EDITOR
                 m_RenderPipeline = value;
 #else
-                Debug.LogError("Modifying the RenderPipeline in standalone builds is not permitted");
+                
 #endif
             }
         }
         [FormerlySerializedAs("renderPipeline"), FormerlySerializedAs("_RenderPipeline")]
         [SerializeField] RenderPipeline m_RenderPipeline = Consts.Config.GeometryRenderPipelineDefault;
 
-        /// <summary>
-        /// MultiPass: Use the 2 pass shader. Will generate 2 drawcalls per beam.
-        /// SinglePass: Use the 1 pass shader. Will generate 1 drawcall per beam.
-        /// GPUInstancing: Dynamically batch multiple beams to combine and reduce draw calls (Feature only supported in Unity 5.6 or above). More info: https://docs.unity3d.com/Manual/GPUInstancing.html
-        /// SRPBatcher: Use the SRP Batcher to automatically batch multiple beams and reduce draw calls. Only available when using SRP.
-        /// </summary>
         public RenderingMode renderingMode
         {
             get { return m_RenderingMode; }
@@ -73,50 +51,37 @@ namespace VLB
 #if UNITY_EDITOR
                 m_RenderingMode = value;
 #else
-                Debug.LogError("Modifying the RenderingMode in standalone builds is not permitted");
+                
 #endif
             }
         }
         [FormerlySerializedAs("renderingMode"), FormerlySerializedAs("_RenderingMode")]
         [SerializeField] RenderingMode m_RenderingMode = Consts.Config.GeometryRenderingModeDefault;
 
-
         public bool IsSRPBatcherSupported()
         {
-            // The SRP Batcher Rendering Mode is only compatible when using a SRP
+
             if (renderPipeline == RenderPipeline.BuiltIn) return false;
 
-            // SRP Batcher only works with URP and HDRP
             var rp = SRPHelper.projectRenderPipeline;
             return rp == RenderPipeline.URP || rp == RenderPipeline.HDRP;
         }
 
-        /// <summary>
-        /// Actual Rendering Mode used on the current platform
-        /// </summary>
         public RenderingMode GetActualRenderingMode(ShaderMode shaderMode)
         {
             if (renderingMode == RenderingMode.SRPBatcher && !IsSRPBatcherSupported()) return RenderingMode.Default;
 
-            // Using a Scriptable Render Pipeline with 'Multi-Pass' Rendering Mode is not supported
             if (renderPipeline != RenderPipeline.BuiltIn && renderingMode == RenderingMode.MultiPass) return RenderingMode.Default;
 
-            // HD beams require single pass shaders
             if (shaderMode == ShaderMode.HD && renderingMode == RenderingMode.MultiPass) return RenderingMode.Default;
 
             return renderingMode;
         }
 
-        /// <summary>
-        /// Depending on the actual Rendering Mode used, returns true if the single pass shader will be used, false otherwise.
-        /// </summary>
         public bool SD_useSinglePassShader { get { return GetActualRenderingMode(ShaderMode.SD) != RenderingMode.MultiPass; } }
 
         public bool SD_requiresDoubleSidedMesh { get { return SD_useSinglePassShader; } }
 
-        /// <summary>
-        /// Main shader applied to the cone beam geometry
-        /// </summary>
         public Shader GetBeamShader(ShaderMode mode)
         {
 #if UNITY_EDITOR
@@ -152,46 +117,16 @@ namespace VLB
             return material;
         }
 
-        /// <summary>
-        /// Depending on the quality of your screen, you might see some artifacts with high contrast visual (like a white beam over a black background).
-        /// These is a very common problem known as color banding.
-        /// To help with this issue, the plugin offers a Dithering factor: it smooths the banding by introducing a subtle pattern of noise.
-        /// </summary>
         public float ditheringFactor = Consts.Config.DitheringFactor;
 
-        /// <summary>
-        /// Contribution of the attached spotlight temperature to the final beam color.
-        /// Only useful when:
-        /// - The beams is attached to a Unity spotlight.
-        /// - The beams color is linked to the Unity Light color.
-        /// - The Unity light uses 'color temperature mode' and is specified with 'Filter' and 'Temperature' properties.
-        /// </summary>
         public bool useLightColorTemperature = Consts.Config.UseLightColorTemperatureDefault;
 
-        /// <summary>
-        /// Number of Sides of the shared cone mesh
-        /// </summary>
         public int sharedMeshSides = Consts.Config.SharedMeshSidesDefault;
 
-        /// <summary>
-        /// Number of Segments of the shared cone mesh
-        /// </summary>
         public int sharedMeshSegments = Consts.Config.SharedMeshSegmentsDefault;
 
-        /// <summary>
-        /// Distance from the camera the beam will fade (for HD beams only, for SD beams, this option can be configured per beam)
-        /// 0 = hard intersection
-        /// Higher values produce soft intersection when the camera is near the cone triangles.
-        /// </summary>
         public float hdBeamsCameraBlendingDistance = Consts.Config.HD.CameraBlendingDistance;
 
-        /// <summary>
-        /// When using URP, specify a custom Renderer index used by the depth cameras for the 'Dynamic Occlusion (Depth Buffer)' with SD beams and 'Volumetric Shadow' for HD Beams features.
-        /// The 'Renderer list' is editable in the URP asset.
-        /// We recommend to specify a custom index referencing the URP default 'ForwardRenderer' when you are using a custom renderer that doesn't support writing to depth render texture.
-        /// This is the case if you encounter errors like: 'RenderTexture.Create failed: colorFormat & depthStencilFormat cannot both be none.'
-        /// Set -1 to disable this feature.
-        /// </summary>
         public int urpDepthCameraScriptableRendererIndex = -1;
 
         public void SetURPScriptableRendererIndexToDepthCamera(Camera camera)
@@ -209,20 +144,11 @@ namespace VLB
 #endif
         }
 
-        /// <summary>
-        /// Global 3D Noise texture scaling: higher scale make the noise more visible, but potentially less realistic.
-        /// </summary>
         [Range(Consts.Beam.NoiseScaleMin, Consts.Beam.NoiseScaleMax)]
         public float globalNoiseScale = Consts.Beam.NoiseScaleDefault;
 
-        /// <summary>
-        /// Global World Space direction and speed of the noise scrolling, simulating the fog/smoke movement
-        /// </summary>
         public Vector3 globalNoiseVelocity = Consts.Beam.NoiseVelocityDefault;
 
-        /// <summary>
-        /// Tag used to retrieve the camera used to compute the fade out factor on beams
-        /// </summary>
         public string fadeOutCameraTag = Consts.Config.FadeOutCameraTagDefault;
 
         public Transform fadeOutCameraTransform
@@ -234,16 +160,12 @@ namespace VLB
                     ForceUpdateFadeOutCamera();
                 }
 
-
                 return m_CachedFadeOutCamera != null ? m_CachedFadeOutCamera.transform : null;
             }
         }
 
         public string fadeOutCameraName { get { return m_CachedFadeOutCamera != null ? m_CachedFadeOutCamera.name : "Invalid Camera"; } }
 
-        /// <summary>
-        /// Call this function if you want to manually change the fadeOutCameraTag property at runtime
-        /// </summary>
         public void ForceUpdateFadeOutCamera()
         {
             var gaos = GameObject.FindGameObjectsWithTag(fadeOutCameraTag);
@@ -254,7 +176,7 @@ namespace VLB
                     if (gao)
                     {
                         var cam = gao.GetComponent<Camera>();
-                        if (cam && cam.isActiveAndEnabled) // look for the first active camera with the proper tag
+                        if (cam && cam.isActiveAndEnabled)
                         {
                             m_CachedFadeOutCamera = cam;
                             return;
@@ -265,72 +187,34 @@ namespace VLB
 
         }
 
-        /// <summary>
-        /// 3D Texture storing noise data.
-        /// </summary>
         [HighlightNull]
         public Texture3D noiseTexture3D = null;
 
-        /// <summary>
-        /// ParticleSystem prefab instantiated for the Volumetric Dust Particles feature (Unity 5.5 or above)
-        /// </summary>
         [HighlightNull]
         public ParticleSystem dustParticlesPrefab = null;
 
-        /// <summary>
-        /// Noise texture for dithering feature
-        /// </summary>
         [HighlightNull]
         public Texture2D ditheringNoiseTexture = null;
 
         [HighlightNull]
         public Texture2D jitteringNoiseTexture = null;
 
-        /// <summary>
-        /// Off: do not support having a gradient as color.
-        /// High Only: support gradient color only for devices with Shader Level = 35 or higher.
-        /// High and Low: support gradient color for all devices.
-        /// </summary>
         public FeatureEnabledColorGradient featureEnabledColorGradient = Consts.Config.FeatureEnabledColorGradientDefault;
 
-        /// <summary>
-        /// Support 'Soft Intersection with Opaque Geometry' feature or not.
-        /// </summary>
         public bool featureEnabledDepthBlend = Consts.Config.FeatureEnabledDefault;
 
-        /// <summary>
-        /// Support 'Noise 3D' feature or not.
-        /// </summary>
         public bool featureEnabledNoise3D = Consts.Config.FeatureEnabledDefault;
 
-        /// <summary>
-        /// Support 'Dynamic Occlusion' features or not.
-        /// </summary>
         public bool featureEnabledDynamicOcclusion = Consts.Config.FeatureEnabledDefault;
 
-        /// <summary>
-        /// Support 'Mesh Skewing' feature or not.
-        /// </summary>
         public bool featureEnabledMeshSkewing = Consts.Config.FeatureEnabledDefault;
 
-        /// <summary>
-        /// Support 'Shader Accuracy' property set to 'High' or not.
-        /// </summary>
         public bool featureEnabledShaderAccuracyHigh = Consts.Config.FeatureEnabledDefault;
 
-        /// <summary>
-        /// Support 'Shadow' features or not.
-        /// </summary>
         public bool featureEnabledShadow = true;
 
-        /// <summary>
-        /// Support 'Cookie' feature or not.
-        /// </summary>
         public bool featureEnabledCookie = true;
 
-
-
-        /// RAYMARCHING BEGIN
         [SerializeField] RaymarchingQuality[] m_RaymarchingQualities = null;
 
         [SerializeField] int m_DefaultRaymarchingQualityUniqueID = 0;
@@ -389,15 +273,13 @@ namespace VLB
             if (m_RaymarchingQualities == null || m_RaymarchingQualities.Length == 0 || !onlyIfNeeded)
             {
                 m_RaymarchingQualities = new RaymarchingQuality[3];
-                // set forced unique ID for default qualities to keep finding them even when deleting Config instance
+
                 m_RaymarchingQualities[0] = RaymarchingQuality.New("Fast", 1, 5);
                 m_RaymarchingQualities[1] = RaymarchingQuality.New("Balanced", 2, 10);
                 m_RaymarchingQualities[2] = RaymarchingQuality.New("High", 3, 20);
                 m_DefaultRaymarchingQualityUniqueID = m_RaymarchingQualities[1].uniqueID;
             }
         }
-        /// RAYMARCHING END
-
 
         public bool isHDRPExposureWeightSupported
         {
@@ -406,12 +288,11 @@ namespace VLB
             #if UNITY_2021_1_OR_NEWER
                 return renderPipeline == RenderPipeline.HDRP;
             #else
-                return false; // GetCurrentExposureMultiplier is accessible but doesn't return a proper value in Unity 2020 for some reasons
+                return false;
             #endif
             }
         }
 
-        // INTERNAL
 #pragma warning disable 0414
         [SerializeField] int pluginVersion = -1;
         [SerializeField] Material _DummyMaterial = null;
@@ -434,17 +315,13 @@ namespace VLB
             Instance.RefreshShaders(RefreshShaderFlags.All);
 #endif
 
-            if (Instance.hasRenderPipelineMismatch)
-                Debug.LogError("It looks like the 'Render Pipeline' is not correctly set in the config. Please make sure to select the proper value depending on your pipeline in use.", Instance);
-        }
+            if (Instance.hasRenderPipelineMismatch) { }}
 
 #if UNITY_EDITOR
         [InitializeOnLoadMethod]
         static void OnProjectLoadedInEditor()
         {
-            // Code executed on Unity Editor startup
-            // use the static variable and NOT the Instance property to prevent from creating a Config instance right away when you unpack the plugin,
-            // otherwise other assets (noise texture...) might not be loaded and references can be broken
+
             if (ms_Instance)
                 ms_Instance.SetScriptingDefineSymbolsForCurrentRenderPipeline();
         }
@@ -529,7 +406,7 @@ namespace VLB
             if (newPipeline != renderPipeline)
             {
                 renderPipeline = newPipeline;
-                EditorUtility.SetDirty(this); // make sure to save this property change
+                EditorUtility.SetDirty(this);
                 RefreshShaders(RefreshShaderFlags.All);
                 SetScriptingDefineSymbolsForCurrentRenderPipeline();
             }
@@ -537,10 +414,8 @@ namespace VLB
 
         public static void EditorSelectInstance()
         {
-            Selection.activeObject = Instance; // this will create the instance if it doesn't exist
-            if (Selection.activeObject == null)
-                Debug.LogError("Cannot find any Config resource");
-        }
+            Selection.activeObject = Instance;
+            if (Selection.activeObject == null) { }}
 
         ref Material GetDummyMaterial(ShaderMode shaderMode)
         {
@@ -631,7 +506,7 @@ namespace VLB
                 DeleteAsset(ref instance);
             }
         }
-#endif // UNITY_EDITOR
+#endif
 
         public void ResetInternalData()
         {
@@ -653,7 +528,7 @@ namespace VLB
             {
                 if (Application.isPlaying)
                 {
-                    Debug.LogError("Failed to instantiate VolumetricDustParticles prefab.");
+                    
                 }
                 return null;
             }
@@ -677,8 +552,8 @@ namespace VLB
         void HandleBackwardCompatibility(int serializedVersion, int newVersion)
         {
 #if UNITY_EDITOR
-            if (serializedVersion == -1) return;            // freshly new spawned config: nothing to do
-            if (serializedVersion == newVersion) return;    // same version: nothing to do
+            if (serializedVersion == -1) return;
+            if (serializedVersion == newVersion) return;
 
             if (serializedVersion < 1830)
             {
@@ -687,56 +562,55 @@ namespace VLB
 
             if (serializedVersion < 1950)
             {
-                ResetInternalData(); // retrieve Noise3D texture converted from binary data to texture 3D asset in 1950
-                EditorUtility.SetDirty(this); // make sure to save this property change
+                ResetInternalData();
+                EditorUtility.SetDirty(this);
             }
 
             if (serializedVersion < 1980)
             {
-                useLightColorTemperature = false; // light temperature support introduced in version 1980
-                EditorUtility.SetDirty(this); // make sure to save this property change
+                useLightColorTemperature = false;
+                EditorUtility.SetDirty(this);
             }
 
             if (serializedVersion < 20000)
             {
-                ResetInternalData(); // retrieve Jittering Noise texture introduced in 20000
-                EditorUtility.SetDirty(this); // make sure to save this property change
+                ResetInternalData();
+                EditorUtility.SetDirty(this);
             }
 
             if (serializedVersion < 20002)
             {
-                SetScriptingDefineSymbolsForCurrentRenderPipeline(); // new Scripting Define Symbols introduced in 20002
+                SetScriptingDefineSymbolsForCurrentRenderPipeline();
             }
 
             if (newVersion > serializedVersion)
             {
-                // Import to keep, we have to regenerate the shader each time the plugin is updated
+
                 RefreshShaders(RefreshShaderFlags.All);
             }
 #endif
         }
 
-        // Singleton management
         static Config ms_Instance = null;
         public static Config Instance { get { return GetInstance(true); } }
 
 #if UNITY_EDITOR && VLB_DEBUG
         public struct Guard : System.IDisposable {
             public Guard(bool assert) {
-                if (m_IsAccessing && assert) Debug.LogError("Circular loop in Config.Instance");
+                if (m_IsAccessing && assert) 
                 m_IsAccessing = true;
             }
 
             public void Dispose() { m_IsAccessing = false; }
             static bool m_IsAccessing = false;
         }
-#endif // UNITY_EDITOR && VLB_DEBUG
+#endif
 
 #if UNITY_EDITOR
         static bool ms_ShouldInvalidateCache = false;
         public Config()
         {
-            ms_ShouldInvalidateCache = true; // new instance detected, force the cache to be refreshed
+            ms_ShouldInvalidateCache = true;
         }
 #endif
 
@@ -748,7 +622,7 @@ namespace VLB
             var instance = Resources.Load<Config>(assetName);
         #if PROFILE_INSTANCE_LOADING
             var totalTime = EditorApplication.timeSinceStartup - startTime;
-            Debug.Log($"Loading {assetName} in {(int)(totalTime*1000)} ms");
+            
         #endif
             return instance;
         }
@@ -757,23 +631,22 @@ namespace VLB
         {
         #if UNITY_EDITOR && VLB_DEBUG
             using (new Guard(true))
-        #endif // UNITY_EDITOR && VLB_DEBUG
+        #endif
             {
                 bool updateInstance = ms_Instance == null;
             #if UNITY_EDITOR
-                updateInstance |= ms_ShouldInvalidateCache; // Force instance reloading when detecting Config asset changes
+                updateInstance |= ms_ShouldInvalidateCache;
             #endif
                 if (updateInstance)
                 {
                 #if UNITY_EDITOR
                     if (ms_IsCreatingInstance)
                     {
-                        Debug.LogError(string.Format("Trying to access Config.Instance while creating it. Breaking before infinite loop."));
+                        
                         return null;
                     }
-                #endif // UNITY_EDITOR
+                #endif
 
-                    // Try to load the instance
                     {
                         var newInstance = LoadAssetInternal(kAssetName + PlatformHelper.GetCurrentPlatformSuffix());
                         if (newInstance == null) newInstance = LoadAssetInternal(kAssetName);
@@ -782,11 +655,11 @@ namespace VLB
                         if (newInstance && newInstance != ms_Instance)
                         {
                             ms_Instance = newInstance;
-                            newInstance.RefreshGlobalShaderProperties(); // make sure noise textures are properly loaded as soon as the editor is started
-                            newInstance.SetScriptingDefineSymbolsForCurrentRenderPipeline(); // force set define symbols when loading the instance, if ms_Instance was not available from OnProjectLoadedInEditor
+                            newInstance.RefreshGlobalShaderProperties();
+                            newInstance.SetScriptingDefineSymbolsForCurrentRenderPipeline();
                         }
                         ms_ShouldInvalidateCache = false;
-                    #endif // UNITY_EDITOR
+                    #endif
 
                         ms_Instance = newInstance;
                     }
@@ -799,11 +672,11 @@ namespace VLB
                         ms_IsCreatingInstance = false;
 
                         ms_Instance.AutoSelectRenderPipeline();
-                        ms_Instance.SetScriptingDefineSymbolsForCurrentRenderPipeline(); // force set define symbols the first time we create the instance
+                        ms_Instance.SetScriptingDefineSymbolsForCurrentRenderPipeline();
 
                         if (Application.isPlaying)
-                            ms_Instance.Reset(); // Reset is not automatically when instancing a ScriptableObject when in playmode
-                    #endif // UNITY_EDITOR
+                            ms_Instance.Reset();
+                    #endif
                         Debug.Assert(!(assertIfNotFound && ms_Instance == null), string.Format("Can't find any resource of type '{0}'. Make sure you have a ScriptableObject of this type in a 'Resources' folder.", typeof(Config)));
                     }
                 }
@@ -880,6 +753,6 @@ namespace VLB
             + "\nColor Space: " + QualitySettings.activeColorSpace
             ;
         }
-#endif // UNITY_EDITOR
+#endif
     }
 }

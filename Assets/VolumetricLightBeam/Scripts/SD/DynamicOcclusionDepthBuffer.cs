@@ -10,30 +10,13 @@ namespace VLB
     {
         public new const string ClassName = "DynamicOcclusionDepthBuffer";
 
-        /// <summary>
-        /// The beam can only be occluded by objects located on the layers matching this mask.
-        /// It's very important to set it as restrictive as possible (checking only the layers which are necessary)
-        /// to perform a more efficient process in order to increase the performance.
-        /// It should NOT include the layer on which the beams are generated.
-        /// </summary>
         public LayerMask layerMask = Consts.DynOcclusion.LayerMaskDefault;
 
-        /// <summary>
-        /// Whether or not the virtual camera will use occlusion culling during rendering from the beam's POV.
-        /// </summary>
         public bool useOcclusionCulling = Consts.DynOcclusion.DepthBufferOcclusionCullingDefault;
 
-        /// <summary>
-        /// Controls how large the depth texture captured by the virtual camera is.
-        /// The lower the resolution, the better the performance, but the less accurate the rendering.
-        /// </summary>
         public int depthMapResolution = Consts.DynOcclusion.DepthBufferDepthMapResolutionDefault;
 
-        /// <summary>
-        /// Fade out the beam before the occlusion surface in order to soften the transition.
-        /// </summary>
         public float fadeDistanceToSurface = Consts.DynOcclusion.DepthBufferFadeDistanceToSurfaceDefault;
-
 
         protected override string GetShaderKeyword() { return ShaderKeywords.SD.OcclusionDepthTexture; }
         protected override MaterialManager.SD.DynamicOcclusion GetDynamicOcclusionMode() { return MaterialManager.SD.DynamicOcclusion.DepthTexture; }
@@ -51,7 +34,7 @@ namespace VLB
         {
             Debug.Assert(m_Master && m_DepthCamera);
 
-            if (SRPHelper.IsUsingCustomRenderPipeline()) // Recursive rendering is not supported on SRP
+            if (SRPHelper.IsUsingCustomRenderPipeline())
                 m_NeedToUpdateOcclusionNextFrame = true;
             else
                 ProcessOcclusionInternal();
@@ -62,7 +45,7 @@ namespace VLB
         void Update()
         {
             if (m_NeedToUpdateOcclusionNextFrame && m_Master && m_DepthCamera
-                && Time.frameCount > 1)  // fix NullReferenceException in UnityEngine.Rendering.Universal.Internal.CopyDepthPass.Execute when using SRP
+                && Time.frameCount > 1)
             {
                 ProcessOcclusionInternal();
                 m_NeedToUpdateOcclusionNextFrame = false;
@@ -100,11 +83,11 @@ namespace VLB
         {
             if (m_DepthCamera != null)
             {
-                m_DepthCamera.gameObject.SetActive(true); // active it in case it has been disabled by OnDisable()
+                m_DepthCamera.gameObject.SetActive(true);
             }
             else
             {
-                // delete old depth cameras when duplicating the GAO
+
                 gameObject.ForeachComponentsInDirectChildrenOnly<Camera>(cam => DestroyImmediate(cam.gameObject), true);
 
                 m_DepthCamera = Utils.NewWithComponent<Camera>("Depth Camera");
@@ -115,7 +98,7 @@ namespace VLB
                     m_DepthCamera.cullingMask = layerMask;
                     m_DepthCamera.clearFlags = CameraClearFlags.Depth;
                     m_DepthCamera.depthTextureMode = DepthTextureMode.Depth;
-                    m_DepthCamera.renderingPath = RenderingPath.VertexLit; // faster
+                    m_DepthCamera.renderingPath = RenderingPath.VertexLit;
                     m_DepthCamera.useOcclusionCulling = useOcclusionCulling;
                     m_DepthCamera.gameObject.hideFlags = Consts.Internal.ProceduralObjectsHideFlags;
                     m_DepthCamera.transform.SetParent(transform, false);
@@ -176,7 +159,7 @@ namespace VLB
                     m_DepthCamera.targetTexture = null;
                 }
 
-                DestroyImmediate(m_DepthCamera.gameObject); // Make sure to delete the GAO
+                DestroyImmediate(m_DepthCamera.gameObject);
                 m_DepthCamera = null;
             }
         }
@@ -199,8 +182,7 @@ namespace VLB
 
         void MarkMaterialAsDirty()
         {
-            // when adding/removing this component in editor, we might need to switch from a GPU Instanced material to a custom one,
-            // since this feature doesn't support GPU Instancing
+
             if (!Application.isPlaying)
                 m_Master._EditorSetBeamGeomDirty();
         }
@@ -226,6 +208,6 @@ namespace VLB
                     ProcessOcclusion(ProcessOcclusionSource.EditorUpdate);
             }
         }
-#endif // UNITY_EDITOR
+#endif
     }
 }

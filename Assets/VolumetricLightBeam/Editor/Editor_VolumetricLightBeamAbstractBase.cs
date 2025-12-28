@@ -31,7 +31,6 @@ namespace VLB
             return null;
         }
 
-
         protected void AddComponentToTargets<T>() where T : MonoBehaviour
         {
             foreach (var target in m_Targets) EditorExtensions.AddComponentFromEditor<T>(target);
@@ -155,7 +154,6 @@ namespace VLB
             }
             return false;
         }
-
 
         static Vector3 GetBeamGlobalForward(VolumetricLightBeamAbstractBase beam)
         {
@@ -296,8 +294,6 @@ namespace VLB
             return update;
         }
 
-
-
         protected GUIStyle buttonAddComponentStyle { get => GUI.skin.button; }
 
         protected void DrawButtonAddComponentDust()
@@ -343,5 +339,4 @@ namespace VLB
         }
     }
 }
-#endif // UNITY_EDITOR
-
+#endif

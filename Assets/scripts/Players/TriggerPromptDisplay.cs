@@ -20,13 +20,12 @@ public class SimpleTriggerPrompt : MonoBehaviour
 
     void Start()
     {
-        
+
         if (promptCanvas != null)
         {
             promptCanvas.SetActive(false);
         }
 
-        
         Collider col = GetComponent<Collider>();
         if (col == null)
         {
@@ -43,7 +42,7 @@ public class SimpleTriggerPrompt : MonoBehaviour
 
     void Update()
     {
-        
+
         if (useBillboard && promptCanvas != null && promptCanvas.activeSelf)
         {
             Camera cam = Camera.main;
@@ -57,37 +56,32 @@ public class SimpleTriggerPrompt : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        
+
         if (triggerOnce && hasTriggered)
             return;
 
-        
         if (!IsValidPlayer(other.gameObject))
             return;
 
-        
         if (promptCanvas != null)
         {
             promptCanvas.SetActive(true);
         }
 
-        
         hasTriggered = true;
     }
 
     private void OnTriggerExit(Collider other)
     {
-        
+
         if (!IsValidPlayer(other.gameObject))
             return;
 
-        
         if (promptCanvas != null)
         {
             promptCanvas.SetActive(false);
         }
 
-        
         if (triggerOnce)
         {
             Destroy(gameObject);
@@ -96,11 +90,10 @@ public class SimpleTriggerPrompt : MonoBehaviour
 
     private bool IsValidPlayer(GameObject obj)
     {
-        
+
         if (validPlayerTags == null || validPlayerTags.Length == 0)
             return true;
 
-        
         foreach (string tag in validPlayerTags)
         {
             if (obj.CompareTag(tag))
@@ -112,7 +105,7 @@ public class SimpleTriggerPrompt : MonoBehaviour
 
     void OnDrawGizmos()
     {
-        
+
         Gizmos.color = new Color(0f, 1f, 0f, 0.3f);
 
         Collider col = GetComponent<Collider>();

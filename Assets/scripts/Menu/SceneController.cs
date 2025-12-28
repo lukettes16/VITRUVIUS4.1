@@ -106,7 +106,6 @@ namespace Michsky.UI.Dark
             SceneManager.LoadScene(gameSceneName);
         }
 
-        
         private IEnumerator LoadGameWithFade()
         {
             yield return new WaitForSeconds(transitionDelay);
@@ -133,4 +132,4 @@ namespace Michsky.UI.Dark
             QuitGame();
         }
     }
-} 
+}

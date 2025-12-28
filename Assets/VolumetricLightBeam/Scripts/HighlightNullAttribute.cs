@@ -5,9 +5,7 @@ using UnityEditor;
 
 namespace VLB
 {
-    /// <summary>
-    /// Highlight in red in inspector in not set
-    /// </summary>
+
     public sealed class HighlightNullAttribute : PropertyAttribute { }
 
 #if UNITY_EDITOR
@@ -30,4 +28,3 @@ namespace VLB
     }
 #endif
 }
-

@@ -14,7 +14,7 @@ public class ParticleSoundController : MonoBehaviour
     [SerializeField] private float minHearingDistance = 2f;
     [Tooltip("Si esta activado, el sonido se escuchara globalmente sin importar la distancia")]
     [SerializeField] private bool globalSound = false;
-    
+
     private ParticleSystem _particleSystem;
     private AudioSource audioSource;
     private bool wasPlaying = false;
@@ -24,12 +24,11 @@ public class ParticleSoundController : MonoBehaviour
     {
         _particleSystem = GetComponent<ParticleSystem>();
         audioSource = GetComponent<AudioSource>();
-        
+
         audioSource.playOnAwake = false;
         audioSource.loop = loopSound;
         audioSource.volume = volume;
-        
-        
+
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
             playerTransform = player.transform;
@@ -50,31 +49,29 @@ public class ParticleSoundController : MonoBehaviour
         if (_particleSystem == null || audioSource == null) return;
 
         bool isPlaying = _particleSystem.isPlaying;
-        
+
         if (isPlaying && !wasPlaying && particleSoundClip != null)
         {
-            
+
             audioSource.clip = particleSoundClip;
             if (ShouldPlaySound())
                 audioSource.Play();
         }
         else if (!isPlaying && wasPlaying)
         {
-            
+
             if (!loopSound)
                 audioSource.Stop();
         }
-        
-        
+
         if (audioSource.isPlaying && !globalSound && playerTransform != null)
         {
             UpdateSoundVolumeBasedOnDistance();
         }
-        
+
         wasPlaying = isPlaying;
     }
 
-    
     public void SetSoundClip(AudioClip newClip, bool playImmediately = false)
     {
         particleSoundClip = newClip;
@@ -83,44 +80,41 @@ public class ParticleSoundController : MonoBehaviour
             audioSource.Play();
     }
 
-    
     private bool ShouldPlaySound()
     {
         if (globalSound) return true;
         if (playerTransform == null) return false;
-        
+
         float distance = Vector3.Distance(transform.position, playerTransform.position);
         return distance <= maxHearingDistance;
     }
 
-    
     private void UpdateSoundVolumeBasedOnDistance()
     {
         if (playerTransform == null) return;
-        
+
         float distance = Vector3.Distance(transform.position, playerTransform.position);
-        
+
         if (distance > maxHearingDistance)
         {
-            
+
             audioSource.Stop();
             return;
         }
-        
+
         if (distance <= minHearingDistance)
         {
-            
+
             audioSource.volume = volume;
         }
         else
         {
-            
+
             float normalizedDistance = (distance - minHearingDistance) / (maxHearingDistance - minHearingDistance);
             audioSource.volume = volume * (1f - normalizedDistance);
         }
     }
 
-    
     public void FindPlayer()
     {
         GameObject player = GameObject.FindGameObjectWithTag("Player");

@@ -72,14 +72,14 @@ namespace VLB
 #endif
                 if (currentPrefabStage != null)
                 {
-                    // The user is in prefab mode without any GAO selected in the hierarchy. Get the current prefab root as parent.
+
                     parentGao = currentPrefabStage.prefabContentsRoot;
                 }
             }
 
-            GameObjectUtility.SetParentAndAlign(gao, parentGao); // Ensure it gets reparented if this was a context click (otherwise does nothing)
+            GameObjectUtility.SetParentAndAlign(gao, parentGao);
 
-            Undo.RegisterCreatedObjectUndo(gao, "Create " + gao.name); // Register the creation in the undo system
+            Undo.RegisterCreatedObjectUndo(gao, "Create " + gao.name);
             Selection.activeObject = gao;
         }
 
@@ -92,13 +92,10 @@ namespace VLB
         {
             if (CanAddComponentFromEditor<TComp>(self))
             {
-                /*var comp =*/ Undo.AddComponent<TComp>(self.gameObject);
+                 Undo.AddComponent<TComp>(self.gameObject);
             }
         }
 
-        /// <summary>
-        /// Add a EditorGUILayout.ToggleLeft which properly handles multi-object editing
-        /// </summary>
         public static void ToggleLeft(this SerializedProperty prop, GUIContent label, params GUILayoutOption[] options)
         {
             ToggleLeft(prop, label, prop.boolValue, options);
@@ -114,7 +111,6 @@ namespace VLB
                 prop.boolValue = newValue;
         }
 
-
         public static bool HasAtLeastOneValue(this SerializedProperty prop, bool value)
         {
             return (prop.boolValue == value) || prop.hasMultipleDifferentValues;
@@ -125,17 +121,6 @@ namespace VLB
             return (prop.floatValue >= 0.0f) || prop.hasMultipleDifferentValues;
         }
 
-        /// <summary>
-        /// Create a EditorGUILayout.Slider which properly handles multi-object editing
-        /// We apply the 'convIn' conversion to the SerializedProperty value before exposing it as a Slider.
-        /// We apply the 'convOut' conversion to the Slider value to get the SerializedProperty back.
-        /// </summary>
-        /// <param name="prop">The value the slider shows.</param>
-        /// <param name="label">Label in front of the slider.</param>
-        /// <param name="leftValue">The value at the left end of the slider.</param>
-        /// <param name="rightValue">The value at the right end of the slider.</param>
-        /// <param name="convIn">Conversion applied on the SerializedProperty to get the Slider value</param>
-        /// <param name="convOut">Conversion applied on the Slider value to get the SerializedProperty</param>
         public static bool FloatSlider(
             this SerializedProperty prop,
             GUIContent label,
@@ -183,15 +168,7 @@ namespace VLB
             }
             return false;
         }
-/*
-        public static void ToggleFromLight(this SerializedProperty prop)
-        {
-            ToggleLeft(
-                prop,
-                new GUIContent("From Spot", "Get the value from the Light Spot"),
-                GUILayout.MaxWidth(80.0f));
-        }
-*/
+
         public static void ToggleUseGlobalNoise(this SerializedProperty prop)
         {
             ToggleLeft(
@@ -244,7 +221,6 @@ namespace VLB
                 prop.intValue = intValue;
         }
 
-
         public static void DrawLineSeparator()
         {
             DrawLineSeparator(Color.grey, 1, 10);
@@ -263,7 +239,6 @@ namespace VLB
             EditorGUI.DrawRect(r, color);
         }
 
-
         public static bool GlobalToggleButton(ref bool boolean, GUIContent content, string saveString, float maxWidth = 999.0f)
         {
             EditorGUI.BeginChangeCheck();
@@ -276,7 +251,6 @@ namespace VLB
             }
             return false;
         }
-
 
         public abstract class EditorGUIWidth : System.IDisposable
         {
@@ -307,7 +281,6 @@ namespace VLB
 
         private static ArcHandle ms_ArcHandle = null;
 
-        // HANDLES
         public static ArcHandle DrawHandleRadius(float radius)
         {
             if (ms_ArcHandle == null)

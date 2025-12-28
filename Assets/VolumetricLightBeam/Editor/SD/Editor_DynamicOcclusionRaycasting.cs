@@ -56,15 +56,15 @@ namespace VLB
                 minSurfaceRatio.FloatSlider(
                     EditorStrings.DynOcclusion.MinSurfaceRatio,
                     Consts.DynOcclusion.RaycastingMinSurfaceRatioMin, Consts.DynOcclusion.RaycastingMinSurfaceRatioMax,
-                    (value) => value * 100f,  // conversion value to slider
-                    (value) => value / 100f   // conversion slider to value
+                    (value) => value * 100f,
+                    (value) => value / 100f
                     );
 
                 maxSurfaceDot.FloatSlider(
                     EditorStrings.DynOcclusion.MaxSurfaceDot,
                     Consts.DynOcclusion.RaycastingMaxSurfaceAngleMin, Consts.DynOcclusion.RaycastingMaxSurfaceAngleMax,
-                    (value) => Mathf.Acos(value) * Mathf.Rad2Deg,   // conversion value to slider
-                    (value) => Mathf.Cos(value * Mathf.Deg2Rad)     // conversion slider to value
+                    (value) => Mathf.Acos(value) * Mathf.Rad2Deg,
+                    (value) => Mathf.Cos(value * Mathf.Deg2Rad)
                     );
             }
 

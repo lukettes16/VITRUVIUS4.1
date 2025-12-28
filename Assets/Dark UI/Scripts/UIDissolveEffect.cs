@@ -13,9 +13,7 @@ namespace Michsky.UI.Dark
     [ExecuteInEditMode]
     [DisallowMultipleComponent]
     public class UIDissolveEffect : BaseMeshEffect
-    // #if UNITY_EDITOR
-    //    , ISerializationCallbackReceiver
-    // #endif
+
     {
         public const string shaderName = "Custom/UI/Dissolve Effect";
 
@@ -72,7 +70,6 @@ namespace Michsky.UI.Dark
                 if (m_EffectMaterial == mat && graphic.material == mat)
                     return;
 
-                // graphic.material = m_EffectMaterial = mat;
                 EditorUtility.SetDirty(this);
                 EditorUtility.SetDirty(graphic);
                 EditorApplication.delayCall += AssetDatabase.SaveAssets;
@@ -98,7 +95,7 @@ namespace Michsky.UI.Dark
 
             if (!mat)
             {
-                Debug.Log("Generate material : " + GetVariantName(shader, color));
+                
                 mat = new Material(shader);
 
                 if (0 < color)

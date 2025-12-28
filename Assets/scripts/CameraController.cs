@@ -59,8 +59,8 @@ public class CameraController : MonoBehaviour
             if (target == null) continue;
 
             var health = target.GetComponent<PlayerHealth>();
-            
-            if (health != null && health.IsIgnoredByCamera) continue; 
+
+            if (health != null && health.IsIgnoredByCamera) continue;
 
             if (!target.gameObject.activeInHierarchy) continue;
 
@@ -82,8 +82,8 @@ public class CameraController : MonoBehaviour
             if (target == null) continue;
 
             var health = target.GetComponent<PlayerHealth>();
-            
-            if (health != null && health.IsIgnoredByCamera) continue; 
+
+            if (health != null && health.IsIgnoredByCamera) continue;
 
             if (!target.gameObject.activeInHierarchy) continue;
 
@@ -96,9 +96,6 @@ public class CameraController : MonoBehaviour
         return Mathf.Clamp(size + edgeBuffer, minSize, maxSize);
     }
 
-    
-    
-    
     public void AddTarget(Transform newTarget)
     {
         if (!targets.Contains(newTarget))

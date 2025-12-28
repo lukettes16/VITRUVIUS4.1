@@ -2,17 +2,13 @@
 using UnityEngine.VFX;
 using UnityEngine.AI;
 
-
-
-
-
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(NPCHealth))]
 public class NPCNoiseEmitter : MonoBehaviour
 {
     [Header("Radios de ruido (metros)")]
     [Tooltip("Radio de ruido constante cuando el NPC esta quieto (SIEMPRE activo para deteccion cercana)")]
-    public float idleNoiseRadius = 2.5f; 
+    public float idleNoiseRadius = 2.5f;
     [Tooltip("Radio de ruido cuando el NPC esta caminando")]
     public float walkNoiseRadius = 3f;
     [Tooltip("Radio de ruido cuando el NPC esta corriendo")]
@@ -50,9 +46,6 @@ public class NPCNoiseEmitter : MonoBehaviour
     [Tooltip("Color del gizmo de ruido")]
     public Color noiseColor = new Color(1f, 0.8f, 0.4f, 0.25f);
 
-    
-    
-    
     [HideInInspector] public float currentNoiseRadius = 0f;
 
     private NavMeshAgent agent;
@@ -76,7 +69,7 @@ public class NPCNoiseEmitter : MonoBehaviour
 
     void Update()
     {
-        
+
         if (npcHealth != null && npcHealth.IsDead)
         {
             currentNoiseRadius = 0f;
@@ -90,9 +83,6 @@ public class NPCNoiseEmitter : MonoBehaviour
         UpdateVFX();
     }
 
-    
-    
-    
 void CalculateLogicRadius()
     {
         if (agent == null)
@@ -106,15 +96,13 @@ void CalculateLogicRadius()
         bool isRunning = currentSpeed >= runSpeedThreshold;
         bool isWalking = currentSpeed >= walkSpeedThreshold && !isRunning;
 
-        
         bool isCrouching = false;
         if (behaviorManager != null && agent.speed <= behaviorManager.crouchSpeed + 0.1f && isMoving)
         {
             isCrouching = true;
         }
 
-        
-        float targetRadius = idleNoiseRadius; 
+        float targetRadius = idleNoiseRadius;
 
         if (isMoving)
         {
@@ -128,14 +116,9 @@ void CalculateLogicRadius()
                 targetRadius = idleNoiseRadius;
         }
 
-        
-        
         currentNoiseRadius = Mathf.Max(targetRadius, idleNoiseRadius);
     }
 
-    
-    
-    
     private void SyncRingWithLeader()
     {
         if (behaviorManager == null || !behaviorManager.IsFollowing)
@@ -164,31 +147,24 @@ void CalculateLogicRadius()
         }
     }
 
-    
     public void ToggleRingVisibility()
     {
         isRingVisible = !isRingVisible;
     }
 
-    
-    
-    
     void UpdateVFX()
     {
         if (noiseVFX == null) return;
 
-        
         visualRadius = Mathf.Lerp(visualRadius, currentNoiseRadius, Time.deltaTime * visualLerpSpeed);
 
-        
         bool shouldShowRing = isRingVisible && (visualRadius > 0.1f);
-        
+
         if (shouldShowRing)
         {
-            
+
             noiseVFX.SetFloat(vfxRadiusProperty, visualRadius);
 
-            
             float targetPulse = idlePulseSpeed;
 
             if (currentNoiseRadius >= runNoiseRadius - 0.1f)
@@ -199,7 +175,6 @@ void CalculateLogicRadius()
             noiseVFX.SetFloat(vfxPulseProperty, targetPulse);
         }
 
-        
         noiseVFX.enabled = shouldShowRing;
     }
 
@@ -210,4 +185,3 @@ void CalculateLogicRadius()
         Gizmos.DrawWireSphere(transform.position, currentNoiseRadius);
     }
 }
-

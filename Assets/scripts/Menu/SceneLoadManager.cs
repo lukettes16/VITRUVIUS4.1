@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class SceneLoadManager : MonoBehaviour
 {
     #region Singleton
-    public static SceneLoadManager Instance; 
+    public static SceneLoadManager Instance;
 
     private void Awake()
     {
@@ -93,7 +93,7 @@ public class SceneLoadManager : MonoBehaviour
         _stateText.text = $"Presiona cualquier tecla para continuar.";
         _barFill.color = Color.red ;
 
-        while(!Input.anyKey) 
+        while(!Input.anyKey)
         {
             yield return null;
         }
@@ -121,5 +121,3 @@ public class SceneLoadManager : MonoBehaviour
 
     }
 }
-
-

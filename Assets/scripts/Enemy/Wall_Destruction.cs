@@ -63,20 +63,16 @@ public class Wall_Destruction : MonoBehaviour
 
         SetupFragments(brokenWall);
         RemoveFromNavMesh();
-        
-        // Start UpdateNavMeshAfterDestruction on the brokenWall since this object is about to be disabled
+
         if (updateNavMeshOnDestroy)
         {
-            // Use a temporary MonoBehaviour on the new object or a global manager to run the coroutine
-            // For simplicity, we'll try to run it on the brokenWall if it has a MonoBehaviour, 
-            // otherwise we'll create a temporary helper.
+
             MonoBehaviour runner = brokenWall.GetComponent<MonoBehaviour>();
             if (runner == null) runner = brokenWall.AddComponent<CoroutineRunner>();
-            
+
             runner.StartCoroutine(UpdateNavMeshAfterDestruction(wallPosition));
         }
 
-        // Start SimulateAndFreeze on the brokenWall since this object is about to be disabled
         MonoBehaviour simRunner = brokenWall.GetComponent<MonoBehaviour>();
         if (simRunner == null) simRunner = brokenWall.AddComponent<CoroutineRunner>();
         simRunner.StartCoroutine(SimulateAndFreeze(brokenWall.transform, impactPoint, impactDirection));
@@ -86,8 +82,7 @@ public class Wall_Destruction : MonoBehaviour
             gameObject.SetActive(false);
         }
     }
-    
-    // Helper class to run coroutines on the broken wall object
+
     public class CoroutineRunner : MonoBehaviour {}
 
     private void RemoveFromNavMesh()
@@ -124,16 +119,14 @@ public class Wall_Destruction : MonoBehaviour
         {
             foreach (NavMeshSurface surface in surfaces)
             {
-                // Set to use physics colliders to avoid Read/Write errors on meshes in standalone builds
+
                 surface.useGeometry = NavMeshCollectGeometry.PhysicsColliders;
-                
-                // Force update to ensure all colliders are properly recognized
+
                 surface.defaultArea = 0;
                 surface.BuildNavMesh();
             }
         }
 
-        // Force a frame delay to ensure physics updates
         yield return null;
 
         Collider[] nearbyColliders = Physics.OverlapSphere(position, navMeshUpdateRadius);
@@ -153,7 +146,7 @@ public class Wall_Destruction : MonoBehaviour
     private void SetupFragments(GameObject brokenWall)
     {
         Collider[] fragmentColliders = brokenWall.GetComponentsInChildren<Collider>();
-        
+
         int debrisLayer = LayerMask.NameToLayer(fragmentLayerName);
         if (debrisLayer != -1)
         {

@@ -10,51 +10,24 @@ namespace VLB
     {
         public new const string ClassName = "EffectFlicker";
 
-        /// <summary>
-        /// Frequency of flickering.
-        /// Higher value means the flickering will occur faster.
-        /// </summary>
         [Range(1.0f, 60.0f)]
         public float frequency = Consts.Effects.FrequencyDefault;
 
-        /// <summary>
-        /// If enabled, pauses will be added between 2 flickering sequences.
-        /// </summary>
         public bool performPauses = Consts.Effects.PerformPausesDefault;
 
-        /// <summary>
-        /// The duration of a flickering sequence.
-        /// A random value will be picked each time inside that range.
-        /// </summary>
         [MinMaxRange(0.0f, 10.0f)]
         public MinMaxRangeFloat flickeringDuration = Consts.Effects.FlickeringDurationDefault;
 
-        /// <summary>
-        /// The duration of a pause sequence.
-        /// A random value will be picked each time inside that range.
-        /// </summary>
         [MinMaxRange(0.0f, 10.0f)]
         public MinMaxRangeFloat pauseDuration = Consts.Effects.PauseDurationDefault;
 
-        /// <summary>
-        /// Restore the default intensity during a pause sequence.
-        /// </summary>
         public bool restoreIntensityOnPause = Consts.Effects.RestoreIntensityOnPauseDefault;
 
-        /// <summary>
-        /// The amplitude of intensity change which will be applied to the Light and/or Beam.  
-        /// A random value will be picked each time inside that range.
-        /// </summary>
         [MinMaxRange(-5.0f, 5.0f)]
         public MinMaxRangeFloat intensityAmplitude = Consts.Effects.IntensityAmplitudeDefault;
 
-        /// <summary>
-        /// How much intensity change will be smoothed.
-        /// Higher value means the more smoothing.
-        /// </summary>
         [Range(0.0f, 0.25f)]
         public float smoothing = Consts.Effects.SmoothingDefault;
-
 
         float m_CurrentAdditiveIntensity = 0.0f;
 
@@ -123,4 +96,3 @@ namespace VLB
         }
     }
 }
-

@@ -21,7 +21,7 @@ namespace Michsky.UI.Dark
                 if (Input.anyKeyDown)
                 {
                     pressAction.Invoke();
-                } 
+                }
             }
 
             else
@@ -29,7 +29,7 @@ namespace Michsky.UI.Dark
                 if (Input.GetKeyDown(hotkey))
                 {
                     pressAction.Invoke();
-                } 
+                }
             }
         }
     }

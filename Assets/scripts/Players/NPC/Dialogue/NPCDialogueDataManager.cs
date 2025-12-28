@@ -9,10 +9,8 @@ public class NPCDialogueDataManager : MonoBehaviour
     private Dictionary<string, int> interactionCounts = new Dictionary<string, int>();
     private Dictionary<string, HashSet<string>> flags = new Dictionary<string, HashSet<string>>();
 
-    
     private CharacterDialogueSet currentDialogueSet;
 
-    
     private static NPCDialogueDataManager instance;
     public static NPCDialogueDataManager Instance
     {
@@ -33,7 +31,7 @@ public class NPCDialogueDataManager : MonoBehaviour
 
     private void Awake()
     {
-        
+
         if (npcDialogueData == null)
         {
 
@@ -42,29 +40,20 @@ public class NPCDialogueDataManager : MonoBehaviour
 
     #region Mtodos Pblicos - Usados por NPCEnhancedDialogueSystem
 
-    
-    
-    
     public bool HasDialogueAvailable(string playerTag)
     {
         if (npcDialogueData == null) return false;
 
-        
         CharacterDialogueSet dialogueSet = npcDialogueData.GetDialogueForPlayer(playerTag, this);
         if (dialogueSet != null) return true;
 
-        
         return npcDialogueData.followUpDialogue != null && npcDialogueData.followUpDialogue.Count > 0;
     }
 
-    
-    
-    
     public List<DialogueNode> GetDialogueForPlayer(string playerTag)
     {
         if (npcDialogueData == null) return new List<DialogueNode>();
 
-        
         currentDialogueSet = npcDialogueData.GetDialogueForPlayer(playerTag, this);
 
         if (currentDialogueSet != null)
@@ -73,35 +62,27 @@ public class NPCDialogueDataManager : MonoBehaviour
             return currentDialogueSet.dialogueNodes;
         }
 
-        
         if (npcDialogueData.followUpDialogue != null && npcDialogueData.followUpDialogue.Count > 0)
         {
 
-            currentDialogueSet = null; 
+            currentDialogueSet = null;
             return npcDialogueData.followUpDialogue;
         }
-
 
         return new List<DialogueNode>();
     }
 
-    
-    
-    
     public void CompleteCurrentDialogue(string playerTag)
     {
         if (npcDialogueData == null) return;
 
-        
         if (currentDialogueSet != null)
         {
             npcDialogueData.CompleteDialogue(playerTag, currentDialogueSet);
 
         }
 
-        
         IncrementInteractionCount(playerTag);
-
 
         currentDialogueSet = null;
     }
@@ -154,9 +135,6 @@ public class NPCDialogueDataManager : MonoBehaviour
 
     #region Reset y Utilidades
 
-    
-    
-    
     public void ResetAllData()
     {
         interactionCounts.Clear();
@@ -165,17 +143,11 @@ public class NPCDialogueDataManager : MonoBehaviour
 
     }
 
-    
-    
-    
     public void SetDialogueData(NPCDialogueData data)
     {
         npcDialogueData = data;
     }
 
-    
-    
-    
     public NPCDialogueData GetDialogueData()
     {
         return npcDialogueData;

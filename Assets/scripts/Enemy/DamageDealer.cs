@@ -7,10 +7,9 @@ public class DamageDealer : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        
+
         if (!gameObject.activeInHierarchy) return;
 
-        
         PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
         if (playerHealth == null)
         {
@@ -26,7 +25,6 @@ public class DamageDealer : MonoBehaviour
             }
         }
 
-        
         NPCHealth npcHealth = other.GetComponent<NPCHealth>();
         if (npcHealth == null)
         {
@@ -38,7 +36,6 @@ public class DamageDealer : MonoBehaviour
         }
     }
 
-    
     public void SetDamage(int damage)
     {
         damageAmount = damage;

@@ -3,7 +3,7 @@ using UnityEngine.Animations.Rigging;
 
 public class HorrorModelVisibilityFix : MonoBehaviour
 {
-    
+
     [SerializeField] private bool autoFixOnStart = true;
     [SerializeField] private bool monitorVisibility = true;
     [SerializeField] private bool enableDebugLogs = false;
@@ -79,7 +79,7 @@ public class HorrorModelVisibilityFix : MonoBehaviour
         #if UNITY_EDITOR
         if (fixedAny && enableDebugLogs)
         {
-            
+
         }
         #endif
     }
@@ -88,7 +88,7 @@ public class HorrorModelVisibilityFix : MonoBehaviour
     private void OnDrawGizmos()
     {
         if (!showGizmos) return;
-        
+
         Gizmos.color = Color.cyan;
         Gizmos.DrawWireCube(transform.position + Vector3.up, new Vector3(0.5f, 2f, 0.5f));
     }

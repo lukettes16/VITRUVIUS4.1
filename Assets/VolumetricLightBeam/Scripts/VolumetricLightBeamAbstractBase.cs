@@ -9,10 +9,8 @@ namespace VLB
         public abstract BeamGeometryAbstractBase GetBeamGeometry();
         protected abstract void SetBeamGeometryNull();
 
-        /// <summary> Has the geometry already been generated? </summary>
         public bool hasGeometry { get { return GetBeamGeometry() != null; } }
 
-        /// <summary> Bounds of the geometry's mesh (if the geometry exists) </summary>
         public Bounds bounds { get { return GetBeamGeometry() != null ? GetBeamGeometry().meshRenderer.bounds : new Bounds(Vector3.zero, Vector3.zero); } }
 
         public delegate void BeamGeometryGeneratedHandler(VolumetricLightBeamAbstractBase beam);
@@ -54,7 +52,6 @@ namespace VLB
             if (beamProps.HasFlag(BeamProps.SideSoftness)) { UtilsBeamProps.SetThickness(this, UtilsBeamProps.GetThickness(beamSrc)); }
         }
 
-        // INTERNAL
 #pragma warning disable 0414
         [SerializeField] protected int pluginVersion = -1;
         public int _INTERNAL_pluginVersion => pluginVersion;
@@ -108,10 +105,9 @@ namespace VLB
 
         protected void DestroyBeam()
         {
-            // do not destroy the beam GAO here in editor to prevent crash when we undo placing a beam in a prefab (with Unity 2021.3 and 2022.1)
-            // in editor, we delete the beam GAO through BeamGeometryAbstractBase.Update instead
+
             if (Application.isPlaying)
-                BeamGeometryAbstractBase.DestroyBeamGeometryGameObject(GetBeamGeometry()); // Make sure to delete the GAO
+                BeamGeometryAbstractBase.DestroyBeamGeometryGameObject(GetBeamGeometry());
             SetBeamGeometryNull();
         }
 
@@ -119,7 +115,6 @@ namespace VLB
         public abstract Color ComputeColorAtDepth(float depthRatio);
 
         public abstract int _EDITOR_GetInstancedMaterialID();
-
 
         [System.Flags]
         protected enum EditorDirtyFlags
@@ -136,7 +131,7 @@ namespace VLB
 
         protected void EditorHandleLightPropertiesUpdate()
         {
-            // Handle edition of light properties in Editor
+
             if (!Application.isPlaying)
             {
                 var newProps = new CachedLightProperties(lightSpotAttached);
@@ -148,10 +143,10 @@ namespace VLB
 
         public UnityEditor.StaticEditorFlags GetStaticEditorFlagsForSubObjects()
         {
-            // Apply the same static flags to the BeamGeometry and DustParticles than the VLB GAO
+
             var flags = UnityEditor.GameObjectUtility.GetStaticEditorFlags(gameObject);
             flags &= ~(
-                // remove the Lightmap static flag since it will generate error messages when selecting the BeamGeometry GAO in the editor
+
 #if UNITY_2019_2_OR_NEWER
                 UnityEditor.StaticEditorFlags.ContributeGI
 #else
@@ -169,6 +164,6 @@ namespace VLB
         public bool _EditorIsDirty() { return m_EditorDirtyFlags != EditorDirtyFlags.Clean; }
         public void _EditorSetMeshDirty() { m_EditorDirtyFlags |= EditorDirtyFlags.Mesh; }
         public void _EditorSetBeamGeomDirty() { m_EditorDirtyFlags |= EditorDirtyFlags.FullBeamGeomGAO; }
-#endif // UNITY_EDITOR
+#endif
     }
 }

@@ -8,7 +8,6 @@ namespace Beautify.Universal {
     [ExecuteInEditMode, VolumeComponentMenu("Kronnect/Beautify")]
     public class Beautify : VolumeComponent, IPostProcessComponent {
 
-
         [AttributeUsage(AttributeTargets.Field)]
         public class SectionGroup : Attribute {
         }
@@ -72,7 +71,6 @@ namespace Beautify.Universal {
         public class FinalBlur : SettingsGroup { }
         public class Frame : SettingsGroup { }
 
-
         [AttributeUsage(AttributeTargets.Field)]
         public class DisplayName : Attribute {
             public string name;
@@ -95,7 +93,6 @@ namespace Beautify.Universal {
             }
         }
 
-
         [AttributeUsage(AttributeTargets.Field)]
         public class DisplayConditionBool : Attribute {
             public string field;
@@ -111,11 +108,9 @@ namespace Beautify.Universal {
             }
         }
 
-
         [AttributeUsage(AttributeTargets.Field)]
         public class ToggleAllFields : Attribute {
         }
-
 
         [AttributeUsage(AttributeTargets.Field)]
         public class GlobalOverride : Attribute {
@@ -267,10 +262,8 @@ namespace Beautify.Universal {
             }
         }
 
-
         [Serializable]
         public sealed class BeautifyBloomLayersFilterMethodParameter : VolumeParameter<BloomLayersFilterMethod> { }
-
 
         #region General settings
 
@@ -525,7 +518,6 @@ namespace Beautify.Universal {
         [LensAndLightingEffects, Bloom, DisplayName("Layer 6 Tint Color")]
         public ColorParameter bloomTint5 = new ColorParameter(Color.white);
 
-
         #endregion
 
         #region Anamorphic flares
@@ -754,9 +746,6 @@ namespace Beautify.Universal {
         [LensAndLightingEffects, DepthOfField, DisplayName("Layer Mask"), DisplayConditionEnum("depthOfFieldFocusMode", (int)DoFFocusMode.AutoFocus)]
         public BeautifyLayerMaskParameter depthOfFieldAutofocusLayerMask = new BeautifyLayerMaskParameter { value = -1 };
 
-        //public ClampedFloatParameter depthOfFieldTransparencySupportDownsampling = new ClampedFloatParameter(1f, 1f, 4f);
-        //public ClampedFloatParameter depthOfFieldExclusionBias = new ClampedFloatParameter(0.99f, 0.9f, 1f);
-
         [LensAndLightingEffects, DepthOfField, DisplayName("Distance"), DisplayConditionEnum("depthOfFieldFocusMode", (int)DoFFocusMode.FixedDistance), Min(0)]
         public FloatParameter depthOfFieldDistance = new FloatParameter(10f);
 
@@ -848,7 +837,7 @@ namespace Beautify.Universal {
 
         [LensAndLightingEffects, DepthOfField, DisplayName("Resolution Invariant"), Tooltip("Adjusts circle of confusion radius based on screen resolution.")]
         public BoolParameter depthOfFieldResolutionInvariant = new BoolParameter(false);
-        
+
         [LensAndLightingEffects, DepthOfField, DisplayName("Max Depth")]
         public ClampedFloatParameter depthOfFieldMaxDistance = new ClampedFloatParameter(1f, 0, 1f);
 
@@ -997,7 +986,6 @@ namespace Beautify.Universal {
         public ClampedFloatParameter outlineLayerCutOff = new ClampedFloatParameter(0f, 0, 1);
 #endif
 
-
         #endregion
 
         #region Night Vision
@@ -1070,8 +1058,6 @@ namespace Beautify.Universal {
         [ArtisticChoices, Frame, DisplayName("Texture Mask")]
         public TextureParameter frameMask = new TextureParameter(null);
 
-
-
         #endregion
 
         #region Final Blur
@@ -1106,7 +1092,6 @@ namespace Beautify.Universal {
 
         int downsamplingUsed;
 
-
         void OnValidate() {
             bloomIntensity.value = Mathf.Max(bloomIntensity.value, 0);
             bloomDepthAtten.value = Mathf.Max(bloomDepthAtten.value, 0);
@@ -1123,9 +1108,9 @@ namespace Beautify.Universal {
             depthOfFieldMaxBlurRadius.value = Mathf.Max(0, depthOfFieldMaxBlurRadius.value);
             tonemapMaxInputBrightness.value = Mathf.Max(0, tonemapMaxInputBrightness.value);
             eyeAdaptationMinCameraDistance.value = Mathf.Max(0, eyeAdaptationMinCameraDistance.value);
-            
+
             if (!downsampling.value && downsamplingUsed == 1) {
-                // deactivate downsampling on the pipeline
+
                 UniversalRenderPipelineAsset pipe = (UniversalRenderPipelineAsset)GraphicsSettings.currentRenderPipeline;
                 pipe.renderScale = 1f;
             }
@@ -1133,7 +1118,6 @@ namespace Beautify.Universal {
             blurSourceEdgeBlendStrength.value = Mathf.Max(blurSourceEdgeBlendStrength.value, 0);
 
         }
-
 
     }
 }

@@ -91,7 +91,7 @@ namespace Beautify.Universal {
 
             if (GUILayout.Button("Autoselect Unused Beautify Features", EditorStyles.miniButton)) {
                 if (EditorUtility.DisplayDialog("Autoselect Unused Beautify Features", "This will disable features not used in the current scene. Do you want to proceed?", "Yes", "No")) {
-                    
+
                     #if UNITY_2023_1_OR_NEWER
                         var beautifyVolumes = FindObjectsByType<Beautify>(FindObjectsSortMode.None);
                     #else
@@ -131,7 +131,6 @@ namespace Beautify.Universal {
                 }
             }
 
-            // Image Enhancement section
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Image Enhancement", EditorStyles.boldLabel);
             if (GUILayout.Button("Toggle All", EditorStyles.miniButton, GUILayout.Width(80))) {
@@ -147,7 +146,6 @@ namespace Beautify.Universal {
             DrawStripToggle(stripBeautifyDithering, "Strip Dithering");
             DrawStripToggle(stripBeautifyEdgeAA, "Strip Edge AA");
 
-            // Tonemapping section
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Tonemapping", EditorStyles.boldLabel);
             if (GUILayout.Button("Toggle All", EditorStyles.miniButton, GUILayout.Width(80))) {
@@ -163,7 +161,6 @@ namespace Beautify.Universal {
             DrawStripToggle(stripBeautifyTonemappingACESFitted, "Strip ACES Fitted Tonemapping");
             DrawStripToggle(stripBeautifyTonemappingAGX, "Strip AGX Tonemapping");
 
-            // Color Grading section
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Color Grading", EditorStyles.boldLabel);
             if (GUILayout.Button("Toggle All", EditorStyles.miniButton, GUILayout.Width(80))) {
@@ -179,7 +176,6 @@ namespace Beautify.Universal {
             DrawStripToggle(stripBeautifyLUT3D, "Strip LUT 3D");
             DrawStripToggle(stripBeautifyColorTweaks, new GUIContent("Strip Color Tweaks", "Refers to sepia, daltonize and color temperature").text);
 
-            // Effects section
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Effects", EditorStyles.boldLabel);
             if (GUILayout.Button("Toggle All", EditorStyles.miniButton, GUILayout.Width(80))) {
@@ -223,7 +219,7 @@ namespace Beautify.Universal {
             DrawStripToggle(stripBeautifyFrame, "Strip Frame");
 
             EditorGUILayout.Separator();
-            // Unity Post Processing section
+
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Unity Post Processing Stripping", EditorStyles.boldLabel);
             if (GUILayout.Button("Toggle All", EditorStyles.miniButton, GUILayout.Width(80))) {
@@ -255,7 +251,7 @@ namespace Beautify.Universal {
             if (GUILayout.Button("Select Beautify Volume >")) {
 #if UNITY_2023_1_OR_NEWER
                 var volumes = FindObjectsByType<Volume>(FindObjectsSortMode.None);
-#else           
+#else
                 var volumes = FindObjectsOfType<Volume>();
 #endif
 

@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 
-#pragma warning disable 0429, 0162 // Unreachable expression code detected (because of Noise3D.isSupported on mobile)
+#pragma warning disable 0429, 0162
 
 namespace VLB
 {
@@ -48,17 +48,17 @@ namespace VLB
                 , geom._EDITOR_InstancedMaterialID
                 , MaterialManager.StaticPropertiesHD.staticPropertiesCount);
             EditorGUILayout.LabelField(matInfo);
-#endif // VLB_DEBUG
+#endif
         }
 
         protected virtual void DrawProperties(bool hasLightSpot)
         {
             if (FoldableHeader.Begin(this, EditorStrings.Beam.HeaderBasic))
             {
-                // Color
+
                 using (ButtonToggleScope.FromLight(m_ColorFromLight, hasLightSpot))
                 {
-                    if (!hasLightSpot) EditorGUILayout.BeginHorizontal();    // mandatory to have the color picker on the same line (when the button "from light" is not here)
+                    if (!hasLightSpot) EditorGUILayout.BeginHorizontal();
                     {
                         if (Config.Instance.featureEnabledColorGradient == FeatureEnabledColorGradient.Off)
                         {
@@ -80,22 +80,20 @@ namespace VLB
                     if (!hasLightSpot) EditorGUILayout.EndHorizontal();
                 }
 
-                // Blending Mode
                 EditorGUILayout.PropertyField(m_BlendingMode, EditorStrings.Beam.BlendingMode);
 
-                // Intensity
                 using (var lightDisabledGrp = ButtonToggleScope.FromLight(m_IntensityMultiplier, hasLightSpot))
                 {
                     if (m_Targets.HasAtLeastOneTargetWith((VolumetricLightBeamHD beam) => { return beam.useIntensityFromAttachedLightSpot; }))
                     {
                         using (new EditorExtensions.ShowMixedValue(m_Intensity))
                         {
-                            // display grayed out Unity's light intensity
+
                             EditorGUILayout.FloatField(EditorStrings.Beam.HD.Intensity, SpotLightHelper.GetIntensity(m_Targets[0].lightSpotAttached));
                         }
 
-                        lightDisabledGrp?.EndDisabledGroup(); // muliplier factor should be available
-                        DrawMultiplierProperty(m_IntensityMultiplier, EditorStrings.Beam.IntensityMultiplier); // multiplier property
+                        lightDisabledGrp?.EndDisabledGroup();
+                        DrawMultiplierProperty(m_IntensityMultiplier, EditorStrings.Beam.IntensityMultiplier);
                     }
                     else
                     {
@@ -109,19 +107,19 @@ namespace VLB
 
             if (FoldableHeader.Begin(this, EditorStrings.Beam.HeaderShape))
             {
-                // Fade End
+
                 using (var lightDisabledGrp = ButtonToggleScope.FromLight(m_FallOffEndMultiplier, hasLightSpot))
                 {
                     if (m_Targets.HasAtLeastOneTargetWith((VolumetricLightBeamHD beam) => { return beam.useFallOffEndFromAttachedLightSpot; }))
                     {
                         using (new EditorExtensions.ShowMixedValue(m_FallOffEnd))
                         {
-                            // display grayed out Unity's light range
+
                             EditorGUILayout.FloatField(EditorStrings.Beam.FallOffEnd, SpotLightHelper.GetFallOffEnd(m_Targets[0].lightSpotAttached));
                         }
 
-                        lightDisabledGrp?.EndDisabledGroup(); // muliplier factor should be available
-                        DrawMultiplierProperty(m_FallOffEndMultiplier, EditorStrings.Beam.FallOffEndMultiplier); // multiplier property
+                        lightDisabledGrp?.EndDisabledGroup();
+                        DrawMultiplierProperty(m_FallOffEndMultiplier, EditorStrings.Beam.FallOffEndMultiplier);
                     }
                     else
                     {
@@ -129,19 +127,18 @@ namespace VLB
                     }
                 }
 
-                // Spot Angle
                 using (var lightDisabledGrp = ButtonToggleScope.FromLight(m_SpotAngleMultiplier, hasLightSpot))
                 {
                     if (m_Targets.HasAtLeastOneTargetWith((VolumetricLightBeamHD beam) => { return beam.useSpotAngleFromAttachedLightSpot; }))
                     {
                         using (new EditorExtensions.ShowMixedValue(m_SpotAngle))
                         {
-                            // display grayed out Unity's light angle
+
                             EditorGUILayout.FloatField(EditorStrings.Beam.SpotAngle, SpotLightHelper.GetSpotAngle(m_Targets[0].lightSpotAttached));
                         }
 
-                        lightDisabledGrp?.EndDisabledGroup(); // muliplier factor should be available
-                        DrawMultiplierProperty(m_SpotAngleMultiplier, EditorStrings.Beam.SpotAngleMultiplier); // multiplier property
+                        lightDisabledGrp?.EndDisabledGroup();
+                        DrawMultiplierProperty(m_SpotAngleMultiplier, EditorStrings.Beam.SpotAngleMultiplier);
                     }
                     else
                     {
@@ -227,15 +224,12 @@ namespace VLB
             base.OnInspectorGUI();
             Debug.Assert(m_Targets.Count > 0);
 
-            // Prevent from drawing inspector when editor props are dirty
-            // in Unity 2022, inspector is drawn BEFORE calling Update & GenerateGeometry which set a valid raymarching ID
-            // and that generates a error message in DrawRaymarchingQualitiesPopup
             foreach (var target in m_Targets)
             {
-                // make sure to display inspector when selecting a prefab asset (since update is not called for prefab asset in project browser, its EditorDirtyFlags.Props will be always true)
+
                 bool isPrefabAsset = PrefabUtility.IsPartOfPrefabAsset(target.gameObject);
 
-                if(target.enabled // always display inspector for disabled component: when disabling a Beam, OnValidate is called which set EditorDirtyFlags.Props
+                if(target.enabled
                 && !isPrefabAsset
                 && target._EditorIsDirty())
                     return;
@@ -256,7 +250,7 @@ namespace VLB
             DrawEditInSceneButton();
             DrawCustomActionButtons();
             DrawAdditionalFeatures();
-            
+
             serializedObject.ApplyModifiedProperties();
         }
 
@@ -286,7 +280,7 @@ namespace VLB
 
         void DrawAdditionalFeatures()
         {
-            if (Application.isPlaying) return; // do not support adding additional components at runtime
+            if (Application.isPlaying) return;
 
             using (new EditorGUILayout.HorizontalScope())
             {
@@ -308,7 +302,7 @@ namespace VLB
                     AddComponentToTargets<TrackRealtimeChangesOnLightHD>();
             }
         }
-        
+
         protected virtual void OnSceneGUI()
         {
             DrawEditInSceneHandles();

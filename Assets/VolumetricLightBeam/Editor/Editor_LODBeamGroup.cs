@@ -49,10 +49,10 @@ namespace VLB
         {
             m_LODBeamsList = new ReorderableList(serializedObject
                 , m_LODBeams
-                , true // draggable
-                , true // displayHeader
-                , true // displayAddButton
-                , true // displayRemoveButton
+                , true
+                , true
+                , true
+                , true
                 );
             m_LODBeamsList.drawHeaderCallback = LODBeamsListDrawHeader;
             m_LODBeamsList.drawElementCallback = LODBeamsListDrawElement;
@@ -136,7 +136,7 @@ namespace VLB
                 }
             }
         }
-       
+
         bool LODBeamsListOnCanRemove(ReorderableList list)
         {
             var lods = m_Target.GetLODsFromLODGroup();
@@ -145,7 +145,7 @@ namespace VLB
 
         void DrawLODBeamsList()
         {
-            if (m_Target.IsPropertlyLoaded()) // fix errors when Unity's LODGroup component is disabled
+            if (m_Target.IsPropertlyLoaded())
             {
                 Debug.Assert(m_LODBeamsList != null);
                 m_LODBeamsList.DoLayoutList();

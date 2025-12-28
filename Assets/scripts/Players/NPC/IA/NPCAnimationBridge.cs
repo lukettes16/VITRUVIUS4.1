@@ -1,9 +1,5 @@
 ﻿using UnityEngine;
 
-
-
-
-
 public class NPCAnimationBridge : MonoBehaviour
 {
     private NPCBehaviorManager behaviorManager;
@@ -11,12 +7,11 @@ public class NPCAnimationBridge : MonoBehaviour
 
     void Awake()
     {
-        
+
         behaviorManager = GetComponentInParent<NPCBehaviorManager>();
         npcHealth = GetComponentInParent<NPCHealth>();
     }
 
-    
     public void PlayFootstepSound()
     {
         if (behaviorManager != null)

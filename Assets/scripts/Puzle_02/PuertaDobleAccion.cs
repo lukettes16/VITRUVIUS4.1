@@ -693,7 +693,6 @@ public class PuertaDobleAccion : MonoBehaviour
             }
         }
 
-        
         if (buttonFollowsPlayer)
         {
             foreach (KeyValuePair<GameObject, GameObject> kvp in playerButtonMap)

@@ -32,7 +32,7 @@ namespace VLB
             var assetPath = AssetDatabase.GetAssetPath(Instance);
             var fullPath = Path.GetFullPath(assetPath);
             var fullDir = Path.GetDirectoryName(fullPath);
-            return fullDir; // full path to shader generator directory
+            return fullDir;
         }
 
         public class ConfigProps
@@ -59,8 +59,6 @@ namespace VLB
         {
             Debug.Assert(configProps != null);
 
-            // The instance might not be accessible yet, when called from Config.OnEnable for instance if the Config is enabled before the ShaderGenerator.
-            // In this case we don't generate the shader right away, we store the parameters instead and we'll generate the shader in ShaderGenerator.OnEnable.
             if (Instance == null)
             {
                 AddGenerationParamOnEnable(shaderMode, configProps);
@@ -221,7 +219,7 @@ namespace VLB
 
                         if (rp == RenderPipeline.URP)
                         {
-                            // force enable constant buffers to fix SRP Batcher support on Android
+
                             passPre += NewLine("#pragma enable_cbuffer");
                         }
                     }
@@ -295,7 +293,6 @@ namespace VLB
                     code = code.Replace("{VLB_GEN_SPECIFIC_INCLUDE}", includes);
                 }
 
-                // Write shader file
                 var outputFolderPath = ShaderGenerator.GetFolderOutputPath();
                 var outputFullPath = Path.Combine(outputFolderPath, GetShaderAssetName(shaderMode));
                 try
@@ -350,7 +347,6 @@ namespace VLB
             return null;
         }
 
-        // Store data to generate the shader on OnEnable
         static Hashtable ms_ConfigPropsOnEnable = null;
         static void AddGenerationParamOnEnable(ShaderMode shaderMode, ConfigProps configProps)
         {
@@ -376,7 +372,6 @@ namespace VLB
             }
         }
 
-        // Singleton management
         static ShaderGenerator m_Instance = null;
         static ShaderGenerator Instance
         {
@@ -390,4 +385,3 @@ namespace VLB
     }
 }
 #endif
-

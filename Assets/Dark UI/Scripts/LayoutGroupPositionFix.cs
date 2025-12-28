@@ -11,7 +11,7 @@ namespace Michsky.UI.Dark
 
         void Start()
         {
-            // BECAUSE UNITY UI IS BUGGY AND NEEDS REFRESHING :P
+
             lg = gameObject.GetComponent<LayoutGroup>();
             StartCoroutine(ExecuteAfterTime(0.01f));
         }

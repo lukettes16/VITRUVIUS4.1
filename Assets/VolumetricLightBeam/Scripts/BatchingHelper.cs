@@ -1,4 +1,4 @@
-﻿// Force isDepthBlendEnabled at true when GPU Instancing is enabled, to prevent from breaking the batch if 1 beam has it at 0 and 1 has it at > 0
+﻿
 #define FORCE_ENABLE_DEPTHBLEND_FOR_BATCHING
 
 using UnityEngine;
@@ -19,7 +19,6 @@ namespace VLB
             material.enableInstancing = enableGpuInstancing;
         }
 
-        // SD
 #if FORCE_ENABLE_DEPTHBLEND_FOR_BATCHING
         public static bool forceEnableDepthBlend { get {
                 var renderingMode = Config.Instance.GetActualRenderingMode(ShaderMode.SD);
@@ -60,7 +59,7 @@ namespace VLB
                     ret = false;
             }
         }
-#endif // UNITY_EDITOR
+#endif
 
         public static bool CanBeBatched(VolumetricLightBeamSD beamA, VolumetricLightBeamSD beamB, ref string reasons)
         {
@@ -73,7 +72,7 @@ namespace VLB
 
 #if UNITY_EDITOR
             bool shouldCheckMaterialID = ret;
-#endif // UNITY_EDITOR
+#endif
 
             if (Config.Instance.featureEnabledDynamicOcclusion)
             {
@@ -124,7 +123,7 @@ namespace VLB
             {
                 CheckMaterialID(beamA, beamB, ref ret, ref reasons);
             }
-#endif // UNITY_EDITOR
+#endif
             return ret;
         }
 
@@ -149,7 +148,6 @@ namespace VLB
             return ret;
         }
 
-        // HD
         public static bool CanBeBatched(VolumetricLightBeamHD beamA, VolumetricLightBeamHD beamB, ref string reasons)
         {
             if (DoesRenderingModePreventBatching(ShaderMode.HD, ref reasons))
@@ -161,7 +159,7 @@ namespace VLB
 
 #if UNITY_EDITOR
             bool shouldCheckMaterialID = ret;
-#endif // UNITY_EDITOR
+#endif
 
             if (Config.Instance.featureEnabledColorGradient != FeatureEnabledColorGradient.Off && beamA.colorMode != beamB.colorMode)
             {
@@ -200,7 +198,7 @@ namespace VLB
             {
                 CheckMaterialID(beamA, beamB, ref ret, ref reasons);
             }
-#endif // UNITY_EDITOR
+#endif
             return ret;
         }
 

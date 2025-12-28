@@ -12,7 +12,7 @@ namespace VLB
         {
             get { return m_EffectProfile; }
             set
-            { 
+            {
                 m_EffectProfile = value;
                 InitInstanceFromProfile();
             }

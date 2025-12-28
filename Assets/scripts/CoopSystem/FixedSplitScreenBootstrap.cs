@@ -1,49 +1,46 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-/// <summary>
-/// Sistema de split-screen para 2 jugadores.
-/// </summary>
 [DefaultExecutionOrder(-300)]
 public class FixedSplitScreenBootstrap : MonoBehaviour
 {
     [Header("Fixed Split Screen Configuration")]
     [Tooltip("Orientación del split-screen (Vertical = Izq/Der, Horizontal = Arr/Aba)")]
     public SplitOrientation splitOrientation = SplitOrientation.Vertical;
-    
+
     [Tooltip("Color del borde visual entre secciones")]
     public Color borderColor = Color.white;
-    
+
     [Tooltip("Ancho del borde visual en píxeles")]
     public float borderWidth = 2f;
 
     [Header("Camera Settings")]
     [Tooltip("Si es true, busca cámaras en los hijos de los jugadores en lugar de crear nuevas")]
     public bool useExistingCameras = false;
-    
+
     [Tooltip("FOV para ambas cámaras")]
     public float fieldOfView = 60f;
-    
+
     [Tooltip("Near clipping plane")]
     public float nearClip = 0.3f;
-    
+
     [Tooltip("Far clipping plane")]
     public float farClip = 1000f;
 
     [Header("Cameras")]
     [Tooltip("Asigna la cámara permanente para el Jugador 1")]
     public Camera player1Camera;
-    
+
     [Tooltip("Asigna la cámara permanente para el Jugador 2")]
     public Camera player2Camera;
 
     [Header("Third Person Settings")]
     [Tooltip("Distancia de la cámara al jugador")]
     public float thirdPersonDistance = 8f;
-    
+
     [Tooltip("Altura de la cámara sobre el jugador")]
     public float thirdPersonHeight = 3f;
-    
+
     [Tooltip("Velocidad de seguimiento")]
     public float followSpeed = 5f;
 
@@ -54,10 +51,10 @@ public class FixedSplitScreenBootstrap : MonoBehaviour
     }
 
     public static FixedSplitScreenBootstrap Instance { get; private set; }
-    
+
     public Camera Player1Camera => player1Camera;
     public Camera Player2Camera => player2Camera;
-    
+
     private GameObject player1Target;
     private GameObject player2Target;
     private GameObject borderVisual;
@@ -127,10 +124,10 @@ public class FixedSplitScreenBootstrap : MonoBehaviour
     private void CreateVisualBorder()
     {
         if (borderVisual != null) Destroy(borderVisual);
-        
+
         borderVisual = new GameObject("SplitScreenBorder");
         borderVisual.transform.SetParent(transform);
-        
+
         LineRenderer lineRenderer = borderVisual.AddComponent<LineRenderer>();
         lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
         lineRenderer.startColor = borderColor;
@@ -243,7 +240,7 @@ public class FixedSplitScreenBootstrap : MonoBehaviour
     {
         GameObject p1 = GameObject.FindGameObjectWithTag("Player1");
         GameObject p2 = GameObject.FindGameObjectWithTag("Player2");
-        
+
         if (p1 == null || p2 == null)
         {
             GameObject[] allPlayers = GameObject.FindGameObjectsWithTag("Player");
@@ -263,7 +260,7 @@ public class FixedSplitScreenBootstrap : MonoBehaviour
 
     private void UpdateExternalSystems()
     {
-#if VLB_URP || true 
+#if VLB_URP || true
         try
         {
             var vlbConfigType = System.Type.GetType("VLB.Config, VolumetricLightBeam");
@@ -289,7 +286,6 @@ public class FixedSplitScreenBootstrap : MonoBehaviour
     {
         return playerId == 1 ? player1Camera : player2Camera;
     }
-
 
     void OnDestroy()
     {
@@ -330,7 +326,7 @@ public class FixedCameraFollower : MonoBehaviour
 
             PlayerInput pInput = targetObject.GetComponent<PlayerInput>();
             if (pInput == null) pInput = targetObject.GetComponentInParent<PlayerInput>();
-            
+
             if (pInput != null)
             {
                 lookAction = pInput.actions.FindAction("Look") ?? pInput.actions.FindAction("look");
@@ -355,13 +351,13 @@ public class FixedCameraFollower : MonoBehaviour
 
             yaw += lookInput.x * lookSensitivity * sens * Time.deltaTime;
             pitch -= lookInput.y * lookSensitivity * sens * Time.deltaTime;
-            pitch = Mathf.Clamp(pitch, -40f, 70f); 
+            pitch = Mathf.Clamp(pitch, -40f, 70f);
         }
 
         Quaternion rotation = Quaternion.Euler(pitch, yaw, 0f);
         Vector3 offset = rotation * new Vector3(0, 0, -bootstrap.thirdPersonDistance);
         Vector3 targetPosition = target.position + Vector3.up * bootstrap.thirdPersonHeight + offset;
-        
+
         transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref velocity, followSmoothTime);
         transform.LookAt(target.position + Vector3.up * bootstrap.thirdPersonHeight);
     }

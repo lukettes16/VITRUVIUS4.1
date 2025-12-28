@@ -31,8 +31,6 @@ public class PlayerPopupBillboard : MonoBehaviour
     [Tooltip("Alto estimado del canvas en unidades del mundo. Si es 0, se calcula automaticamente.")]
     [SerializeField] private float canvasHeight = 0f;
 
-    
-
     private Coroutine currentRoutine;
     private Coroutine offsetTransitionCoroutine;
     private Vector3 originalScale;
@@ -75,7 +73,6 @@ public class PlayerPopupBillboard : MonoBehaviour
             popupPanel.transform.rotation = Quaternion.LookRotation(-lookDirection);
         }
 
-        
     }
 
     public void SetLateralOffset(float offset)
@@ -136,39 +133,28 @@ public class PlayerPopupBillboard : MonoBehaviour
         return transform.position + Vector3.up * verticalOffset;
     }
 
-    
-    
-    
-    
     public void UpdateTextInstant(string message)
     {
         if (popupPanel == null || popupText == null) return;
 
-        
         popupText.fontSize = fontSize;
         popupText.text = message;
 
-        
         if (popupPanel.activeSelf && popupPanel.transform.localScale == originalScale)
         {
-            
+
             return;
         }
 
-        
         if (currentRoutine != null)
             StopCoroutine(currentRoutine);
 
         popupPanel.SetActive(true);
-        popupPanel.transform.localScale = originalScale; 
+        popupPanel.transform.localScale = originalScale;
 
-        
         currentRoutine = null;
     }
 
-    
-    
-    
     public void ShowMessage(string message, float time = 2f)
     {
         if (popupPanel == null || popupText == null) return;
@@ -231,5 +217,4 @@ public class PlayerPopupBillboard : MonoBehaviour
         StartCoroutine(HidePopup());
     }
 
-    
 }

@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using TMPro;
 using System.Collections.Generic;
-using System.Collections; // <<<< NECESARIO PARA LAS COROUTINES
+using System.Collections;
 
 public class HotbarController : MonoBehaviour
 {
@@ -83,7 +83,7 @@ public class HotbarController : MonoBehaviour
 
     private void Update()
     {
-        // Return to fade if interaction time has passed and it's currently visible.
+
         if (hotBarCanvasGroup != null && hotBarCanvasGroup.alpha == normalAlpha && Time.time > lastInteractionTime + fadeDelay)
         {
             StartFade(fadedAlpha);
@@ -100,18 +100,15 @@ public class HotbarController : MonoBehaviour
     {
         if (hotBarCanvasGroup == null) return;
 
-        // Detiene cualquier fade anterior para iniciar el nuevo inmediatamente
         StopAllCoroutines();
         StartCoroutine(FadeCoroutine(targetAlpha));
     }
 
-    // Coroutine para el desvanecimiento suave (fade)
     private IEnumerator FadeCoroutine(float targetAlpha)
     {
         float startAlpha = hotBarCanvasGroup.alpha;
         float elapsedTime = 0f;
 
-        // Permite la interacci�n cuando va a ser visible
         if (targetAlpha == normalAlpha)
         {
             hotBarCanvasGroup.interactable = true;
@@ -128,7 +125,6 @@ public class HotbarController : MonoBehaviour
 
         hotBarCanvasGroup.alpha = targetAlpha;
 
-        // Bloquear la interacci�n cuando vuelve al fade
         if (targetAlpha == fadedAlpha)
         {
             hotBarCanvasGroup.interactable = false;
@@ -136,7 +132,6 @@ public class HotbarController : MonoBehaviour
         }
     }
 
-    // Establece la opacidad instant�neamente (�til para el Awake)
     private void SetAlpha(float alpha)
     {
         if (hotBarCanvasGroup == null) return;
@@ -175,12 +170,10 @@ public class HotbarController : MonoBehaviour
         allItems.AddRange(playerInventory.GetCollectedItems());
         allItems.AddRange(playerInventory.GetCollectedKeyCards());
 
-        // --- MODIFICACI�N: Chequeo de slot vac�o ---
-        // Si el �ndice seleccionado es mayor o igual a la cantidad de �tems, el slot est� vac�o.
         if (selectedIndex >= allItems.Count)
         {
             ShowPlayerNotification("Nothing to analyze here.");
-            return; // Detenemos la ejecuci�n aqu�.
+            return;
         }
 
         string selectedItem = allItems[selectedIndex];
@@ -200,7 +193,7 @@ public class HotbarController : MonoBehaviour
                 break;
 
             default:
-                // Caso por defecto para �tems recogidos que no tienen un an�lisis espec�fico.
+
                 ShowPlayerNotification("Cannot analyze this item right now.");
                 break;
         }
@@ -210,14 +203,13 @@ public class HotbarController : MonoBehaviour
     {
         if (cardCanvas == null)
         {
-            Debug.LogWarning("No se asign� el canvas de la tarjeta en el inspector.");
+            
             return;
         }
 
         isCardCanvasOpen = !isCardCanvasOpen;
         cardCanvas.SetActive(isCardCanvasOpen);
 
-        Debug.Log(isCardCanvasOpen ? "Canvas de tarjeta abierto" : "Canvas de tarjeta cerrado");
     }
 
     private void CloseCardCanvas()
@@ -244,7 +236,7 @@ public class HotbarController : MonoBehaviour
         }
         else
         {
-            Debug.Log($"[Notification]: {message}");
+            
         }
     }
 

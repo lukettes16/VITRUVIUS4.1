@@ -49,4 +49,3 @@ public static class PromptVisualHelper
         }
     }
 }
-

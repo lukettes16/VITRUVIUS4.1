@@ -31,8 +31,7 @@ public class PlayerConversationTrigger : MonoBehaviour
 
         if (other.CompareTag("Player1") || other.CompareTag("Player2"))
         {
-            
-            
+
             if (conversationCoroutine == null)
             {
                 conversationCoroutine = StartCoroutine(PlayConversation());
@@ -70,14 +69,12 @@ public class PlayerConversationTrigger : MonoBehaviour
                 DialogueManager.ShowPlayerMessage(speakerObj, line.message, line.duration);
             }
 
-            
             yield return new WaitForSeconds(line.duration + line.delayAfter);
         }
 
         conversationCoroutine = null;
     }
 
-    
     public void ResetConversation()
     {
         hasPlayed = false;

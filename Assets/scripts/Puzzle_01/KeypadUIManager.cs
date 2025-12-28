@@ -32,7 +32,7 @@ public class KeypadUIManager : MonoBehaviour
 
     private void Start()
     {
-        
+
         UpdateVisualSelection();
     }
 
@@ -40,7 +40,6 @@ public class KeypadUIManager : MonoBehaviour
     {
         doorController = controller;
 
-        
         if (!gameObject.activeSelf)
             gameObject.SetActive(true);
 
@@ -164,7 +163,7 @@ public class KeypadUIManager : MonoBehaviour
 
     private void CloseUI()
     {
-        
+
         if (activePlayerInput != null)
         {
             activePlayerInput.actions["Navigate"].performed -= OnNavigate;

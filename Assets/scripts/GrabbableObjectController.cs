@@ -63,7 +63,6 @@ namespace Gameplay
         protected Animator holderAnimator;
         protected PlayerGrabProfile currentHolderProfile;
 
-        
         private Renderer meshRenderer;
         private MaterialPropertyBlock propertyBlock;
         private int outlineColorID;
@@ -117,7 +116,6 @@ namespace Gameplay
         {
             Collider[] nearbyColliders = Physics.OverlapSphere(transform.position, GrabRadius, PlayerLayer);
 
-            
             UpdateOutlineDetection(nearbyColliders);
 
             foreach (var nearbyCol in nearbyColliders)
@@ -158,7 +156,7 @@ namespace Gameplay
             }
             else
             {
-                
+
                 GameObject player = hoveringPlayers.First();
                 PlayerIdentifier pi = player.GetComponent<PlayerIdentifier>();
                 if (pi != null)
@@ -175,8 +173,7 @@ namespace Gameplay
             meshRenderer.GetPropertyBlock(propertyBlock);
             propertyBlock.SetColor(outlineColorID, color);
             propertyBlock.SetFloat(outlineScaleID, scale);
-            
-            
+
             meshRenderer.SetPropertyBlock(propertyBlock);
         }
 
@@ -240,7 +237,6 @@ namespace Gameplay
             isThrowingInProgress = false;
             currentHolder = holder;
 
-            
             SetOutlineState(Color.black, 0f);
             hoveringPlayers.Clear();
 

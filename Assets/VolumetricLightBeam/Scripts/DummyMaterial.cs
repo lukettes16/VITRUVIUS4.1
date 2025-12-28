@@ -23,9 +23,6 @@ namespace VLB
             return System.IO.Path.Combine(shaderFolder, kDummyFilename);
         }
 
-        /// <summary>
-        /// Create a dummy material with the proper instancing flag to prevent from stripping away needed shader variants when exporting build
-        /// </summary>
         public static Material Create(ShaderMode shaderMode, Shader shader, bool gpuInstanced)
         {
             if (shader == null)

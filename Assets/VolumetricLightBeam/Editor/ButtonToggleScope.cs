@@ -29,7 +29,7 @@ namespace VLB
         {
             if (m_DisableGroup)
                 EditorGUI.EndDisabledGroup();
-            m_DisableGroup = false; // prevent from calling EndDisabledGroup twice
+            m_DisableGroup = false;
         }
 
         public ButtonToggleScope(SerializedProperty prop, bool disableGroup, GUIContent content)
@@ -117,7 +117,7 @@ namespace VLB
             if (!visible) return null;
 
             return new ButtonToggleScope(prop,
-                true,   // disableGroup
+                true,
                 EditorData.Instance.contentFromSpotLight);
         }
 
@@ -126,10 +126,9 @@ namespace VLB
             if (!visible) return null;
 
             return new ButtonToggleScope(prop,
-                false,  // disableGroup
+                false,
                 EditorStrings.Beam.SD.IntensityModeAdvanced);
         }
     }
 }
-#endif // UNITY_EDITOR
-
+#endif

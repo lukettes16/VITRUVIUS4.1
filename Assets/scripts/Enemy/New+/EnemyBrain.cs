@@ -55,7 +55,7 @@ public class EnemyBrain : MonoBehaviour
     private Coroutine investigationCoroutine;
     private float investigationTimer = 0f;
     private bool hasOtherTargetsInRange = false;
-    private bool isInvestigatingStanding = false; 
+    private bool isInvestigatingStanding = false;
 
     public Transform GetCurrentTarget()
     {
@@ -100,7 +100,7 @@ public class EnemyBrain : MonoBehaviour
             case InitialState.Patrol:
                 currentState = State.Patrol;
                 visuals.SetPassiveState(0);
-                
+
                 GoToNextPatrolPoint();
                 break;
         }
@@ -112,7 +112,6 @@ public class EnemyBrain : MonoBehaviour
 
         senses.Tick();
 
-        
         if (currentState == State.Sleeping || currentState == State.Eating)
         {
             if (senses.HasTargetOfInterest)
@@ -144,13 +143,11 @@ public class EnemyBrain : MonoBehaviour
     {
         Transform currentTarget = GetCurrentTarget();
 
-        
         if (currentTarget != null)
         {
             PlayerHealth playerHealth = currentTarget.GetComponent<PlayerHealth>();
             NPCHealth npcHealth = currentTarget.GetComponent<NPCHealth>();
 
-            
             float distCT = Vector3.Distance(transform.position, currentTarget.position);
             if (distCT <= detectionRange)
             {
@@ -160,10 +157,10 @@ public class EnemyBrain : MonoBehaviour
 
             if (senses.CurrentNoisyObject != null && currentTarget == senses.CurrentNoisyObject)
             {
-                
+
                 if (senses.CurrentNoisyObject == null || !senses.objectNoiseDetection.HasNoisyObjectNearby())
                 {
-                    
+
                     senses.ForgetTarget();
                     if (currentState != State.Investigating)
                     {
@@ -172,13 +169,11 @@ public class EnemyBrain : MonoBehaviour
                     return;
                 }
 
-                
                 senses.TargetPositionOfInterest = senses.CurrentNoisyObject.position;
-                
+
                 motor.MoveTo(senses.TargetPositionOfInterest, crawlSpeed, 0.2f);
                 visuals.UpdateAnimationState(true);
 
-                
                 if (motor.GetRemainingDistance() <= 0.3f)
                 {
                     if (currentState != State.Investigating)
@@ -193,32 +188,30 @@ public class EnemyBrain : MonoBehaviour
 
             if (targetIsDead)
             {
-                
+
                 CheckForOtherTargetsInRange();
-                
+
                 if (hasOtherTargetsInRange)
                 {
-                    
 
                     senses.ForgetTarget();
                     SelectClosestAliveTarget();
                     if (senses.HasTargetOfInterest)
                     {
-                        
+
                         if (senses.CurrentNoisyObject != null)
                         {
                             StartCoroutine(InvestigateObjectRoutine());
                         }
                         else
                         {
-                            
+
                             currentState = State.Chasing;
                         }
                     }
                 }
                 else
                 {
-                    
 
                     senses.ForgetTarget();
                     StartCoroutine(InvestigateAfterKillRoutine());
@@ -227,7 +220,6 @@ public class EnemyBrain : MonoBehaviour
             }
         }
 
-        
         if (Time.time - lastWallCheckTime > wallCheckInterval)
         {
             lastWallCheckTime = Time.time;
@@ -238,18 +230,16 @@ public class EnemyBrain : MonoBehaviour
             }
         }
 
-        
         if (senses.HasTargetOfInterest)
         {
             SelectClosestAliveTarget();
-            
-            
+
             if (senses.CurrentNoisyObject != null && senses.CurrentPlayer == null && senses.CurrentNPCTarget == null)
             {
-                
+
                 if (senses.CurrentNoisyObject == null || !senses.objectNoiseDetection.HasNoisyObjectNearby())
                 {
-                    
+
                     senses.ForgetTarget();
                     if (currentState != State.Investigating)
                     {
@@ -258,13 +248,11 @@ public class EnemyBrain : MonoBehaviour
                     return;
                 }
 
-                
                 senses.TargetPositionOfInterest = senses.CurrentNoisyObject.position;
-                
+
                 motor.MoveTo(senses.TargetPositionOfInterest, crawlSpeed, 0.2f);
                 visuals.UpdateAnimationState(true);
 
-                
                 if (motor.GetRemainingDistance() <= 0.3f)
                 {
                     if (currentState != State.Investigating)
@@ -275,7 +263,6 @@ public class EnemyBrain : MonoBehaviour
                 return;
             }
 
-            
             Transform liveTarget = GetCurrentTarget();
             if (liveTarget != null)
             {
@@ -287,21 +274,19 @@ public class EnemyBrain : MonoBehaviour
             }
             visuals.UpdateAnimationState(false);
 
-            
             bool isCharacter = senses.CurrentPlayer != null || senses.CurrentNPCTarget != null;
             if (isCharacter)
             {
                 Transform actualTarget = GetCurrentTarget();
                 if (actualTarget != null)
                 {
-                    
+
                     float distanceToTarget = Vector3.Distance(transform.position, actualTarget.position);
-                    
-                    
+
                     bool isTargetMakingNoise = false;
                     PlayerNoiseEmitter playerNoise = actualTarget.GetComponent<PlayerNoiseEmitter>();
                     NPCNoiseEmitter npcNoise = actualTarget.GetComponent<NPCNoiseEmitter>();
-                    
+
                     if (playerNoise != null)
                     {
                         isTargetMakingNoise = playerNoise.currentNoiseRadius > playerNoise.idleNoiseRadius + 0.1f;
@@ -310,8 +295,7 @@ public class EnemyBrain : MonoBehaviour
                     {
                         isTargetMakingNoise = npcNoise.currentNoiseRadius > npcNoise.idleNoiseRadius + 0.1f;
                     }
-                    
-                    
+
                     if (distanceToTarget <= attackRange && !senses.CheckForWallInFront())
                     {
                         StartCoroutine(AttackTargetRoutine());
@@ -321,8 +305,7 @@ public class EnemyBrain : MonoBehaviour
         }
         else
         {
-            
-            
+
             Transform liveTarget = GetCurrentTarget();
             if (liveTarget != null)
             {
@@ -332,7 +315,7 @@ public class EnemyBrain : MonoBehaviour
             }
             else if (currentState == State.Chasing)
             {
-                
+
                 senses.ForgetTarget();
                 StartCoroutine(ReturnToPatrolRoutine());
             }
@@ -345,25 +328,23 @@ public class EnemyBrain : MonoBehaviour
 
     void HandlePatrol()
     {
-        
+
         if (senses.HasTargetOfInterest)
         {
             currentState = State.Transitioning;
 
-            
             if (senses.CurrentNoisyObject != null && senses.CurrentPlayer == null && senses.CurrentNPCTarget == null)
             {
                 StartCoroutine(WakeUpQuietRoutine());
             }
             else
             {
-                
+
                 StartCoroutine(WakeUpAndRoarRoutine());
             }
             return;
         }
 
-        
         if (patrolPoints.Length == 0) return;
 
         if (motor.GetRemainingDistance() <= 0.2f)
@@ -381,7 +362,7 @@ public class EnemyBrain : MonoBehaviour
 
     void HandleInvestigating()
     {
-        
+
         if (senses.HasTargetOfInterest)
         {
             if (investigationCoroutine != null)
@@ -390,33 +371,32 @@ public class EnemyBrain : MonoBehaviour
                 investigationCoroutine = null;
             }
             visuals.SetInvestigatingMode(false);
-            
-            
+
             if (senses.CurrentPlayer != null || senses.CurrentNPCTarget != null)
             {
-                
+
                 if (!isInvestigatingStanding)
                 {
                     StartCoroutine(ReactToPlayerNoiseWhileInvestigating());
                 }
                 else
                 {
-                    
+
                     currentState = State.Chasing;
                 }
             }
-            
+
             else if (senses.CurrentNoisyObject != null)
             {
-                
+
                 if (isInvestigatingStanding)
                 {
-                    
+
                     currentState = State.Chasing;
                 }
                 else
                 {
-                    
+
                     currentState = State.Chasing;
                 }
             }
@@ -428,8 +408,7 @@ public class EnemyBrain : MonoBehaviour
         currentState = State.Transitioning;
         motor.Stop();
         visuals.SetInvestigatingMode(false);
-        
-        
+
         if (!isInvestigatingStanding)
         {
         visuals.TriggerGetUp();
@@ -438,16 +417,14 @@ public class EnemyBrain : MonoBehaviour
             while (!visuals.AnimFinishedReceived && t < 2.5f) { t += Time.deltaTime; yield return null; }
         }
         }
-        
-        
+
         visuals.TriggerRoar();
         visuals.PlayRoarSound();
         {
             float t = 0f;
             while (!visuals.AnimFinishedReceived && t < 3.0f) { t += Time.deltaTime; yield return null; }
         }
-        
-        
+
         isInvestigatingStanding = true;
         currentState = State.Chasing;
     }
@@ -456,7 +433,6 @@ public class EnemyBrain : MonoBehaviour
     {
         hasOtherTargetsInRange = false;
 
-        
         foreach (Transform player in senses.playerTargets)
         {
             if (player == null) continue;
@@ -472,7 +448,6 @@ public class EnemyBrain : MonoBehaviour
             }
         }
 
-        
         foreach (Transform npc in senses.npcTargets)
         {
             if (npc == null) continue;
@@ -488,7 +463,6 @@ public class EnemyBrain : MonoBehaviour
             }
         }
 
-        
         if (senses.objectNoiseDetection != null && senses.objectNoiseDetection.HasNoisyObjectNearby())
         {
             hasOtherTargetsInRange = true;
@@ -508,7 +482,6 @@ public class EnemyBrain : MonoBehaviour
             while (!visuals.AnimFinishedReceived && t < 2.5f) { t += Time.deltaTime; yield return null; }
         }
 
-        
         float confirmT = 0f;
         while (visuals.IsCrawlingAnim() && confirmT < 1.0f) { confirmT += Time.deltaTime; yield return null; }
         visuals.TriggerRoar();
@@ -531,15 +504,14 @@ public class EnemyBrain : MonoBehaviour
         preInvestigatePosition = transform.position;
         isInvestigatingObjectNoise = true;
 
-        
         yield return StartCoroutine(InvestigateObjectRoutine());
     }
 
     IEnumerator InvestigateObjectRoutine()
     {
         currentState = State.Investigating;
-        isInvestigatingStanding = false; 
-        
+        isInvestigatingStanding = false;
+
         investigationCoroutine = StartCoroutine(InvestigateObjectRoutineInternal());
         yield return investigationCoroutine;
     }
@@ -551,7 +523,7 @@ public class EnemyBrain : MonoBehaviour
         {
             investigationPosition = senses.CurrentNoisyObject.position;
         }
-        
+
         motor.MoveTo(investigationPosition, crawlSpeed, 0.2f);
 
         float timeoutTimer = 0f;
@@ -559,55 +531,50 @@ public class EnemyBrain : MonoBehaviour
         {
             timeoutTimer += Time.deltaTime;
             visuals.UpdateAnimationState(true);
-            
-            
+
             if (senses.CurrentNoisyObject == null || !senses.objectNoiseDetection.HasNoisyObjectNearby())
             {
                 senses.ForgetTarget();
             }
-            
-            
+
             if (senses.HasTargetOfInterest)
             {
                 if (senses.CurrentPlayer != null || senses.CurrentNPCTarget != null)
                 {
-                    
+
                     yield break;
                 }
                 else if (senses.CurrentNoisyObject != null)
                 {
-                    
+
                     yield break;
                 }
             }
-            
+
             yield return null;
         }
 
-        
         motor.Stop();
         visuals.UpdateAnimationState(true);
         visuals.SetInvestigatingMode(true);
-        
+
         investigationTimer = 0f;
         while (investigationTimer < investigationDuration)
         {
             investigationTimer += Time.deltaTime;
-            
-            
+
             if (senses.HasTargetOfInterest)
             {
                 visuals.SetInvestigatingMode(false);
                 yield break;
             }
-            
+
             yield return null;
         }
 
-        
         visuals.SetInvestigatingMode(false);
         senses.ForgetTarget();
-        
+
         if (isInvestigatingObjectNoise)
         {
             senses.IgnoreCurrentNoisyObjectFor(8f);
@@ -625,20 +592,19 @@ public class EnemyBrain : MonoBehaviour
     IEnumerator InvestigateRoutine(Vector3 targetPosition)
     {
         currentState = State.Investigating;
-        
-        
+
         if (!isInvestigatingStanding)
         {
-            isInvestigatingStanding = false; 
+            isInvestigatingStanding = false;
         }
-        
+
         investigationCoroutine = StartCoroutine(InvestigateRoutineInternal(targetPosition));
         yield return investigationCoroutine;
     }
 
     IEnumerator InvestigateRoutineInternal(Vector3 targetPosition)
     {
-        
+
         float moveSpeed = isInvestigatingStanding ? walkSpeed : crawlSpeed;
         motor.MoveTo(targetPosition, moveSpeed, 0.2f);
 
@@ -646,52 +612,48 @@ public class EnemyBrain : MonoBehaviour
         while (motor.GetRemainingDistance() > 0.3f && timeoutTimer < 7.0f)
         {
             timeoutTimer += Time.deltaTime;
-            
+
             visuals.UpdateAnimationState(!isInvestigatingStanding);
-            
-            
+
             if (senses.HasTargetOfInterest)
             {
                 yield break;
             }
-            
+
             yield return null;
         }
 
-        
         motor.Stop();
-        
+
         visuals.UpdateAnimationState(!isInvestigatingStanding);
         visuals.SetInvestigatingMode(true);
-        
+
         investigationTimer = 0f;
         while (investigationTimer < investigationDuration)
         {
             investigationTimer += Time.deltaTime;
-            
-            
+
             if (senses.HasTargetOfInterest)
             {
                 visuals.SetInvestigatingMode(false);
                 yield break;
             }
-            
+
             yield return null;
         }
 
-        
         visuals.SetInvestigatingMode(false);
         senses.ForgetTarget();
         yield return StartCoroutine(ReturnToPatrolRoutine());
-        
+
         isInvestigatingStanding = false;
     }
 
     IEnumerator InvestigateAfterKillRoutine()
     {
         currentState = State.Investigating;
-        isInvestigatingStanding = false; 
-        
+        isInvestigatingStanding = false;
+
         investigationCoroutine = StartCoroutine(InvestigateAfterKillRoutineInternal());
         yield return investigationCoroutine;
     }
@@ -701,26 +663,24 @@ public class EnemyBrain : MonoBehaviour
         motor.Stop();
         visuals.UpdateAnimationState(true);
         visuals.SetInvestigatingMode(true);
-        
+
         investigationTimer = 0f;
         while (investigationTimer < investigationDuration)
         {
             investigationTimer += Time.deltaTime;
-            
-            
+
             if (senses.HasTargetOfInterest)
             {
                 visuals.SetInvestigatingMode(false);
                 yield break;
             }
-            
+
             yield return null;
         }
 
-        
         visuals.SetInvestigatingMode(false);
         yield return StartCoroutine(ReturnToPatrolRoutine());
-        
+
         isInvestigatingStanding = false;
     }
 
@@ -770,7 +730,6 @@ public class EnemyBrain : MonoBehaviour
 
         yield return new WaitUntil(() => visuals.AnimImpactReceived || visuals.AnimFinishedReceived);
 
-        
         Transform target = GetCurrentTarget();
         if (target != null)
         {
@@ -778,7 +737,7 @@ public class EnemyBrain : MonoBehaviour
             NPCHealth nHealth = target.GetComponent<NPCHealth>();
             if (pHealth != null) pHealth.TakeDamage(attackDamage);
             if (nHealth != null) nHealth.TakeDamage(attackDamage);
-            
+
             Vector3 targetPos = target.position;
             senses.TargetPositionOfInterest = targetPos;
             senses.HasTargetOfInterest = true;
@@ -886,7 +845,6 @@ public class EnemyBrain : MonoBehaviour
         float closestDistance = float.MaxValue;
         bool isNPCFound = false;
 
-        
         foreach (Transform npc in senses.npcTargets)
         {
             if (npc == null) continue;
@@ -903,7 +861,6 @@ public class EnemyBrain : MonoBehaviour
             }
         }
 
-        
         foreach (Transform player in senses.playerTargets)
         {
             if (player == null) continue;

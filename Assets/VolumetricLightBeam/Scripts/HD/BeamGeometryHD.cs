@@ -1,20 +1,20 @@
 ﻿#if DEBUG
-//#define DEBUG_SHOW_MESH_NORMALS
+
 #endif
 #define FORCE_CURRENT_CAMERA_DEPTH_TEXTURE_MODE
 
 #if UNITY_2018_1_OR_NEWER
-#define VLB_SRP_SUPPORT // Comment this to disable SRP support
+#define VLB_SRP_SUPPORT
 #endif
 
 using UnityEngine;
 using System.Collections;
 
-#pragma warning disable 0429, 0162 // Unreachable expression code detected (because of Noise3D.isSupported on mobile)
+#pragma warning disable 0429, 0162
 
 namespace VLB
 {
-    [AddComponentMenu("")] // hide it from Component search
+    [AddComponentMenu("")]
     [ExecuteInEditMode]
     [HelpURL(Consts.Help.HD.UrlBeam)]
     public class BeamGeometryHD : BeamGeometryAbstractBase
@@ -60,7 +60,7 @@ namespace VLB
             {
                 if (Config.Instance.GetActualRenderingMode(ShaderMode.HD) == RenderingMode.GPUInstancing)
                 {
-                    return m_Cookie == null && m_Shadow == null; // sampler cannot be passed to shader as instanced property
+                    return m_Cookie == null && m_Shadow == null;
                 }
                 return false;
             }
@@ -86,7 +86,7 @@ namespace VLB
             meshRenderer.hideFlags = customHideFlags;
             meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             meshRenderer.receiveShadows = false;
-            meshRenderer.reflectionProbeUsage = UnityEngine.Rendering.ReflectionProbeUsage.Off; // different reflection probes could break batching with GPU Instancing
+            meshRenderer.reflectionProbeUsage = UnityEngine.Rendering.ReflectionProbeUsage.Off;
             meshRenderer.lightProbeUsage = UnityEngine.Rendering.LightProbeUsage.Off;
 
             m_Cookie = m_Master.GetAdditionalComponentCookie();
@@ -103,8 +103,7 @@ namespace VLB
                 if (SortingLayer.IsValid(m_Master.GetSortingLayerID()))
                     sortingLayerID = m_Master.GetSortingLayerID();
                 else
-                    Debug.LogError(string.Format("Beam '{0}' has an invalid sortingLayerID ({1}). Please fix it by setting a valid layer.", Utils.GetPath(m_Master.transform), m_Master.GetSortingLayerID()));
-
+                    
                 sortingOrder = m_Master.GetSortingOrder();
             }
 
@@ -119,10 +118,6 @@ namespace VLB
 #endif
         }
 
-        /// <summary>
-        /// Generate the cone mesh and calls UpdateMaterialAndBounds.
-        /// Since this process involves recreating a new mesh, make sure to not call it at every frame during playtime.
-        /// </summary>
         public void RegenerateMesh()
         {
             Debug.Assert(m_Master);
@@ -142,9 +137,7 @@ namespace VLB
 
         Vector3 ComputeLocalMatrix()
         {
-            // In the VS, we compute the vertices so the whole beam fits into a fixed 2x2x1 box.
-            // We have to apply some scaling to get the proper beam size.
-            // This way we have the proper bounds without having to recompute specific bounds foreach beam.
+
             var maxRadius = Mathf.Max(m_Master.coneRadiusStart, m_Master.coneRadiusEnd);
 
             var localScale = new Vector3(maxRadius, maxRadius, m_Master.maxGeometryDistance);
@@ -157,7 +150,7 @@ namespace VLB
             return localScale;
         }
 
-        bool isNoiseEnabled { get { return m_Master.isNoiseEnabled && m_Master.noiseIntensity > 0f && Noise3D.isSupported; } } // test Noise3D.isSupported the last
+        bool isNoiseEnabled { get { return m_Master.isNoiseEnabled && m_Master.noiseIntensity > 0f && Noise3D.isSupported; } }
 
         MaterialManager.StaticPropertiesHD ComputeMaterialStaticProperties()
         {
@@ -309,9 +302,6 @@ namespace VLB
                 meshRenderer.SetPropertyBlock(MaterialManager.materialPropertyBlock);
         }
 
-        ////////////////////////
-        /// DIRTY PROPERTIES
-        ////////////////////////
         DirtyProps m_DirtyProps = DirtyProps.None;
 
         public void SetPropertyDirty(DirtyProps prop)
@@ -320,7 +310,7 @@ namespace VLB
 
             if(prop.HasAtLeastOneFlag(DirtyProps.OnlyMaterialChangeOnly))
             {
-                UpdateMaterialAndBounds(); // need to change material variant
+                UpdateMaterialAndBounds();
             }
         }
 
@@ -335,18 +325,17 @@ namespace VLB
 
             MaterialChangeStart();
             {
-                m_DirtyProps = DirtyProps.All; // make sure all props will be updated on next camera render
+                m_DirtyProps = DirtyProps.All;
 
                 if (isNoiseEnabled)
                 {
                     Noise3D.LoadIfNeeded();
                 }
 
-                // make sure the bounds are good from the startup
-                ComputeLocalMatrix(); // compute matrix before sending it to the shader
+                ComputeLocalMatrix();
 
 #if VLB_SRP_SUPPORT
-                // This update is to make QA test 'ReflectionObliqueProjection' pass
+
                 UpdateMatricesPropertiesForGPUInstancingSRP();
 #endif
             }
@@ -357,7 +346,6 @@ namespace VLB
             {
                 var vertex = coneMesh.vertices[vertexInd];
 
-                // apply modification done inside VS
                 vertex.x *= Mathf.Lerp(coneRadius.x, coneRadius.y, vertex.z);
                 vertex.y *= Mathf.Lerp(coneRadius.x, coneRadius.y, vertex.z);
                 vertex.z *= m_Master.fallOffEnd;
@@ -416,9 +404,9 @@ namespace VLB
             {
                 if (
 #if UNITY_EDITOR
-                    Utils.IsEditorCamera(cam) || // make sure to call UpdateCameraRelatedProperties for editor scene camera 
+                    Utils.IsEditorCamera(cam) ||
 #endif
-                    cam.enabled)    // prevent from doing stuff when we render from a previous DynamicOcclusionDepthBuffer's DepthCamera, because the DepthCamera are disabled 
+                    cam.enabled)
                 {
                     Debug.Assert(cam.GetComponentInParent<VolumetricLightBeamHD>() == null);
                     UpdateMaterialPropertiesForCamera(cam);
@@ -458,13 +446,13 @@ namespace VLB
                     {
                         var precision = Utils.GetFloatPackingPrecision();
                         m_ColorGradientMatrix = m_Master.colorGradient.SampleInMatrix((int)precision);
-                        // pass the gradient matrix in OnWillRenderObject()
+
                     }
                 }
 
                 if (m_DirtyProps.HasFlag(DirtyProps.Cone))
                 {
-                    // kMinRadius and kMinApexOffset prevents artifacts when fresnel computation is done in the vertex shader
+
                     const float kMinRadius = 0.0001f;
                     var coneRadius = new Vector2(Mathf.Max(m_Master.coneRadiusStart, kMinRadius), Mathf.Max(m_Master.coneRadiusEnd, kMinRadius));
                     SetMaterialProp(ShaderProperties.ConeRadius, coneRadius);
@@ -476,7 +464,7 @@ namespace VLB
 
                     SetMaterialProp(ShaderProperties.DistanceFallOff, new Vector3(m_Master.fallOffStart, m_Master.fallOffEnd, m_Master.maxGeometryDistance));
 
-                    ComputeLocalMatrix(); // compute matrix before sending it to the shader
+                    ComputeLocalMatrix();
                 }
 
                 if (m_DirtyProps.HasFlag(DirtyProps.Jittering))
@@ -511,7 +499,7 @@ namespace VLB
 
                 if (m_DirtyProps.HasFlag(DirtyProps.ShadowProps))
                     VolumetricShadowHD.ApplyMaterialProperties(m_Shadow, this);
- 
+
                 m_DirtyProps = DirtyProps.None;
             }
         }
@@ -532,12 +520,12 @@ namespace VLB
 
                     if (m_Master.colorMode == ColorMode.Gradient)
                     {
-                        // Send the gradient matrix every frame since it's not a shader's property
+
                         SetMaterialProp(ShaderProperties.ColorGradientMatrix, m_ColorGradientMatrix);
                     }
 
 #if VLB_SRP_SUPPORT
-                    // This update is to be able to move beams without trackChangesDuringPlaytime enabled with SRP & GPU Instancing
+
                     UpdateMatricesPropertiesForGPUInstancingSRP();
 #endif
                 }

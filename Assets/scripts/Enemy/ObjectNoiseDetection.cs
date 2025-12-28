@@ -2,10 +2,6 @@
 using System.Collections.Generic;
 using Gameplay;
 
-
-
-
-
 public class ObjectNoiseDetection : MonoBehaviour
 {
     [Header("Deteccion de Objetos")]
@@ -40,7 +36,7 @@ public class ObjectNoiseDetection : MonoBehaviour
         ObjectNoiseEmitter[] allObjects = FindObjectsOfType<ObjectNoiseEmitter>();
         activeNoiseObjects.Clear();
         activeNoiseObjects.AddRange(allObjects);
-        
+
         if (objectNoiseTargets != null && objectNoiseTargets.Length > 0)
         {
             foreach (var obj in objectNoiseTargets)
@@ -51,9 +47,6 @@ public class ObjectNoiseDetection : MonoBehaviour
         }
     }
 
-    
-    
-    
     public bool GetLoudestObject(out Transform objectTransform, out Vector3 position)
     {
         objectTransform = null;
@@ -68,7 +61,6 @@ public class ObjectNoiseDetection : MonoBehaviour
             float dist = Vector3.Distance(transform.position, noiseObj.transform.position);
             if (dist > maxDetectionDistance) continue;
 
-            
             float effectiveNoise = noiseObj.currentNoiseRadius * (1f - (dist / maxDetectionDistance));
             if (effectiveNoise > maxNoise)
             {
@@ -87,9 +79,6 @@ public class ObjectNoiseDetection : MonoBehaviour
         return false;
     }
 
-    
-    
-    
     public bool HasNoisyObjectNearby()
     {
         foreach (var noiseObj in activeNoiseObjects)
@@ -105,4 +94,3 @@ public class ObjectNoiseDetection : MonoBehaviour
         return false;
     }
 }
-

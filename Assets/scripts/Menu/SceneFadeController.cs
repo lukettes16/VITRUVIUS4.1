@@ -15,7 +15,7 @@ namespace Michsky.UI.Dark
 
         private void Awake()
         {
-            
+
             if (Instance == null)
             {
                 Instance = this;
@@ -27,7 +27,6 @@ namespace Michsky.UI.Dark
                 return;
             }
 
-            
             if (fadeImage == null)
             {
 
@@ -38,7 +37,7 @@ namespace Michsky.UI.Dark
         {
             if (fadeInOnStart && fadeImage != null)
             {
-                
+
                 fadeImage.color = new Color(0, 0, 0, 1);
                 StartCoroutine(FadeIn());
             }
@@ -59,7 +58,6 @@ namespace Michsky.UI.Dark
                 yield return null;
             }
 
-            
             color.a = 1f;
             fadeImage.color = color;
         }
@@ -79,7 +77,6 @@ namespace Michsky.UI.Dark
                 yield return null;
             }
 
-            
             color.a = 0f;
             fadeImage.color = color;
         }

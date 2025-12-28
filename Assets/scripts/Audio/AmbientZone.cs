@@ -10,7 +10,7 @@ public class AmbientZone : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player")) 
+        if (other.CompareTag("Player"))
         {
             AudioManager.Instance.PlaySFX(ambientSound, transform.position, spatialBlend, volume);
         }
@@ -20,7 +20,7 @@ public class AmbientZone : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            
+
         }
     }
 

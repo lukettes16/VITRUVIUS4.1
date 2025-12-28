@@ -3,10 +3,6 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.VFX;
 
-
-
-
-
 public class MovJugador2 : PlayerControllerBase
 {
         #region Serialized Fields
@@ -21,7 +17,6 @@ public class MovJugador2 : PlayerControllerBase
     [SerializeField] private AudioClip cooldownStartClip;
     [Range(0f, 3f)]
     [SerializeField] private float cooldownVolume = 1.0f;
-
 
     #endregion
 
@@ -39,7 +34,7 @@ public class MovJugador2 : PlayerControllerBase
     {
         base.InitializeComponents();
         flashlightController = GetComponentInChildren<FlashlightController>();
-        
+
         if (pickupReach == null)
         {
             pickupReach = GetComponent<ItemPickupReach>();
@@ -187,7 +182,7 @@ public class MovJugador2 : PlayerControllerBase
 
     #region Input Callbacks
 
-    public void OnMove(InputValue value)
+    public override void OnMove(InputValue value)
     {
         if (isInUI)
         {
@@ -197,13 +192,15 @@ public class MovJugador2 : PlayerControllerBase
         moveInput = value.Get<Vector2>();
     }
 
-    public void OnRun(InputValue value)
+    public override void OnRun(InputValue value)
     {
         if (isInUI) return;
-        isRunningInput = value.isPressed;
+
+        float triggerValue = value.Get<float>();
+        isRunningInput = value.isPressed && triggerValue > 0.1f;
     }
 
-    public void OnCrouch(InputValue value)
+    public override void OnCrouch(InputValue value)
     {
         if (isInUI) return;
         if (value.isPressed)
@@ -216,7 +213,7 @@ public class MovJugador2 : PlayerControllerBase
 
     #region Door Lift System
 
-    private void OnLiftDoorPressed()
+    public override void OnLiftDoorPressed()
     {
         if (currentDoorToLift == null || isInUI || isAnimationInLiftState) return;
 
@@ -225,7 +222,7 @@ public class MovJugador2 : PlayerControllerBase
         StartCoroutine(CheckLiftHold());
     }
 
-    private void OnLiftDoorReleased()
+    public override void OnLiftDoorReleased()
     {
         liftButtonPressed = false;
         liftButtonHoldTime = 0f;
@@ -291,7 +288,7 @@ public class MovJugador2 : PlayerControllerBase
         }
     }
 
-    public void OnDoorLiftAnimationComplete()
+    public override void OnDoorLiftAnimationComplete()
     {
         StopDoorLiftEvent();
 
@@ -371,7 +368,7 @@ public class MovJugador2 : PlayerControllerBase
         return false;
     }
 
-    private void TryCollectItems()
+    protected override void TryCollectItems()
     {
         Collider[] items = Physics.OverlapSphere(transform.position, collectionRange, collectableLayer);
 
@@ -386,12 +383,12 @@ public class MovJugador2 : PlayerControllerBase
         {
             if (pickupReach != null)
             {
-                
+
                 pickupReach.ReachForItem(closestItem, OnHandReachedItem);
             }
             else
             {
-                
+
                 CollectItem(closestItem);
             }
         }
@@ -439,18 +436,12 @@ public class MovJugador2 : PlayerControllerBase
                obj.GetComponent<CollectableItem>() != null;
     }
 
-    
-    
-    
     private void OnHandReachedItem(GameObject item)
     {
         if (item == null) return;
         CollectItem(item);
     }
 
-    
-    
-    
     private void CollectItem(GameObject item)
     {
         PickableItem pickable = item.GetComponent<PickableItem>();
@@ -880,7 +871,7 @@ public class MovJugador2 : PlayerControllerBase
         currentSpeedScalar = Mathf.MoveTowards(currentSpeedScalar, desiredSpeed, accel * Time.deltaTime);
     }
 
-    private Vector3 CalculateMovementDirection()
+    protected override Vector3 CalculateMovementDirection()
     {
         Vector3 movement = Vector3.zero;
 

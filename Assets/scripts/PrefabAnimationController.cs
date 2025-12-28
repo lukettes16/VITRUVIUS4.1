@@ -39,7 +39,7 @@ public class PrefabAnimationController : MonoBehaviour
 
     void Start()
     {
-        
+
         if (player1FlashlightPrefab == null)
         {
 
@@ -75,16 +75,15 @@ public class PrefabAnimationController : MonoBehaviour
 
         if (currentlyCrouching && !isCrouching)
         {
-            
+
             isCrouching = true;
             SaveOriginalTransform(prefab, ref originalTransform);
 
-            
             string handBoneName = (prefab == player1FlashlightPrefab) ? player1HandBoneName : player2HandBoneName;
-            Transform handBone = animator.GetBoneTransform(HumanBodyBones.LeftHand); 
+            Transform handBone = animator.GetBoneTransform(HumanBodyBones.LeftHand);
             if (handBone == null)
             {
-                
+
                 handBone = FindDeepChild(animator.transform, handBoneName);
             }
 
@@ -101,9 +100,9 @@ public class PrefabAnimationController : MonoBehaviour
         }
         else if (!currentlyCrouching && isCrouching)
         {
-            
+
             isCrouching = false;
-            
+
             prefab.transform.SetParent(originalTransform.parent);
             prefab.transform.localPosition = originalTransform.localPosition;
             prefab.transform.localRotation = originalTransform.localRotation;
@@ -111,10 +110,7 @@ public class PrefabAnimationController : MonoBehaviour
 
         if (isCrouching)
         {
-            
-            
-            
-            
+
             if (prefab.transform.parent == null || prefab.transform.parent != animator.GetBoneTransform(HumanBodyBones.LeftHand))
             {
                 prefab.transform.localPosition = originalTransform.localPosition;
@@ -148,7 +144,6 @@ public class PrefabAnimationController : MonoBehaviour
         return false;
     }
 
-    
     private Transform FindDeepChild(Transform parent, string childName)
     {
         foreach (Transform child in parent)

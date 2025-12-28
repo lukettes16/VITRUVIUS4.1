@@ -7,7 +7,7 @@ public static class AnimatorExtensions
     public static bool HasParameter(this Animator animator, string paramName)
     {
         if (animator == null || string.IsNullOrEmpty(paramName)) return false;
-        
+
         foreach (AnimatorControllerParameter param in animator.parameters)
         {
             if (param.name == paramName) return true;
@@ -21,7 +21,7 @@ public class FlashlightController_Enhanced : MonoBehaviour
     [Header("Flashlight Settings")]
     public Light flashlight;
     public float rotationSpeed = 100f;
-    
+
     public Behaviour volumetricBeam;
 
     [Header("Input Settings")]
@@ -44,7 +44,7 @@ public class FlashlightController_Enhanced : MonoBehaviour
     public string animationBoolParameter = "FlashlightOn";
     [Tooltip("Tiempo de delay adicional despues de la animacion")]
     public float animationDelay = 0.1f;
-    
+
     [Header("Flashlight Animation Controller")]
     [Tooltip("Controlador de animaciones de brazo para la linterna")]
     public FlashlightAnimationController animationController;
@@ -100,14 +100,14 @@ public class FlashlightController_Enhanced : MonoBehaviour
     private bool pendingSoundActivation = false;
     private float lightDelayTimer = 0f;
     private float soundDelayTimer = 0f;
-    
+
     [HideInInspector] public float originalIntensity;
     private VolumetricLightBeamSD vlbBeam;
 
     private AudioSource audioSource;
     private Vector3 lastSafeArmPosition;
     private Quaternion lastSafeArmRotation;
-    
+
     private float currentWallArmValue = 0f;
     private float targetWallArmValue = 0f;
 
@@ -145,12 +145,11 @@ public class FlashlightController_Enhanced : MonoBehaviour
             audioSource.spatialBlend = 0.7f;
         }
 
-        // Initialize animation controller
         if (animationController == null)
         {
             animationController = GetComponent<FlashlightAnimationController>();
         }
-        
+
         if (animationController != null)
         {
             animationController.InitializeFromFlashlight(this, isFlashlightOn);
@@ -177,7 +176,7 @@ public class FlashlightController_Enhanced : MonoBehaviour
     {
         ProcessDelayTimers();
         RotateFlashlight();
-        
+
         if (isAnimating)
         {
             animationTimer -= Time.deltaTime;
@@ -186,15 +185,15 @@ public class FlashlightController_Enhanced : MonoBehaviour
                 CompleteAnimation();
             }
         }
-        
+
         PreventHandWallClipping();
-        
+
         if (enableAutoLowerArm)
         {
             AutoLowerArmNearWalls();
         }
     }
-    
+
     private void ProcessDelayTimers()
     {
         if (pendingLightActivation)
@@ -203,7 +202,7 @@ public class FlashlightController_Enhanced : MonoBehaviour
             if (lightDelayTimer <= 0f)
             {
                 pendingLightActivation = false;
-                
+
                 if (flashlight != null)
                 {
                     flashlight.intensity = isFlashlightOn ? originalIntensity : 0f;
@@ -215,7 +214,7 @@ public class FlashlightController_Enhanced : MonoBehaviour
                 }
             }
         }
-        
+
         if (pendingSoundActivation)
         {
             soundDelayTimer -= Time.deltaTime;
@@ -242,14 +241,13 @@ public class FlashlightController_Enhanced : MonoBehaviour
     public void StartFlashlightAnimation()
     {
         if (isAnimating) return;
-        
+
         isAnimating = true;
         PlayFlashlightSound();
-        
-        // Update animation controller state
+
         if (animationController != null)
         {
-            // Flashlight animation controller integration
+
             if (!isFlashlightOn)
             {
                 animationController.OnFlashlightTurnedOn();
@@ -259,12 +257,12 @@ public class FlashlightController_Enhanced : MonoBehaviour
                 animationController.OnFlashlightTurnedOff();
             }
         }
-        
+
         if (flashlightAnimator != null && !string.IsNullOrEmpty(animationBoolParameter))
         {
             flashlightAnimator.SetBool(animationBoolParameter, !isFlashlightOn);
         }
-        
+
         animationTimer = animationDelay;
     }
 
@@ -276,7 +274,7 @@ public class FlashlightController_Enhanced : MonoBehaviour
     private void CompleteAnimation()
     {
         if (!isAnimating) return;
-        
+
         isFlashlightOn = !isFlashlightOn;
         SetFlashlightState(isFlashlightOn, true);
         isAnimating = false;
@@ -286,7 +284,7 @@ public class FlashlightController_Enhanced : MonoBehaviour
     public void SetFlashlightState(bool state, bool immediate = false)
     {
         if (isAnimating && !immediate) return;
-        
+
         isFlashlightOn = state;
 
         if (flashlight != null)
@@ -305,7 +303,6 @@ public class FlashlightController_Enhanced : MonoBehaviour
             flashlightAnimator.SetBool(animationBoolParameter, state);
         }
 
-        
         ToggleAllChildObjects(state);
     }
 
@@ -315,14 +312,14 @@ public class FlashlightController_Enhanced : MonoBehaviour
         {
             float mouseX = Input.GetAxis("Mouse X");
             float mouseY = Input.GetAxis("Mouse Y");
-            
+
             Vector3 rotation = armTransform.localEulerAngles;
             rotation.x += mouseY * rotationSpeed * Time.deltaTime;
             rotation.y += mouseX * rotationSpeed * Time.deltaTime;
-            
+
             rotation.x = Mathf.Clamp(rotation.x, -80f, 80f);
             rotation.y = Mathf.Clamp(rotation.y, -80f, 80f);
-            
+
             armTransform.localEulerAngles = rotation;
         }
     }
@@ -348,35 +345,32 @@ public class FlashlightController_Enhanced : MonoBehaviour
         isFlashlightOn = state;
         isAnimating = false;
         SetFlashlightState(state, true);
-        
-        // Force update animation controller state
+
         if (animationController != null)
         {
             animationController.ForceUpdateState(state);
         }
     }
 
-    
 private void ToggleAllChildObjects(bool state)
     {
-        
+
         Light[] allLights = GetComponentsInChildren<Light>(true);
         foreach (Light light in allLights)
         {
-            if (light != null && flashlight != null && light != flashlight) 
+            if (light != null && flashlight != null && light != flashlight)
             {
                 light.enabled = state;
             }
         }
 
-        
         Behaviour[] allBehaviours = GetComponentsInChildren<Behaviour>(true);
         foreach (Behaviour behaviour in allBehaviours)
         {
             if (behaviour != null && behaviour != volumetricBeam && behaviour != this)
             {
-                
-                if (behaviour.GetType().Name.Contains("Spotlight") || 
+
+                if (behaviour.GetType().Name.Contains("Spotlight") ||
                     behaviour.GetType().Name.Contains("Light") ||
                     behaviour.GetType().Name.Contains("VLB"))
                 {
@@ -385,7 +379,6 @@ private void ToggleAllChildObjects(bool state)
             }
         }
 
-        
         Renderer[] allRenderers = GetComponentsInChildren<Renderer>(true);
         foreach (Renderer renderer in allRenderers)
         {
@@ -421,8 +414,8 @@ private void ToggleAllChildObjects(bool state)
         vlbBeam.noiseIntensity = vlbNoiseIntensity;
         vlbBeam.intensityInside = vlbIntensity;
         vlbBeam.intensityOutside = vlbIntensity;
-        vlbBeam.intensityFromLight = true; 
-        vlbBeam.color = Color.white * vlbBrightness; 
+        vlbBeam.intensityFromLight = true;
+        vlbBeam.color = Color.white * vlbBrightness;
     }
 
     private void PreventHandWallClipping()
@@ -433,7 +426,7 @@ private void ToggleAllChildObjects(bool state)
         Vector3 handForward = armTransform.forward;
 
         RaycastHit hit;
-        if (Physics.SphereCast(handPosition, handCollisionRadius, handForward, out hit, 
+        if (Physics.SphereCast(handPosition, handCollisionRadius, handForward, out hit,
                              handCollisionDistance, handCollisionLayers))
         {
             Vector3 safePosition = handPosition - handForward * (hit.distance - 0.05f);
@@ -471,21 +464,21 @@ private void ToggleAllChildObjects(bool state)
         vlbBeam.noiseIntensity = 0.5f;
         vlbBeam.intensityInside = 1.0f;
         vlbBeam.intensityOutside = 1.0f;
-        vlbBeam.intensityFromLight = true; 
-        vlbBeam.color = Color.white; 
+        vlbBeam.intensityFromLight = true;
+        vlbBeam.color = Color.white;
     }
 
     private void FindAndSetupAnimator()
     {
         Animator[] allAnimators = FindObjectsOfType<Animator>(true);
-        
+
         foreach (Animator animator in allAnimators)
         {
-            if (animator.gameObject.name.Contains("Player1") || 
+            if (animator.gameObject.name.Contains("Player1") ||
                 animator.gameObject.name.Contains("player1") ||
                 animator.gameObject.name.Equals("Player1"))
             {
-                if (gameObject.name.Contains("Player1") || 
+                if (gameObject.name.Contains("Player1") ||
                     gameObject.name.Contains("player1") ||
                     gameObject.transform.IsChildOf(animator.transform))
                 {
@@ -493,11 +486,11 @@ private void ToggleAllChildObjects(bool state)
                     break;
                 }
             }
-            else if (animator.gameObject.name.Contains("Player2") || 
+            else if (animator.gameObject.name.Contains("Player2") ||
                      animator.gameObject.name.Contains("player2") ||
                      animator.gameObject.name.Equals("Player2"))
             {
-                if (gameObject.name.Contains("Player2") || 
+                if (gameObject.name.Contains("Player2") ||
                     gameObject.name.Contains("player2") ||
                     gameObject.transform.IsChildOf(animator.transform))
                 {
@@ -534,7 +527,7 @@ private void ToggleAllChildObjects(bool state)
     private System.Collections.IEnumerator AddParameterNextFrame()
     {
         yield return null;
-        
+
         #if UNITY_EDITOR
         UnityEditor.Animations.AnimatorController controller = flashlightAnimator.runtimeAnimatorController as UnityEditor.Animations.AnimatorController;
         if (controller != null)
@@ -548,7 +541,7 @@ private void ToggleAllChildObjects(bool state)
                     break;
                 }
             }
-            
+
             if (!parameterExists)
             {
                 controller.AddParameter(wallArmParameter, AnimatorControllerParameterType.Float);
@@ -566,7 +559,7 @@ private void ToggleAllChildObjects(bool state)
         Vector3 handForward = armTransform.forward;
 
         RaycastHit hit;
-        bool wallDetected = Physics.Raycast(handPosition, handForward, out hit, 
+        bool wallDetected = Physics.Raycast(handPosition, handForward, out hit,
                                           wallDetectionDistance, handCollisionLayers);
 
         if (wallDetected)
@@ -579,8 +572,8 @@ private void ToggleAllChildObjects(bool state)
         }
 
         currentWallArmValue = Mathf.Lerp(
-            currentWallArmValue, 
-            targetWallArmValue, 
+            currentWallArmValue,
+            targetWallArmValue,
             Time.deltaTime * armTransitionSpeed
         );
 
@@ -590,7 +583,7 @@ private void ToggleAllChildObjects(bool state)
         }
 
         #if UNITY_EDITOR
-        Debug.DrawRay(handPosition, handForward * wallDetectionDistance, 
+        Debug.DrawRay(handPosition, handForward * wallDetectionDistance,
                      wallDetected ? Color.red : Color.green);
         #endif
     }

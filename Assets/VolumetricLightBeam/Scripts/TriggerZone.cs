@@ -10,33 +10,24 @@ namespace VLB
     {
         public const string ClassName = "TriggerZone";
 
-        /// <summary>
-        /// Define if the Collider will be created as a convex trigger (not physical, most common behavior) or as a regular collider (physical).
-        /// </summary>
         public bool setIsTrigger = true;
 
-        /// <summary>
-        /// Change the length of the Collider. For example, set 2.0 to make the Collider 2x longer than the beam. Default value is 1.0.
-        /// </summary>
         public float rangeMultiplier = 1.0f;
 
         enum TriggerZoneUpdateRate
         {
-            /// <summary>Compute the Trigger Zone only once at startup</summary>
+
             OnEnable,
-            /// <summary>Compute the Trigger Zone each time the dynamic occlusion has changed</summary>
+
             OnOcclusionChange,
         }
 
-        /// <summary>
-        /// How often will the Trigger Zone be computed?
-        /// </summary>
         TriggerZoneUpdateRate updateRate
         {
             get
             {
                 Debug.Assert(m_Beam != null);
-                if(UtilsBeamProps.GetDimensions(m_Beam) == Dimensions.Dim3D) return TriggerZoneUpdateRate.OnEnable;  // for 3D meshes, do it only once because it's too performance heavy
+                if(UtilsBeamProps.GetDimensions(m_Beam) == Dimensions.Dim3D) return TriggerZoneUpdateRate.OnEnable;
                 return m_DynamicOcclusionRaycasting != null ? TriggerZoneUpdateRate.OnOcclusionChange : TriggerZoneUpdateRate.OnEnable;
             }
         }
@@ -108,8 +99,8 @@ namespace VLB
                         m_PolygonCollider2D = gameObject.GetOrAddComponent<PolygonCollider2D>();
                         Debug.Assert(m_PolygonCollider2D);
                     }
-                    
-                    var polyCoordsLS = new Vector2[] // polygon coord in local space
+
+                    var polyCoordsLS = new Vector2[]
                     {
                         new Vector2(0.0f,      -coneRadiusStart),
                         new Vector2(rangeEnd,  -lerpedRadiusEnd),
@@ -123,8 +114,6 @@ namespace VLB
 
                         if (Utils.IsAlmostZero(plane3dWS.normal.z))
                         {
-                            // Compute 2 points on the plane in world space
-                            // Use this technique instead of transforming the plane's normal to fully support scaling
 
                             var ptOnPlane1 = plane3dWS.ClosestPointOnPlaneCustom(Vector3.zero);
                             var ptOnPlane2 = plane3dWS.ClosestPointOnPlaneCustom(Vector3.up);
@@ -132,11 +121,9 @@ namespace VLB
                             if(Utils.IsAlmostZero(Vector3.SqrMagnitude(ptOnPlane1 - ptOnPlane2)))
                                 ptOnPlane1 = plane3dWS.ClosestPointOnPlaneCustom(Vector3.right);
 
-                            // Compute 2 points on the plane in local space
                             ptOnPlane1 = transform.InverseTransformPoint(ptOnPlane1);
                             ptOnPlane2 = transform.InverseTransformPoint(ptOnPlane2);
 
-                            // Compute plane equation in local space
                             var plane2dLS = PolygonHelper.Plane2D.FromPoints(ptOnPlane1, ptOnPlane2);
                             if (plane2dLS.normal.x > 0.0f) plane2dLS.Flip();
 

@@ -11,9 +11,7 @@ namespace VLB
     [AddComponentMenu(Consts.Help.HD.AddComponentMenuBeam2D)]
     public partial class VolumetricLightBeamHD2D : VolumetricLightBeamHD
     {
-        /// <summary>
-        /// Unique ID of the beam's sorting layer.
-        /// </summary>
+
         public int sortingLayerID
         {
             get { return m_SortingLayerID; }
@@ -23,19 +21,12 @@ namespace VLB
             }
         }
 
-        /// <summary>
-        /// Name of the beam's sorting layer.
-        /// </summary>
         public string sortingLayerName
         {
             get { return SortingLayer.IDToName(sortingLayerID); }
             set { sortingLayerID = SortingLayer.NameToID(value); }
         }
 
-        /// <summary>
-        /// The overlay priority within its layer.
-        /// Lower numbers are rendered first and subsequent numbers overlay those below.
-        /// </summary>
         public int sortingOrder
         {
             get { return m_SortingOrder; }
@@ -79,6 +70,6 @@ namespace VLB
             sortingLayerID = 0;
             sortingOrder = 0;
         }
-#endif // UNITY_EDITOR
+#endif
     }
 }

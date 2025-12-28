@@ -6,9 +6,6 @@ public class PauseStateChecker : MonoBehaviour
     void Start()
     {
 
-
-
-        
         PauseController pauseController = FindObjectOfType<PauseController>();
         if (pauseController != null)
         {
@@ -20,14 +17,13 @@ public class PauseStateChecker : MonoBehaviour
 
             }
         }
-        
+
         GameOverManager gameOverManager = FindObjectOfType<GameOverManager>();
         if (gameOverManager != null)
         {
 
         }
-        
-        
+
         if (Mathf.Approximately(Time.timeScale, 0f))
         {
 

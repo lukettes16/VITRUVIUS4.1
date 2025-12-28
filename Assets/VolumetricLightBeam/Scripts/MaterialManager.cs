@@ -90,23 +90,23 @@ namespace VLB
 
         static readonly UnityEngine.Rendering.BlendMode[] BlendingMode_SrcFactor = new UnityEngine.Rendering.BlendMode[(int)BlendingMode.Count]
         {
-            UnityEngine.Rendering.BlendMode.One,                // Additive
-            UnityEngine.Rendering.BlendMode.OneMinusDstColor,   // SoftAdditive
-            UnityEngine.Rendering.BlendMode.SrcAlpha,           // TraditionalTransparency
+            UnityEngine.Rendering.BlendMode.One,
+            UnityEngine.Rendering.BlendMode.OneMinusDstColor,
+            UnityEngine.Rendering.BlendMode.SrcAlpha,
         };
 
         static readonly UnityEngine.Rendering.BlendMode[] BlendingMode_DstFactor = new UnityEngine.Rendering.BlendMode[(int)BlendingMode.Count]
         {
-            UnityEngine.Rendering.BlendMode.One,                // Additive
-            UnityEngine.Rendering.BlendMode.One,                // SoftAdditive
-            UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha,   // TraditionalTransparency
+            UnityEngine.Rendering.BlendMode.One,
+            UnityEngine.Rendering.BlendMode.One,
+            UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha,
         };
 
         static readonly bool[] BlendingMode_AlphaAsBlack = new bool[(int)BlendingMode.Count]
         {
-            true,   // Additive
-            true,   // SoftAdditive
-            false,  // TraditionalTransparency
+            true,
+            true,
+            false,
         };
 
         interface IStaticProperties
@@ -117,7 +117,6 @@ namespace VLB
             ShaderMode GetShaderMode();
         }
 
-        // STATIC PROPERTIES SD
         public struct StaticPropertiesSD : IStaticProperties
         {
             public ShaderMode GetShaderMode() { return ShaderMode.SD; }
@@ -170,7 +169,6 @@ namespace VLB
             }
         }
 
-        // STATIC PROPERTIES HD
         public struct StaticPropertiesHD : IStaticProperties
         {
             public ShaderMode GetShaderMode() { return ShaderMode.HD; }
@@ -230,7 +228,7 @@ namespace VLB
         {
             if (!shader)
             {
-                Debug.LogError("Invalid VLB Shader. Please try to reset the VLB Config asset or reinstall the plugin.");
+                
                 return null;
             }
 
@@ -250,7 +248,6 @@ namespace VLB
             }
         }
 
-        // SD Instanced Material Access
         static Hashtable ms_MaterialsGroupSD = new Hashtable(1);
         public static Material GetInstancedMaterial(uint groupID, ref StaticPropertiesSD staticProps)
         {
@@ -258,7 +255,6 @@ namespace VLB
             return GetInstancedMaterial(ms_MaterialsGroupSD, groupID, ref iStaticProp);
         }
 
-        // HD Instanced Material Access
         static Hashtable ms_MaterialsGroupHD = new Hashtable(1);
         public static Material GetInstancedMaterial(uint groupID, ref StaticPropertiesHD staticProps)
         {
@@ -266,7 +262,7 @@ namespace VLB
             return GetInstancedMaterial(ms_MaterialsGroupHD, groupID, ref iStaticProp);
         }
 
-        static Material GetInstancedMaterial(Hashtable groups, uint groupID, ref IStaticProperties staticProps) // pass StaticProperties by ref to avoid per value arg copy
+        static Material GetInstancedMaterial(Hashtable groups, uint groupID, ref IStaticProperties staticProps)
         {
             MaterialsGroup group = (MaterialsGroup)groups[groupID];
             if (group == null)
@@ -292,8 +288,6 @@ namespace VLB
             return mat;
         }
 
-        // Enable or Disable the GPU Instancing batching optimization globally, at runtime.
-        // The Config's asset must be configured with GPUInstancing RenderingMode, in order to properly generate GPUInstancing compatible shaders.
         public static bool EnableGPUInstancing(ShaderMode shaderMode, bool enabled)
         {
             if(Config.Instance.GetActualRenderingMode(shaderMode) != RenderingMode.GPUInstancing)
@@ -324,7 +318,6 @@ namespace VLB
             return hasChanged;
         }
 
-        // Material Utils
         enum ZWrite { Off = 0, On = 1 }
         static void SetBlendingMode(this Material mat, int nameID, BlendMode value) { mat.SetInt(nameID, (int)value); }
         static void SetStencilRef(this Material mat, int nameID, int value) { mat.SetInt(nameID, value); }

@@ -19,11 +19,11 @@ namespace VLB
             {
                 if (entity is T)
                 {
-                    m_Targets.Add(entity as T); // directly get the component from the object
+                    m_Targets.Add(entity as T);
                 }
                 else
                 {
-                    // otherwise get access from the current MonoBehaviour, in case the current MonoBehaviour is not the type wanted as target
+
                     var behaviour = entity as MonoBehaviour;
                     var comp = behaviour.GetComponent<T>();
                     if (comp)
@@ -74,7 +74,6 @@ namespace VLB
             }
         }
 
-        // make this object foreach compatible
         public IEnumerator<T> GetEnumerator()
         {
             foreach (var target in m_Targets)
@@ -88,4 +87,3 @@ namespace VLB
     }
 }
 #endif
-

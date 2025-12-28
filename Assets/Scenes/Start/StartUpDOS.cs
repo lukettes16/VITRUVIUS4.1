@@ -14,7 +14,7 @@ public class StartUpDOS : MonoBehaviour
 
     void Start()
     {
-        // Start Music (Music1)
+
         if (SoundManager.instance != null)
         {
             SoundManager.instance.PlayMusic(MusicID.Music1, true);
@@ -36,7 +36,7 @@ public class StartUpDOS : MonoBehaviour
         {
             SoundManager.instance.PlaySound(SoundID.MSDos);
             textTMPro.text = animatedText[actualIndex];
-            Debug.Log(textTMPro.text);
+            
             actualIndex++;
             yield return new WaitForSeconds(timeBetweenText);
         }

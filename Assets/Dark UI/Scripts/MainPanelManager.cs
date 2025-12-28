@@ -18,7 +18,7 @@ namespace Michsky.UI.Dark
         public int currentPanelIndex = 0;
         public bool enableBrushAnimation = true;
         public bool enableHomeBlur = true;
-         
+
         private GameObject currentPanel;
         private GameObject nextPanel;
         private Animator currentPanelAnimator;
@@ -32,12 +32,12 @@ namespace Michsky.UI.Dark
 
         IEnumerator Start()
         {
-            // Intro Sequence
+
             GameObject introObj = new GameObject("Intro_FL");
             Canvas mainCanvas = GetComponentInParent<Canvas>();
             if (mainCanvas != null) introObj.transform.SetParent(mainCanvas.transform, false);
             else introObj.transform.SetParent(this.transform, false);
-            
+
             introObj.transform.SetAsLastSibling();
 
             UnityEngine.UI.Image img = introObj.AddComponent<UnityEngine.UI.Image>();
@@ -49,7 +49,7 @@ namespace Michsky.UI.Dark
                 img.sprite = s;
                 img.SetNativeSize();
             }
-            
+
             RectTransform rt = img.rectTransform;
             rt.anchorMin = new Vector2(0.5f, 0.5f);
             rt.anchorMax = new Vector2(0.5f, 0.5f);
@@ -65,7 +65,6 @@ namespace Michsky.UI.Dark
             float fadeOut = 1.0f;
             float timer = 0f;
 
-            // Fade In
             while (timer < fadeIn)
             {
                 timer += Time.deltaTime;
@@ -74,10 +73,8 @@ namespace Michsky.UI.Dark
             }
             cg.alpha = 1f;
 
-            // Stay
             yield return new WaitForSeconds(stay);
 
-            // Fade Out
             timer = 0f;
             while (timer < fadeOut)
             {
@@ -90,7 +87,6 @@ namespace Michsky.UI.Dark
 
             ScaleButtons();
 
-            // Original Initialization
             currentPanel = panels[currentPanelIndex];
             currentPanelAnimator = currentPanel.GetComponent<Animator>();
             currentPanelAnimator.Play(panelFadeIn);

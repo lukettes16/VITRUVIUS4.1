@@ -59,8 +59,7 @@ namespace VLB
             {
                 if(renderers != null)
                 {
-                    // Fix a very weird Unity bug happening on 2021 and higher, where the Unity's LODGroup inspector generates errors when modifying its LOD data.
-                    // The only workaround I found is to deselect the gameobject for a bit of time.
+
                     m_SelectionToRestore = Selection.activeGameObject;
                     Selection.activeGameObject = null;
                 }
@@ -118,7 +117,7 @@ namespace VLB
             {
                 return;
             }
- 
+
             for (int i = 0; i < m_LODBeams.Length; i++)
             {
                 if (m_LODBeams[i] == beam)
@@ -172,7 +171,7 @@ namespace VLB
 
             if (m_ResetAllLODsLocalTransform)
             {
-                // Process for all the beams, even LOD0
+
                 foreach (var beam in m_LODBeams)
                 {
                     if (beam)
@@ -195,7 +194,6 @@ namespace VLB
                 return;
             }
 
-            // Process for all the "slave" beams only
             for(int i = 1; i < m_LODBeams.Length; ++i)
             {
                 var LODi = m_LODBeams[i];
@@ -203,8 +201,6 @@ namespace VLB
                 {
                     LODi.CopyPropsFrom(LOD0, m_LOD0PropsToCopy);
 
-                    // Disable 'property from light' feature on slave beams AFTER copying the properties from LOD0,
-                    // because we copy some multipliers during this process, and multipliers properties handle the 'from light' feature in some cases
                     UtilsBeamProps.SetColorFromLight(LODi, false);
                     UtilsBeamProps.SetFallOffEndFromLight(LODi, false);
                     UtilsBeamProps.SetIntensityFromLight(LODi, false);

@@ -152,7 +152,6 @@ namespace VLB
 
                 public const string TipJittering = "When using this feature, we highly recommend to increase the 'Jittering Factor' property on your HD beam.\nAdding jittering allows to have a decent rendering quality by smoothing banding artifact while keeping raymarching steps as low as possible(and so good performance).";
 
-
                 public const string ButtonAddShadow = "+ Volumetric Shadow\nGives awareness to your beam so it reacts to changes in the world: it could be occluded by environment geometry.";
                 public const string ButtonAddCookie = "+ Volumetric Cookie\nSpecify a cookie texture to the beam, which is a mask to simulate a shadow with a specific shape or color.";
 
@@ -271,7 +270,6 @@ namespace VLB
 
             public const string HelpFeatureDisabled = "The 'Mesh Skewing' feature has been disabled in the plugin's Config.";
         }
-
 
         public static class Shadow
         {
@@ -452,7 +450,6 @@ namespace VLB
             public static readonly GUIContent EffectProfile = new GUIContent("Effect Profile", "The Effect Profile asset to use");
             public static readonly GUIContent ButtonNewProfileFlicker = new GUIContent("New Flicker profile", "Create a new flicker profile asset");
             public static readonly GUIContent ButtonNewProfilePulse = new GUIContent("New Pulse profile", "Create a new pulse profile asset");
-
 
             public const string HelpNoValidComponents = "This component must be applied with a 'Unity Light' and/or a 'Volumetric Light Beam SD/HD'.";
             public const string HelpLightNotChangeable = "To apply this effect on the Unity Light's intensity, it must use 'Realtime' or 'Mixed' mode.";

@@ -15,8 +15,8 @@ namespace VLB
 
         [SerializeField] int _UniqueID;
         static RaymarchingQuality ms_DefaultInstance = new RaymarchingQuality(-1);
-        const int kRandomUniqueIdMinRange = 4; // default qualities have fixed ID from 1 to 3
-        
+        const int kRandomUniqueIdMinRange = 4;
+
         private RaymarchingQuality(int uniqueID)
         {
             _UniqueID = uniqueID;
@@ -49,4 +49,3 @@ namespace VLB
         }
     }
 }
-

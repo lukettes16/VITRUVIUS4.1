@@ -16,7 +16,7 @@ namespace Michsky.UI.Dark
         {
             if (buttonAnimator.GetCurrentAnimatorStateInfo(0).IsName("Hover to Pressed"))
             {
-                // do nothing because it's clicked
+
             }
 
             else
@@ -29,7 +29,7 @@ namespace Michsky.UI.Dark
         {
             if (buttonAnimator.GetCurrentAnimatorStateInfo(0).IsName("Hover to Pressed"))
             {
-                // do nothing because it's clicked
+
             }
 
             else

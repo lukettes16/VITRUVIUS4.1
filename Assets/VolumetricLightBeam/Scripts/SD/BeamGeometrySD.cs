@@ -1,20 +1,20 @@
 ﻿#if DEBUG
-//#define DEBUG_SHOW_MESH_NORMALS
+
 #endif
 #define FORCE_CURRENT_CAMERA_DEPTH_TEXTURE_MODE
 
 #if UNITY_2018_1_OR_NEWER
-#define VLB_SRP_SUPPORT // Comment this to disable SRP support
+#define VLB_SRP_SUPPORT
 #endif
 
 using UnityEngine;
 using System.Collections;
 
-#pragma warning disable 0429, 0162 // Unreachable expression code detected (because of Noise3D.isSupported on mobile)
+#pragma warning disable 0429, 0162
 
 namespace VLB
 {
-    [AddComponentMenu("")] // hide it from Component search
+    [AddComponentMenu("")]
     [ExecuteInEditMode]
     [HelpURL(Consts.Help.SD.UrlBeam)]
     public class BeamGeometrySD : BeamGeometryAbstractBase, MaterialModifier.Interface
@@ -153,13 +153,13 @@ namespace VLB
 
         bool shouldUseGPUInstancedMaterial
         { get {
-            return m_Master._INTERNAL_DynamicOcclusionMode != MaterialManager.SD.DynamicOcclusion.DepthTexture // sampler cannot be passed to shader as instanced property
+            return m_Master._INTERNAL_DynamicOcclusionMode != MaterialManager.SD.DynamicOcclusion.DepthTexture
                 && Config.Instance.GetActualRenderingMode(ShaderMode.SD) == RenderingMode.GPUInstancing;
         }}
 
         void OnEnable()
         {
-            // When a GAO is disabled, all its coroutines are killed, so renable them on OnEnable.
+
             RestartFadeOutCoroutine();
 
 #if VLB_SRP_SUPPORT
@@ -180,7 +180,7 @@ namespace VLB
             meshRenderer.hideFlags = customHideFlags;
             meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             meshRenderer.receiveShadows = false;
-            meshRenderer.reflectionProbeUsage = UnityEngine.Rendering.ReflectionProbeUsage.Off; // different reflection probes could break batching with GPU Instancing
+            meshRenderer.reflectionProbeUsage = UnityEngine.Rendering.ReflectionProbeUsage.Off;
             meshRenderer.lightProbeUsage = UnityEngine.Rendering.LightProbeUsage.Off;
 
             if (!shouldUseGPUInstancedMaterial)
@@ -192,8 +192,7 @@ namespace VLB
             if (SortingLayer.IsValid(m_Master.sortingLayerID))
                 sortingLayerID = m_Master.sortingLayerID;
             else
-                Debug.LogError(string.Format("Beam '{0}' has an invalid sortingLayerID ({1}). Please fix it by setting a valid layer.", Utils.GetPath(m_Master.transform), m_Master.sortingLayerID));
-
+                
             sortingOrder = m_Master.sortingOrder;
 
             meshFilter = gameObject.GetOrAddComponent<MeshFilter>();
@@ -209,10 +208,6 @@ namespace VLB
             RestartFadeOutCoroutine();
         }
 
-        /// <summary>
-        /// Generate the cone mesh and calls UpdateMaterialAndBounds.
-        /// Since this process involves recreating a new mesh, make sure to not call it at every frame during playtime.
-        /// </summary>
         public void RegenerateMesh(bool masterEnabled)
         {
             Debug.Assert(m_Master);
@@ -248,7 +243,7 @@ namespace VLB
                     }
                 default:
                     {
-                        Debug.LogError("Unsupported MeshType");
+                        
                         break;
                     }
             }
@@ -260,9 +255,7 @@ namespace VLB
 
         Vector3 ComputeLocalMatrix()
         {
-            // In the VS, we compute the vertices so the whole beam fits into a fixed 2x2x1 box.
-            // We have to apply some scaling to get the proper beam size.
-            // This way we have the proper bounds without having to recompute specific bounds foreach beam.
+
             var maxRadius = Mathf.Max(m_Master.coneRadiusStart, m_Master.coneRadiusEnd);
             transform.localScale = new Vector3(maxRadius, maxRadius, m_Master.maxGeometryDistance);
             transform.localRotation = m_Master.beamInternalLocalRotation;
@@ -270,7 +263,7 @@ namespace VLB
             return transform.localScale;
         }
 
-        bool isNoiseEnabled { get { return m_Master.isNoiseEnabled && m_Master.noiseIntensity > 0f && Noise3D.isSupported; } } // test Noise3D.isSupported the last
+        bool isNoiseEnabled { get { return m_Master.isNoiseEnabled && m_Master.noiseIntensity > 0f && Noise3D.isSupported; } }
 
 #pragma warning disable 0162
         bool isDepthBlendEnabled { get { return BatchingHelper.forceEnableDepthBlend || m_Master.depthBlendDistance > 0f; } }
@@ -357,9 +350,7 @@ namespace VLB
         {
             if (m_CustomMaterial)
                 m_CustomMaterial.SetTexture(nameID, value);
-            else
-                Debug.LogError("Setting a Texture property to a GPU instanced material is not supported");
-        }
+            else { }}
 
         void MaterialChangeStart()
         {
@@ -405,10 +396,9 @@ namespace VLB
                         m_MaterialModifierCallback(this);
                 }
 
-                float slopeRad = (m_Master.coneAngle * Mathf.Deg2Rad) / 2; // use coneAngle (instead of spotAngle) which is more correct with the geometry
+                float slopeRad = (m_Master.coneAngle * Mathf.Deg2Rad) / 2;
                 SetMaterialProp(ShaderProperties.SD.ConeSlopeCosSin, new Vector2(Mathf.Cos(slopeRad), Mathf.Sin(slopeRad)));
 
-                // kMinRadius and kMinApexOffset prevents artifacts when fresnel computation is done in the vertex shader
                 const float kMinRadius = 0.0001f;
                 var coneRadius = new Vector2(Mathf.Max(m_Master.coneRadiusStart, kMinRadius), Mathf.Max(m_Master.coneRadiusEnd, kMinRadius));
                 SetMaterialProp(ShaderProperties.ConeRadius, coneRadius);
@@ -425,7 +415,7 @@ namespace VLB
                 {
                     var precision = Utils.GetFloatPackingPrecision();
                     m_ColorGradientMatrix = m_Master.colorGradient.SampleInMatrix((int)precision);
-                    // pass the gradient matrix in OnWillRenderObject()
+
                 }
 
                 float intensityInside, intensityOutside;
@@ -435,7 +425,7 @@ namespace VLB
                 SetMaterialProp(ShaderProperties.SD.AttenuationLerpLinearQuad, m_Master.attenuationLerpLinearQuad);
                 SetMaterialProp(ShaderProperties.DistanceFallOff, new Vector3(m_Master.fallOffStart, m_Master.fallOffEnd, m_Master.maxGeometryDistance));
                 SetMaterialProp(ShaderProperties.SD.DistanceCamClipping, m_Master.cameraClippingDistance);
-                SetMaterialProp(ShaderProperties.SD.FresnelPow, Mathf.Max(0.001f, m_Master.fresnelPow)); // no pow 0, otherwise will generate inf fresnel and issues on iOS
+                SetMaterialProp(ShaderProperties.SD.FresnelPow, Mathf.Max(0.001f, m_Master.fresnelPow));
                 SetMaterialProp(ShaderProperties.SD.GlareBehind, m_Master.glareBehind);
                 SetMaterialProp(ShaderProperties.SD.GlareFrontal, m_Master.glareFrontal);
                 SetMaterialProp(ShaderProperties.SD.DrawCap, m_Master.geomCap ? 1 : 0);
@@ -470,14 +460,14 @@ namespace VLB
                         m_Master.noiseMode == NoiseMode.WorldSpace ? 0f : 1f));
                 }
 
-                var localScale = ComputeLocalMatrix(); // compute matrix before sending it to the shader
+                var localScale = ComputeLocalMatrix();
 
                 if (m_Master.hasMeshSkewing)
                 {
                     var localForwardDirectionNormalized = m_Master.skewingLocalForwardDirectionNormalized;
                     SetMaterialProp(ShaderProperties.SD.LocalForwardDirection, localForwardDirectionNormalized);
 
-                    if (coneMesh != null) // coneMesh can be null few frames with Dynamic Occlusion & GPU Instancing
+                    if (coneMesh != null)
                     {
                         var localForwardDirectionN = localForwardDirectionNormalized;
                         localForwardDirectionN /= localForwardDirectionN.z;
@@ -502,7 +492,7 @@ namespace VLB
                 }
 
 #if VLB_SRP_SUPPORT
-                // This update is to make QA test 'ReflectionObliqueProjection' pass
+
                 UpdateMatricesPropertiesForGPUInstancingSRP();
 #endif
             }
@@ -513,7 +503,6 @@ namespace VLB
             {
                 var vertex = coneMesh.vertices[vertexInd];
 
-                // apply modification done inside VS
                 vertex.x *= Mathf.Lerp(coneRadius.x, coneRadius.y, vertex.z);
                 vertex.y *= Mathf.Lerp(coneRadius.x, coneRadius.y, vertex.z);
                 vertex.z *= m_Master.fallOffEnd;
@@ -572,9 +561,9 @@ namespace VLB
             {
                 if (
 #if UNITY_EDITOR
-                    Utils.IsEditorCamera(cam) || // make sure to call UpdateCameraRelatedProperties for editor scene camera 
+                    Utils.IsEditorCamera(cam) ||
 #endif
-                    cam.enabled)    // prevent from doing stuff when we render from a previous DynamicOcclusionDepthBuffer's DepthCamera, because the DepthCamera are disabled 
+                    cam.enabled)
                 {
                     UpdateCameraRelatedProperties(cam);
                     m_Master._INTERNAL_OnWillCameraRenderThisBeam(cam);
@@ -595,13 +584,13 @@ namespace VLB
                     SetMaterialProp(ShaderProperties.SD.CameraParams, new Vector4(camForwardVectorOSN.x, camForwardVectorOSN.y, camForwardVectorOSN.z, camIsInsideBeamFactor));
 
 #if VLB_SRP_SUPPORT
-                    // This update is to be able to move beams without trackChangesDuringPlaytime enabled with SRP & GPU Instancing
+
                     UpdateMatricesPropertiesForGPUInstancingSRP();
 #endif
 
                     if (m_Master.usedColorMode == ColorMode.Gradient)
                     {
-                        // Send the gradient matrix every frame since it's not a shader's property
+
                         SetMaterialProp(ShaderProperties.ColorGradientMatrix, m_ColorGradientMatrix);
                     }
                 }

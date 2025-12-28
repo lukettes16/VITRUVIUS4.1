@@ -1,13 +1,13 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System.Collections.Generic; 
+using System.Collections.Generic;
 using UnityEngine.UI;
 
 public class MonitorPuzzleController : InteractiveObject
 {
     public enum MonitorObjectKind { Computer, Note }
     [Header("Individual UI Configuration")]
-    
+
     [SerializeField] private Canvas player1Canvas;
     [SerializeField] private Canvas player2Canvas;
 
@@ -15,17 +15,11 @@ public class MonitorPuzzleController : InteractiveObject
     [SerializeField] private MonitorObjectKind objectKind = MonitorObjectKind.Computer;
     [SerializeField] private string monitorID = "MonitorA";
 
-    
-    
-    
     [Header("Interaction Prompt")]
-    [SerializeField] private GameObject interactPromptCanvas; 
+    [SerializeField] private GameObject interactPromptCanvas;
     [SerializeField] private Image promptButtonImage;
     [SerializeField] private RectTransform buttonAnchor;
     [SerializeField] private Vector2 buttonImageOffset = Vector2.zero;
-    
-    
-    
 
     [Header("Audio Configuration")]
     [SerializeField] private AudioClip openSound;
@@ -34,11 +28,10 @@ public class MonitorPuzzleController : InteractiveObject
     [SerializeField] private float audioPitch = 1f;
 
     [Header("Inputs de Activacion")]
-    
+
     [SerializeField] private InputActionReference actionButtonPlayer1;
     [SerializeField] private InputActionReference actionButtonPlayer2;
 
-    
     [Header("Outline Multiplayer")]
     [Tooltip("The color used when two or more players are in the trigger.")]
     [SerializeField] private Color cooperativeOutlineColor = Color.yellow;
@@ -49,22 +42,19 @@ public class MonitorPuzzleController : InteractiveObject
     [SerializeField] private string outlineScaleProperty = "_Outline_Scale";
     [SerializeField] private float activeOutlineScale = 0.0125f;
 
-    
     private List<PlayerIdentifier> activePlayers = new List<PlayerIdentifier>();
     private Renderer meshRenderer;
     private MaterialPropertyBlock propertyBlock;
     private int outlineColorID;
     private int outlineScaleID;
     private Color originalOutlineColor = Color.black;
-    
 
-    
     private bool isPlayer1InRange = false;
     private bool isPlayer2InRange = false;
 
     private void Start()
     {
-        
+
         if (player1Canvas != null)
         {
             player1Canvas.gameObject.SetActive(false);
@@ -82,17 +72,9 @@ public class MonitorPuzzleController : InteractiveObject
                 player2Canvas.gameObject.AddComponent<CanvasScreenClamper>();
         }
 
-        
-        
-        
         if (interactPromptCanvas != null)
             interactPromptCanvas.gameObject.SetActive(false);
-        
-        
-        
 
-
-        
         meshRenderer = GetComponent<Renderer>();
         if (meshRenderer != null)
         {
@@ -101,7 +83,6 @@ public class MonitorPuzzleController : InteractiveObject
             outlineColorID = Shader.PropertyToID(outlineColorProperty);
             outlineScaleID = Shader.PropertyToID(outlineScaleProperty);
 
-            
             SetOutlineState(Color.black, 0.0f);
         }
 
@@ -137,14 +118,14 @@ public class MonitorPuzzleController : InteractiveObject
         if (isPlayer1Action && isPlayer1InRange && player1Canvas != null)
         {
             ToggleCanvas(player1Canvas);
-            
+
             if (player1Canvas.gameObject.activeSelf)
                 ShowPrompt(false);
         }
         else if (isPlayer2Action && isPlayer2InRange && player2Canvas != null)
         {
             ToggleCanvas(player2Canvas);
-            
+
             if (player2Canvas.gameObject.activeSelf)
                 ShowPrompt(false);
         }
@@ -157,8 +138,7 @@ public class MonitorPuzzleController : InteractiveObject
 
         if (newState && openSound != null)
         {
-            
-            
+
              AudioManager.Instance.PlaySFX(openSound, transform.position, audioVolume, audioPitch);
         }
         else if (!newState && closeSound != null)
@@ -166,12 +146,9 @@ public class MonitorPuzzleController : InteractiveObject
              AudioManager.Instance.PlaySFX(closeSound, transform.position, audioVolume, audioPitch);
         }
 
-
-
-        
         if (!newState)
         {
-            
+
             bool isAnyCanvasActive = (player1Canvas != null && player1Canvas.gameObject.activeSelf) ||
                                     (player2Canvas != null && player2Canvas.gameObject.activeSelf);
 
@@ -180,12 +157,11 @@ public class MonitorPuzzleController : InteractiveObject
         }
     }
 
-    
     private void SetOutlineState(Color color, float scale)
     {
         if (meshRenderer != null && propertyBlock != null)
         {
-            
+
             meshRenderer.GetPropertyBlock(propertyBlock, 1);
 
             propertyBlock.SetColor(outlineColorID, color);
@@ -203,18 +179,17 @@ public class MonitorPuzzleController : InteractiveObject
         }
         else if (activePlayers.Count == 1)
         {
-            
+
             PlayerIdentifier singlePlayer = activePlayers[0];
-            
+
             SetOutlineState(singlePlayer.PlayerOutlineColor, activeOutlineScale);
         }
         else
         {
-            
+
             SetOutlineState(cooperativeOutlineColor, activeOutlineScale);
         }
     }
-    
 
     private void OnTriggerEnter(Collider other)
     {
@@ -222,7 +197,7 @@ public class MonitorPuzzleController : InteractiveObject
 
         if (playerIdentifier != null)
         {
-            
+
             if (playerIdentifier.playerID == 1)
             {
                 isPlayer1InRange = true;
@@ -232,7 +207,6 @@ public class MonitorPuzzleController : InteractiveObject
                 isPlayer2InRange = true;
             }
 
-            
             if (!activePlayers.Contains(playerIdentifier))
             {
                 activePlayers.Add(playerIdentifier);
@@ -240,10 +214,6 @@ public class MonitorPuzzleController : InteractiveObject
 
             UpdateOutlineVisuals();
 
-            
-            
-            
-            
             if (!(player1Canvas != null && player1Canvas.gameObject.activeSelf) &&
                 !(player2Canvas != null && player2Canvas.gameObject.activeSelf))
             {
@@ -261,7 +231,7 @@ public class MonitorPuzzleController : InteractiveObject
 
         if (playerIdentifier != null)
         {
-            
+
             if (playerIdentifier.playerID == 1)
             {
                 isPlayer1InRange = false;
@@ -273,7 +243,6 @@ public class MonitorPuzzleController : InteractiveObject
                 if (player2Canvas != null) player2Canvas.gameObject.SetActive(false);
             }
 
-            
             if (activePlayers.Contains(playerIdentifier))
             {
                 activePlayers.Remove(playerIdentifier);
@@ -281,23 +250,14 @@ public class MonitorPuzzleController : InteractiveObject
 
             UpdateOutlineVisuals();
 
-            
-            
-            
-            
             if (activePlayers.Count == 0)
             {
                 ShowPrompt(false);
             }
-            
-            
-            
+
         }
     }
 
-    
-    
-    
     private void ShowPrompt(bool state)
     {
         if (interactPromptCanvas != null)
@@ -342,7 +302,5 @@ public class MonitorPuzzleController : InteractiveObject
             }
         }
     }
-    
-    
-    
+
 }

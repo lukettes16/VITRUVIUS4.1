@@ -1,10 +1,6 @@
 ﻿using UnityEngine;
 using Gameplay;
 
-
-
-
-
 [RequireComponent(typeof(Rigidbody))]
 public class ObjectNoiseEmitter : MonoBehaviour
 {
@@ -32,9 +28,6 @@ public class ObjectNoiseEmitter : MonoBehaviour
     [Tooltip("Color del gizmo de ruido")]
     public Color noiseColor = new Color(1f, 0.4f, 0.8f, 0.25f);
 
-    
-    
-    
     [HideInInspector] public float currentNoiseRadius = 0f;
 
     private Rigidbody rb;
@@ -49,7 +42,7 @@ public class ObjectNoiseEmitter : MonoBehaviour
 
     void Update()
     {
-        
+
         if (grabbableController != null && grabbableController.IsHeld)
         {
             currentNoiseRadius = idleNoiseRadius;
@@ -57,8 +50,7 @@ public class ObjectNoiseEmitter : MonoBehaviour
         }
 
         CalculateLogicRadius();
-        
-        
+
         if (collisionNoiseTimer > 0f)
         {
             collisionNoiseTimer -= Time.deltaTime;
@@ -69,9 +61,6 @@ public class ObjectNoiseEmitter : MonoBehaviour
         }
     }
 
-    
-    
-    
     void CalculateLogicRadius()
     {
         if (rb == null)
@@ -83,13 +72,12 @@ public class ObjectNoiseEmitter : MonoBehaviour
         float currentSpeed = rb.velocity.magnitude;
         float baseNoiseRadius = idleNoiseRadius;
 
-        
         if (collisionNoiseTimer > 0f)
         {
             float collisionNoiseAmount = collisionNoiseTimer / collisionNoiseDuration;
             baseNoiseRadius = Mathf.Lerp(idleNoiseRadius, collisionNoiseRadius, collisionNoiseAmount);
         }
-        
+
         else if (currentSpeed > movingSpeedThreshold)
         {
             if (currentSpeed >= fastMovingSpeedThreshold)
@@ -105,13 +93,10 @@ public class ObjectNoiseEmitter : MonoBehaviour
         currentNoiseRadius = baseNoiseRadius;
     }
 
-    
-    
-    
     public void TriggerCollisionNoise(float impactMagnitude = 1f)
     {
         collisionNoiseTimer = collisionNoiseDuration;
-        
+
         float adjustedRadius = collisionNoiseRadius * Mathf.Clamp(impactMagnitude / 10f, 0.5f, 2f);
         currentNoiseRadius = Mathf.Max(currentNoiseRadius, adjustedRadius);
     }

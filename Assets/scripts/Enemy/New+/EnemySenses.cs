@@ -113,10 +113,9 @@ public class EnemySenses : MonoBehaviour
             if (target == null) return;
 
             float dist = Vector3.Distance(transform.position, target.position);
-            
+
             bool isEmittingActiveNoise = noiseRadius > idleNoiseRadius + 0.1f;
-            
-            
+
             if (dist <= minDetectionRadius)
             {
                 float strengthClose = 1f;
@@ -129,12 +128,12 @@ public class EnemySenses : MonoBehaviour
                 }
                 return;
             }
-            
+
             bool shouldEvaluate = isEmittingActiveNoise;
             if (!shouldEvaluate) return;
-            
+
             float strength = CalculateAudioStrength(target, noiseRadius, dist);
-            
+
             bool shouldDetect = strength > detectionThreshold;
 
             if (shouldDetect)
@@ -189,11 +188,10 @@ public class EnemySenses : MonoBehaviour
         if (bestTarget != null)
         {
             bool stillMakingNoise = false;
-            
-            
+
             TargetCache bestCache = default;
             bool foundInCache = false;
-            
+
             foreach(var c in playerCache) if(c.transform == bestTarget) { bestCache = c; foundInCache = true; break; }
             if(!foundInCache) foreach(var c in npcCache) if(c.transform == bestTarget) { bestCache = c; foundInCache = true; break; }
 
@@ -208,8 +206,7 @@ public class EnemySenses : MonoBehaviour
                     stillMakingNoise = bestCache.npcNoise.currentNoiseRadius > bestCache.npcNoise.idleNoiseRadius + 0.1f;
                 }
             }
-            
-            
+
             bool isUltraClose = minDistance <= Mathf.Max(minDetectionRadius, 0.5f);
             if (stillMakingNoise || isUltraClose)
             {
@@ -231,12 +228,12 @@ public class EnemySenses : MonoBehaviour
             {
                 if (CurrentPlayer == bestTarget) CurrentPlayer = null;
                 if (CurrentNPCTarget == bestTarget) CurrentNPCTarget = null;
-                
+
                 if (CurrentPlayer == null && CurrentNPCTarget == null)
                 {
                     HasTargetOfInterest = false;
                 }
-                
+
                 timeSinceLastHeard += Time.deltaTime;
                 if (timeSinceLastHeard > memoryDuration)
                 {
@@ -382,14 +379,13 @@ public class EnemySenses : MonoBehaviour
 
     private void ProcessObjectNoiseDetection()
     {
-        
+
         if (HasTargetOfInterest && (CurrentPlayer != null || CurrentNPCTarget != null))
         {
             CurrentNoisyObject = null;
             return;
         }
 
-        
         if (objectNoiseDetection != null && objectNoiseDetection.HasNoisyObjectNearby())
         {
             if (objectNoiseDetection.GetLoudestObject(out Transform noisyObject, out Vector3 objectPosition))
@@ -405,10 +401,9 @@ public class EnemySenses : MonoBehaviour
             }
         }
 
-        
         if (CurrentNoisyObject != null)
         {
-            
+
             bool stillLoudest = false;
             if (objectNoiseDetection != null && objectNoiseDetection.HasNoisyObjectNearby())
             {
@@ -417,14 +412,14 @@ public class EnemySenses : MonoBehaviour
                     if (loudest == CurrentNoisyObject)
                     {
                         stillLoudest = true;
-                        TargetPositionOfInterest = pos; 
+                        TargetPositionOfInterest = pos;
                     }
                 }
             }
-            
+
             if (!stillLoudest)
             {
-                
+
                 CurrentNoisyObject = null;
                 if (CurrentPlayer == null && CurrentNPCTarget == null)
                 {

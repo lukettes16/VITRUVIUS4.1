@@ -11,20 +11,19 @@ public class StaminaFatigueFeedback : MonoBehaviour
     public Transform breathingTarget;
 
     [Header("Configuracion Visual")]
-    public float transitionSpeed = 5f; 
-    public float breathSpeed = 14f;    
-    public float breathAmount = 8f;   
+    public float transitionSpeed = 5f;
+    public float breathSpeed = 14f;
+    public float breathAmount = 8f;
 
     private bool _isExhausted = false;
     private Quaternion _initialRotation;
 
     void Start()
     {
-        
+
         if (breathingTarget != null)
             _initialRotation = breathingTarget.localRotation;
 
-        
         if (fatigueRig != null)
             fatigueRig.weight = 0f;
     }
@@ -33,26 +32,20 @@ public class StaminaFatigueFeedback : MonoBehaviour
     {
         if (fatigueRig == null) return;
 
-        
-        
         float targetW = _isExhausted ? 1f : 0f;
         fatigueRig.weight = Mathf.Lerp(fatigueRig.weight, targetW, Time.deltaTime * transitionSpeed);
 
-        
         if (fatigueRig.weight > 0.1f && breathingTarget != null)
         {
-            
+
             float breathAngle = Mathf.Sin(Time.time * breathSpeed) * breathAmount;
 
-            
-            
             Quaternion breathRot = Quaternion.Euler(breathAngle, 0, 0);
 
             breathingTarget.localRotation = _initialRotation * breathRot;
         }
     }
 
-    
     public void SetExhausted(bool state)
     {
         _isExhausted = state;

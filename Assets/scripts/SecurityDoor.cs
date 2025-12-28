@@ -7,65 +7,64 @@ public class SecurityDoor : MonoBehaviour
     [SerializeField] private Vector3 openPosition;
     [SerializeField] private Vector3 closedPosition;
     [SerializeField] private float moveSpeed = 2f;
-    
+
     [Header("Key Configuration")]
     [SerializeField] private string requiredKeyID = "Tarjeta";
-    
+
     [Header("Audio")]
     [SerializeField] private bool useAudioConfig = true;
     [SerializeField] private AudioClip openSound;
     [SerializeField] private AudioClip lockedSound;
-    
+
     [Header("Visual Effects")]
     [SerializeField] private GameObject openEffect;
     [SerializeField] private GameObject lockedEffect;
-    
+
     [Header("Light Control")]
     [SerializeField] private Light pcRoomLight;
     [SerializeField] private Color closedLightColor = Color.red;
     [SerializeField] private Color openLightColor = Color.green;
-    
+
     private bool isOpen = false;
     private bool isMoving = false;
     private bool player1InRange = false;
     private bool player2InRange = false;
-    
+
     private void Start()
     {
         if (doorTransform == null)
             doorTransform = transform;
-            
+
         closedPosition = doorTransform.position;
-        
-        
+
         if (pcRoomLight != null)
         {
             pcRoomLight.color = closedLightColor;
         }
     }
-    
+
     private void Update()
     {
         if (isMoving)
         {
             Vector3 targetPosition = isOpen ? openPosition : closedPosition;
             doorTransform.position = Vector3.MoveTowards(doorTransform.position, targetPosition, moveSpeed * Time.deltaTime);
-            
+
             if (Vector3.Distance(doorTransform.position, targetPosition) < 0.01f)
             {
                 isMoving = false;
             }
         }
-        
+
         CheckForKeyAndPlayers();
     }
-    
+
     private void CheckForKeyAndPlayers()
     {
         if (isOpen || (!player1InRange && !player2InRange)) return;
-        
+
         bool hasRequiredKey = false;
-        
+
         if (player1InRange)
         {
             GameObject player1 = GameObject.FindGameObjectWithTag("Player1");
@@ -79,7 +78,7 @@ public class SecurityDoor : MonoBehaviour
                 }
             }
         }
-        
+
         if (!hasRequiredKey && player2InRange)
         {
             GameObject player2 = GameObject.FindGameObjectWithTag("Player2");
@@ -93,7 +92,7 @@ public class SecurityDoor : MonoBehaviour
                 }
             }
         }
-        
+
         if (hasRequiredKey)
         {
             OpenDoor();
@@ -103,14 +102,14 @@ public class SecurityDoor : MonoBehaviour
             PlayLockedSound();
         }
     }
-    
+
     private void OpenDoor()
     {
         if (isOpen) return;
-        
+
         isOpen = true;
         isMoving = true;
-        
+
         if (useAudioConfig)
         {
             SoundHelper.PlayDoorOpenSound(transform.position);
@@ -119,18 +118,15 @@ public class SecurityDoor : MonoBehaviour
         {
             AudioSource.PlayClipAtPoint(openSound, transform.position);
         }
-        
+
         if (openEffect != null)
         {
             Instantiate(openEffect, transform.position, transform.rotation);
         }
-        
 
-        
-        
         ChangeLightColor(openLightColor);
     }
-    
+
     private void PlayLockedSound()
     {
         if (useAudioConfig)
@@ -141,15 +137,14 @@ public class SecurityDoor : MonoBehaviour
         {
             AudioSource.PlayClipAtPoint(lockedSound, transform.position);
         }
-        
+
         if (lockedEffect != null)
         {
             Instantiate(lockedEffect, transform.position, transform.rotation);
         }
-        
 
     }
-    
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player1"))
@@ -161,7 +156,7 @@ public class SecurityDoor : MonoBehaviour
             player2InRange = true;
         }
     }
-    
+
     private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Player1"))
@@ -173,8 +168,7 @@ public class SecurityDoor : MonoBehaviour
             player2InRange = false;
         }
     }
-    
-    
+
     private void ChangeLightColor(Color newColor)
     {
         if (pcRoomLight != null)

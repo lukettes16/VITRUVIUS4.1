@@ -6,8 +6,7 @@ public class BillboardCanvas : MonoBehaviour
 
     void Start()
     {
-        
-        
+
         if (Camera.main != null)
         {
             mainCameraTransform = Camera.main.transform;
@@ -23,20 +22,9 @@ public class BillboardCanvas : MonoBehaviour
         if (mainCameraTransform == null)
             return;
 
-        
-        
-        
-
-        
-        
-        
-
-        
         Vector3 lookDirection = mainCameraTransform.position - transform.position;
-        lookDirection.y = 0; 
+        lookDirection.y = 0;
 
-        
-        
         if (lookDirection != Vector3.zero)
         {
             transform.rotation = Quaternion.LookRotation(-lookDirection);

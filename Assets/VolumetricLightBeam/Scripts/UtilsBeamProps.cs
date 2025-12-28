@@ -71,7 +71,6 @@ namespace VLB
             return 0f;
         }
 
-
         public static ColorMode GetColorMode(VolumetricLightBeamAbstractBase self)
         {
             var sd = self as VolumetricLightBeamSD;

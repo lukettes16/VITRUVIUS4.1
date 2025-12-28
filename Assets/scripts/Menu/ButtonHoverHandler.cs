@@ -7,14 +7,14 @@ public class ButtonHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerE
     private Button button;
     private PauseController pauseController;
     private int buttonIndex;
-    
+
     public void SetupHover(Button btn, PauseController controller, int index)
     {
         button = btn;
         pauseController = controller;
         buttonIndex = index;
     }
-    
+
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (pauseController != null)
@@ -23,9 +23,9 @@ public class ButtonHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerE
             pauseController.PlayHoverSound();
         }
     }
-    
+
     public void OnPointerExit(PointerEventData eventData)
     {
-        
+
     }
 }
